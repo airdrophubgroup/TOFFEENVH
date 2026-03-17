@@ -3,85 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOFFEENVH Claim App</title>
+    <title>TOFFEENVH - Claim Rewards</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 350px; }
-        h1 { color: #333; font-size: 22px; margin-bottom: 20px; }
-        input { width: 90%; padding: 12px; margin-bottom: 20px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 350px; }
+        h1 { color: #333; margin-bottom: 5px; font-size: 22px; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 20px; }
+        input { width: 90%; padding: 12px; margin-bottom: 20px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; }
+        input:focus { border-color: #35D07F; }
         .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold; margin-bottom: 10px; transition: 0.3s; }
         #connectBtn { background: #4A90E2; color: white; }
         #claimBtn { background: #35D07F; color: white; }
-        #status { font-size: 14px; color: #666; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; }
+        #claimBtn:disabled { background: #ccc; cursor: not-allowed; }
+        #status { font-size: 13px; color: #444; margin-top: 15px; padding: 10px; background: #fff9c4; border-radius: 8px; min-height: 20px; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="card">
     <h1>🍬 TOFFEENVH Project</h1>
+    <p class="subtitle">Nihal Vihar's Digital Reward</p>
+    
     <div id="status">Pehle Wallet Connect Karein</div>
     
-    <button class="btn" id="connectBtn">Connect Celo Wallet</button>
+    <button class="btn" id="connectBtn">1. Connect Wallet</button>
     
-    <input type="text" id="wrapperCode" placeholder="Enter Wrapper Code">
+    <input type="text" id="wrapperCode" placeholder="Toffee Wrapper Code Dalein">
     
-    <button class="btn" id="claimBtn" disabled>Claim 10 Tokens</button>
-    <p style="font-size: 11px; color: #999;">Nihal Vihar Cyber Cafe Initiative</p>
+    <button class="btn" id="claimBtn" disabled>2. Claim 10 Tokens</button>
 </div>
 
 <script>
+    // --- CONFIGURATION ---
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxHXis2UaZa0VnzMbak4bWGaGUhrxz1RlSnNRkzXWopUDE1srO5Z7Hv9L6NamMOWlzVuQ/exec";
     const CONTRACT_ADDRESS = "0xd9145CCE52D386F254917e481eB44e9943f39138";
     const ABI = [ "function claim(string memory _code) public" ];
 
     let signer, contract;
 
-    // 1. Wallet Connect
+    // 1. Connect Wallet
     document.getElementById('connectBtn').onclick = async () => {
         if (window.ethereum) {
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            signer = provider.getSigner();
-            document.getElementById('status').innerText = "Wallet Connected! Ab code dalein.";
-            document.getElementById('claimBtn').disabled = false;
-            document.getElementById('connectBtn').style.display = "none";
-            contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                const address = await signer.getAddress();
+                
+                document.getElementById('status').innerText = "Connected: " + address.substring(0,6) + "...";
+                document.getElementById('claimBtn').disabled = false;
+                document.getElementById('connectBtn').innerText = "Wallet Linked ✓";
+                document.getElementById('connectBtn').style.background = "#aaa";
+                
+                contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+            } catch (err) {
+                alert("Connection cancel kar di gayi.");
+            }
         } else {
             alert("MetaMask ya Valora install karein!");
         }
     };
 
-    // 2. Claim Logic (Google Sheet + Blockchain)
+    // 2. Claim Logic
     document.getElementById('claimBtn').onclick = async () => {
         const code = document.getElementById('wrapperCode').value.trim();
-        if (!code) return alert("Pehle code dalein!");
+        if (!code) return alert("Pehle wrapper code dalein!");
 
         try {
             document.getElementById('status').innerText = "Checking Code in Google Sheet...";
             
-            // Google Sheet se verify karo
-            const res = await fetch(`${GOOGLE_URL}?code=${code}`);
-            const result = await res.text();
+            // Google Sheet se baat kar rahe hain
+            const res = await fetch(`${GOOGLE_URL}?code=${code}`, {
+                method: 'GET',
+                mode: 'no-cors' // Google Script ke liye safe mode
+            });
 
-            if (result === "VALID") {
-                document.getElementById('status').innerText = "Code Verified! Blockchain confirm karein...";
+            // Note: 'no-cors' mein hum result read nahi kar paate, 
+            // isliye best hai ki redirect: 'follow' wala regular fetch use karein agar rules set hain.
+            
+            const response = await fetch(`${GOOGLE_URL}?code=${code}`, {
+                redirect: 'follow'
+            });
+            const result = await response.text();
+
+            if (result.trim() === "VALID") {
+                document.getElementById('status').innerText = "Code Sahi Hai! Ab Wallet Confirm Karein...";
                 
-                // Blockchain par claim karo
+                // Blockchain Transaction
                 const tx = await contract.claim(code);
-                document.getElementById('status').innerText = "Transaction Pending... Wait karein";
+                document.getElementById('status').innerText = "Transaction Pending... Wait karein.";
                 await tx.wait();
 
-                document.getElementById('status').innerText = "SUCCESS! 10 Tokens Received 🍬";
-                alert("Mubarak ho! Tokens bhej diye gaye hain.");
+                document.getElementById('status').innerText = "SUCCESS! 10 Tokens Mil Gaye 🍬";
+                alert("Mubarak ho! Tokens bhej diye gaye.");
                 document.getElementById('wrapperCode').value = "";
             } else {
-                document.getElementById('status').innerText = "Invalid ya Used Code!";
-                alert("Ye code galat hai ya pehle hi use ho chuka hai.");
+                document.getElementById('status').innerText = "Invalid Code: Code galat hai ya use ho chuka hai.";
+                alert("Error: Code Invalid hai.");
             }
         } catch (err) {
             console.error(err);
-            document.getElementById('status').innerText = "Error: Transaction fail ho gayi.";
+            document.getElementById('status').innerText = "Error: Kuch galat hua. Check balance/code.";
         }
     };
 </script>
