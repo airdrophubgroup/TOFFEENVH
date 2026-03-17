@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toffee Project - Claim Rewards</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        body { font-family: Arial; text-align: center; background: #f4f4f4; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-block; }
+        input { padding: 10px; width: 80%; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; background: #35D07F; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:disabled { background: #ccc; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>🍬 TOFFEENVH Project</h1>
+        <p>Apna Wrapper Code Daalein aur 10 Tokens Paayein!</p>
+        
+        <button id="connectBtn">Connect Wallet</button>
+        <p id="walletAddress"></p>
+
+        <hr>
+
+        <input type="text" id="wrapperCode" placeholder="Enter Wrapper Code (e.g. TF123)">
+        <br>
+        <button id="claimBtn" disabled>Claim 10 TOFFEENVH</button>
+        
+        <p id="status"></p>
+    </div>
+
+    <script>
+        const contractAddress = "0xd9145CCE52D386F254917e481eB44e9943f39138";
+        const tokenAbi = [ "function claim(string memory _code) public" ];
+
+        let provider, signer, contract;
+
+        async function connect() {
+            if (window.ethereum) {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                signer = provider.getSigner();
+                const address = await signer.getAddress();
+                document.getElementById('walletAddress').innerText = "Wallet: " + address;
+                document.getElementById('claimBtn').disabled = false;
+                
+                contract = new ethers.Contract(contractAddress, tokenAbi, signer);
+            } else {
+                alert("Please install MetaMask or Valora!");
+            }
+        }
+
+        async function claim() {
+            const code = document.getElementById('wrapperCode').value;
+            if (!code) return alert("Pehle code dalein!");
+
+            try {
+                document.getElementById('status').innerText = "Processing... Please wait";
+                const tx = await contract.claim(code);
+                await tx.wait();
+                document.getElementById('status').innerText = "Mubarak ho! 10 Tokens bhej diye gaye hain.";
+            } catch (err) {
+                console.error(err);
+                document.getElementById('status').innerText = "Error: Code galat hai ya gas fees kam hai.";
+            }
+        }
+
+        document.getElementById('connectBtn').onclick = connect;
+        document.getElementById('claimBtn').onclick = claim;
+    </script>
+</body>
+</html>
