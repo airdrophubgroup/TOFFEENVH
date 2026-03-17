@@ -1,74 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toffee Project - Claim Rewards</title>
+    <title>TOFFEENVH Claim App</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
-        body { font-family: Arial; text-align: center; background: #f4f4f4; padding: 50px; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-block; }
-        input { padding: 10px; width: 80%; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-        button { padding: 10px 20px; background: #35D07F; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        button:disabled { background: #ccc; }
+        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 350px; }
+        h1 { color: #333; font-size: 22px; margin-bottom: 20px; }
+        input { width: 90%; padding: 12px; margin-bottom: 20px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold; margin-bottom: 10px; transition: 0.3s; }
+        #connectBtn { background: #4A90E2; color: white; }
+        #claimBtn { background: #35D07F; color: white; }
+        #status { font-size: 14px; color: #666; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>🍬 TOFFEENVH Project</h1>
-        <p>Apna Wrapper Code Daalein aur 10 Tokens Paayein!</p>
-        
-        <button id="connectBtn">Connect Wallet</button>
-        <p id="walletAddress"></p>
+<div class="container">
+    <h1>🍬 TOFFEENVH Project</h1>
+    <div id="status">Pehle Wallet Connect Karein</div>
+    
+    <button class="btn" id="connectBtn">Connect Celo Wallet</button>
+    
+    <input type="text" id="wrapperCode" placeholder="Enter Wrapper Code">
+    
+    <button class="btn" id="claimBtn" disabled>Claim 10 Tokens</button>
+    <p style="font-size: 11px; color: #999;">Nihal Vihar Cyber Cafe Initiative</p>
+</div>
 
-        <hr>
+<script>
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxHXis2UaZa0VnzMbak4bWGaGUhrxz1RlSnNRkzXWopUDE1srO5Z7Hv9L6NamMOWlzVuQ/exec";
+    const CONTRACT_ADDRESS = "0xd9145CCE52D386F254917e481eB44e9943f39138";
+    const ABI = [ "function claim(string memory _code) public" ];
 
-        <input type="text" id="wrapperCode" placeholder="Enter Wrapper Code (e.g. TF123)">
-        <br>
-        <button id="claimBtn" disabled>Claim 10 TOFFEENVH</button>
-        
-        <p id="status"></p>
-    </div>
+    let signer, contract;
 
-    <script>
-        const contractAddress = "0xd9145CCE52D386F254917e481eB44e9943f39138";
-        const tokenAbi = [ "function claim(string memory _code) public" ];
+    // 1. Wallet Connect
+    document.getElementById('connectBtn').onclick = async () => {
+        if (window.ethereum) {
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+            document.getElementById('status').innerText = "Wallet Connected! Ab code dalein.";
+            document.getElementById('claimBtn').disabled = false;
+            document.getElementById('connectBtn').style.display = "none";
+            contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+        } else {
+            alert("MetaMask ya Valora install karein!");
+        }
+    };
 
-        let provider, signer, contract;
+    // 2. Claim Logic (Google Sheet + Blockchain)
+    document.getElementById('claimBtn').onclick = async () => {
+        const code = document.getElementById('wrapperCode').value.trim();
+        if (!code) return alert("Pehle code dalein!");
 
-        async function connect() {
-            if (window.ethereum) {
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                await provider.send("eth_requestAccounts", []);
-                signer = provider.getSigner();
-                const address = await signer.getAddress();
-                document.getElementById('walletAddress').innerText = "Wallet: " + address;
-                document.getElementById('claimBtn').disabled = false;
+        try {
+            document.getElementById('status').innerText = "Checking Code in Google Sheet...";
+            
+            // Google Sheet se verify karo
+            const res = await fetch(`${GOOGLE_URL}?code=${code}`);
+            const result = await res.text();
+
+            if (result === "VALID") {
+                document.getElementById('status').innerText = "Code Verified! Blockchain confirm karein...";
                 
-                contract = new ethers.Contract(contractAddress, tokenAbi, signer);
-            } else {
-                alert("Please install MetaMask or Valora!");
-            }
-        }
-
-        async function claim() {
-            const code = document.getElementById('wrapperCode').value;
-            if (!code) return alert("Pehle code dalein!");
-
-            try {
-                document.getElementById('status').innerText = "Processing... Please wait";
+                // Blockchain par claim karo
                 const tx = await contract.claim(code);
+                document.getElementById('status').innerText = "Transaction Pending... Wait karein";
                 await tx.wait();
-                document.getElementById('status').innerText = "Mubarak ho! 10 Tokens bhej diye gaye hain.";
-            } catch (err) {
-                console.error(err);
-                document.getElementById('status').innerText = "Error: Code galat hai ya gas fees kam hai.";
-            }
-        }
 
-        document.getElementById('connectBtn').onclick = connect;
-        document.getElementById('claimBtn').onclick = claim;
-    </script>
+                document.getElementById('status').innerText = "SUCCESS! 10 Tokens Received 🍬";
+                alert("Mubarak ho! Tokens bhej diye gaye hain.");
+                document.getElementById('wrapperCode').value = "";
+            } else {
+                document.getElementById('status').innerText = "Invalid ya Used Code!";
+                alert("Ye code galat hai ya pehle hi use ho chuka hai.");
+            }
+        } catch (err) {
+            console.error(err);
+            document.getElementById('status').innerText = "Error: Transaction fail ho gayi.";
+        }
+    };
+</script>
+
 </body>
 </html>
