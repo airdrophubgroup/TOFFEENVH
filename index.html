@@ -4,72 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOFFEENVH - Nihal Vihar Rewards</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #1a1a2e; color: white; padding: 50px; }
-        .container { background: #16213e; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: inline-block; max-width: 400px; width: 90%; border: 1px solid #0f3460; }
-        h1 { color: #e94560; margin-bottom: 5px; }
-        p { color: #95a5a6; margin-bottom: 25px; }
-        input { padding: 12px; width: 85%; margin: 15px 0; border: none; border-radius: 8px; background: #0f3460; color: white; text-align: center; font-size: 16px; }
-        button { padding: 12px 25px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; margin: 10px 5px; transition: 0.3s; font-size: 15px; }
-        .connect-btn { background: #f1c40f; color: #1a1a2e; }
-        .connect-btn:hover { background: #d4ac0d; }
-        .claim-btn { background: #e94560; color: white; width: 95%; }
-        .claim-btn:hover { background: #c62842; }
-        #status { margin-top: 20px; font-size: 14px; font-weight: bold; }
-        .success { color: #2ecc71; }
-        .error { color: #e74c3c; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #0f172a; color: white; padding: 40px 20px; }
+        .card { background: #1e293b; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: inline-block; max-width: 400px; width: 100%; border: 1px solid #334155; }
+        h1 { color: #38bdf8; margin-bottom: 10px; font-size: 28px; }
+        p { color: #94a3b8; margin-bottom: 20px; }
+        input { padding: 12px; width: 85%; margin: 15px 0; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: white; font-size: 16px; outline: none; }
+        input:focus { border-color: #38bdf8; }
+        button { padding: 12px 25px; cursor: pointer; border-radius: 10px; border: none; font-weight: bold; margin: 10px 0; width: 95%; transition: 0.3s; font-size: 16px; }
+        .btn-connect { background: #f59e0b; color: #0f172a; }
+        .btn-connect:hover { background: #d97706; }
+        .btn-claim { background: #38bdf8; color: #0f172a; }
+        .btn-claim:hover { background: #0ea5e9; }
+        #status { margin-top: 20px; font-size: 14px; padding: 10px; border-radius: 8px; display: none; }
+        .msg-info { background: #334155; color: #38bdf8; display: block !important; }
+        .msg-success { background: #064e3b; color: #34d399; display: block !important; }
+        .msg-error { background: #450a0a; color: #f87171; display: block !important; }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="card">
         <h1>🍬 TOFFEENVH</h1>
         <p>Nihal Vihar Digital Rewards</p>
         
-        <button id="walletBtn" class="connect-btn" onclick="connectWallet()">1. Connect Wallet</button>
+        <button id="walletBtn" class="btn-connect" onclick="connectWallet()">1. Connect Wallet</button>
         
-        <br>
+        <input type="text" id="toffeeCodeInput" placeholder="Enter Wrapper Code">
         
-        <input type="text" id="toffeeCodeInput" placeholder="Enter Toffee Code (e.g. TOFFEE-XXXX)">
-        
-        <br>
-        
-        <button id="claimBtn" class="claim-btn" onclick="claimTokens()">2. Claim 10 Tokens</button>
+        <button id="claimBtn" class="btn-claim" onclick="claimTokens()">2. Claim 10 Tokens</button>
         
         <div id="status"></div>
     </div>
 
     <script>
-        // AAPKA LIVE CONTRACT ADDRESS
+        // --- AAPKA LIVE CONTRACT DETAILS ---
         const contractAddress = "0xF5Fc412E1aE71924fd7C6bD44A3cDADa8e69fd37"; 
-
         const abi = [
-            { "inputs": [{ "internalType": "string[]", "name": "codes", "type": "string[]" }], "name": "addCodes", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
-            { "inputs": [{ "internalType": "string", "name": "code", "type": "string" }], "name": "claimReward", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
-            { "inputs": [{ "internalType": "address", "name": "_tokenAddress", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" },
-            { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" },
-            { "inputs": [], "name": "rewardAmount", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
-            { "inputs": [], "name": "toffeeToken", "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" },
-            { "inputs": [{ "internalType": "string", "name": "", "type": "string" }], "name": "usedCodes", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" },
-            { "inputs": [{ "internalType": "string", "name": "", "type": "string" }], "name": "validCodes", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }
+            {"inputs":[{"internalType":"string[]","name":"codes","type":"string[]"}],"name":"addCodes","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"string","name":"code","type":"string"}],"name":"claimReward","outputs":[],"stateMutability":"nonpayable","type":"function"},
+            {"inputs":[{"internalType":"address","name":"_tokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},
+            {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"rewardAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"toffeeToken","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"usedCodes","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"validCodes","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}
         ];
 
         let provider, signer, contract;
 
-        async function connectWallet() {
+        function updateStatus(msg, type) {
             const statusDiv = document.getElementById("status");
-            if (window.ethereum) {
+            statusDiv.innerText = msg;
+            statusDiv.className = type === 'success' ? 'msg-success' : type === 'error' ? 'msg-error' : 'msg-info';
+        }
+
+        async function connectWallet() {
+            if (typeof window.ethereum !== 'undefined') {
                 try {
+                    updateStatus("Connecting to MetaMask...", "info");
+                    
+                    // Naya tarika accounts lene ka
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    
                     provider = new ethers.providers.Web3Provider(window.ethereum);
-                    await provider.send("eth_requestAccounts", []);
                     signer = provider.getSigner();
                     contract = new ethers.Contract(contractAddress, abi, signer);
-                    const address = await signer.getAddress();
-                    document.getElementById("walletBtn").innerText = "Connected: " + address.substring(0, 6) + "...";
-                    statusDiv.innerHTML = "<span class='success'>Wallet Connected Successfully!</span>";
+                    
+                    const userAddress = accounts[0];
+                    document.getElementById("walletBtn").innerText = "Connected: " + userAddress.substring(0, 6) + "...";
+                    updateStatus("Wallet Connected! Network: Celo", "success");
                 } catch (err) {
-                    statusDiv.innerHTML = "<span class='error'>Connection Failed!</span>";
+                    console.error(err);
+                    updateStatus("Connection Failed! Please try again.", "error");
                 }
             } else {
                 alert("MetaMask install karein ya Crypto browser use karein!");
@@ -77,28 +87,39 @@
         }
 
         async function claimTokens() {
-            const code = document.getElementById("toffeeCodeInput").value.trim();
-            const statusDiv = document.getElementById("status");
+            const codeInput = document.getElementById("toffeeCodeInput");
+            const code = codeInput.value.trim();
 
             if (!code) {
-                alert("Toffee wrapper ka code enter karein!");
+                alert("Pehle toffee wrapper ka code enter karein!");
                 return;
             }
             if (!contract) {
-                alert("Pehle Wallet Connect karein!");
+                alert("Pehle Wallet Connect karein (Step 1)!");
                 return;
             }
 
             try {
-                statusDiv.innerHTML = "Processing Transaction... Please Wait";
+                updateStatus("Blockchain par transaction bhej rahe hain...", "info");
+                
+                // Contract call
                 const tx = await contract.claimReward(code);
-                statusDiv.innerHTML = "Waiting for Blockchain confirmation...";
-                await tx.wait();
-                statusDiv.innerHTML = "<span class='success'>Mubarak Ho! 10 Tokens bhej diye gaye hain.</span>";
+                
+                updateStatus("Transaction bhej di gayi hai. Confirmation ka intezar karein...", "info");
+                
+                await tx.wait(); // Confirm hone tak ruko
+                
+                updateStatus("Mubarak Ho! 10 Tokens bhej diye gaye hain.", "success");
                 alert("Success! Check your wallet for TOFFEENVH tokens.");
+                codeInput.value = ""; // Input saaf kar do
             } catch (err) {
                 console.error(err);
-                statusDiv.innerHTML = "<span class='error'>Error: Code galat hai, use ho chuka hai ya gas ki kami hai.</span>";
+                // Error message ko thoda asaan banate hain
+                if (err.message.includes("user rejected")) {
+                    updateStatus("Aapne transaction cancel kar di.", "error");
+                } else {
+                    updateStatus("Error: Code galat hai ya pehle use ho chuka hai.", "error");
+                }
             }
         }
     </script>
