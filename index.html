@@ -3,59 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOFFEENVH - Rewards Dashboard</title>
+    <title>TOFFEENVH - Rewards</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 
     <style>
         :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; }
-        .container { max-width: 500px; margin: auto; background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); border: 1px solid #334155; }
-        h1 { color: var(--primary); margin-bottom: 5px; font-size: 32px; }
-        .sub-text { color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; margin: 0; }
         
-        input { width: 90%; padding: 12px; margin: 15px 0; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: white; font-size: 16px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--primary); }
+        .container { max-width: 450px; margin: 40px auto; background: var(--card); padding: 30px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #334155; }
         
-        button { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        h1 { color: var(--primary); font-size: 32px; margin-bottom: 5px; }
+        .sub-text { color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
+        
+        input { width: 90%; padding: 14px; margin: 15px 0; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: white; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        
+        button { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
         .btn-connect { background: #f59e0b; color: #0f172a; }
         .btn-claim { background: var(--primary); color: #0f172a; }
         button:hover { opacity: 0.9; transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
         
-        #status { margin-top: 20px; padding: 12px; border-radius: 10px; font-size: 14px; display: none; }
-        .info { background: #334155; color: var(--primary); display: block; }
-        .success { background: #064e3b; color: #34d399; display: block; }
-        .error { background: #450a0a; color: #f87171; display: block; }
+        #status { margin-top: 20px; padding: 12px; border-radius: 10px; font-size: 14px; display: none; line-height: 1.5; }
+        .info { background: #1e293b; color: var(--primary); border: 1px solid var(--primary); display: block; }
+        .success { background: #064e3b; color: #34d399; border: 1px solid #059669; display: block; }
+        .error { background: #450a0a; color: #f87171; border: 1px solid #dc2626; display: block; }
 
-        /* Admin Section Styling */
-        #adminPanel { margin-top: 40px; display: none; text-align: left; background: #0f172a; padding: 20px; border-radius: 15px; border: 1px dashed var(--primary); }
-        h3 { color: var(--primary); border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        /* Admin Section */
+        #adminPanel { margin-top: 30px; display: none; text-align: left; background: #0f172a; padding: 20px; border-radius: 15px; border: 1px dashed var(--primary); }
+        h3 { color: var(--primary); font-size: 18px; margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 10px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
         th { text-align: left; color: #94a3b8; padding: 8px; border-bottom: 1px solid #334155; }
-        td { padding: 10px 8px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
+        td { padding: 10px 8px; border-bottom: 1px solid #1e293b; color: #cbd5e1; font-family: monospace; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>🍬 TOFFEENVH</h1>
-        <p class="sub-text">Nihal Vihar Digital Token Rewards</p>
+        <p class="sub-text">Nihal Vihar Digital Rewards Portal</p>
         
         <button id="walletBtn" class="btn-connect" onclick="connectWallet()">1. Connect Wallet</button>
         
         <input type="text" id="toffeeCodeInput" placeholder="Enter Wrapper Code (e.g. TOFFEE-XXXX)">
         
-        <button id="claimBtn" class="btn-claim" onclick="claimTokens()">2. Claim 10 Tokens</button>
+        <button id="claimBtn" class="btn-claim" onclick="claimTokens()">2. Claim 10 TOFFEE</button>
         
         <div id="status"></div>
 
         <div id="adminPanel">
-            <h3>📊 Admin: Used Codes Log</h3>
-            <table>
+            <h3>📊 Admin: Activity Log</h3>
+            <table id="eventTable">
                 <thead>
                     <tr>
                         <th>User (Address)</th>
-                        <th>Code Used</th>
+                        <th>Code</th>
                     </tr>
                 </thead>
                 <tbody id="adminTableBody">
@@ -65,81 +68,108 @@
     </div>
 
     <script>
+        // AAPKA FINAL CONTRACT ADDRESS
         const contractAddress = "0xF5Fc412E1aE71924fd7C6bD44A3cDADa8e69fd37"; 
+
         const abi = [
             {"inputs":[{"internalType":"string[]","name":"codes","type":"string[]"}],"name":"addCodes","outputs":[],"stateMutability":"nonpayable","type":"function"},
             {"inputs":[{"internalType":"string","name":"code","type":"string"}],"name":"claimReward","outputs":[],"stateMutability":"nonpayable","type":"function"},
             {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
             {"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"usedCodes","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
-            // Agar aapke contract mein 'RewardClaimed' event hai, toh ye line kaam karegi
             {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"string","name":"code","type":"string"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"RewardClaimed","type":"event"}
         ];
 
         let provider, signer, contract;
 
-        function showStatus(msg, type) {
+        function updateStatus(msg, type) {
             const s = document.getElementById("status");
             s.innerText = msg;
             s.className = type;
+            s.style.display = "block";
         }
 
         async function connectWallet() {
-            if (window.ethereum) {
+            if (typeof window.ethereum !== 'undefined') {
                 try {
-                    showStatus("Connecting...", "info");
+                    updateStatus("Connecting to MetaMask...", "info");
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    
                     provider = new ethers.providers.Web3Provider(window.ethereum);
                     signer = provider.getSigner();
                     contract = new ethers.Contract(contractAddress, abi, signer);
                     
                     const userAddr = accounts[0];
-                    document.getElementById("walletBtn").innerText = "Connected: " + userAddr.substring(0,6)+"...";
-                    showStatus("Wallet Connected!", "success");
+                    document.getElementById("walletBtn").innerText = "Connected: " + userAddr.substring(0, 6) + "...";
+                    updateStatus("Wallet Connected! Network: Celo", "success");
 
-                    // Check if Admin
-                    checkAdmin(userAddr);
-                } catch (err) { showStatus("Connection Failed", "error"); }
-            } else { alert("Install MetaMask!"); }
-        }
-
-        async function checkAdmin(address) {
-            const owner = await contract.owner();
-            if (address.toLowerCase() === owner.toLowerCase()) {
-                document.getElementById("adminPanel").style.display = "block";
-                loadHistory();
+                    // Admin Check
+                    const owner = await contract.owner();
+                    if (userAddr.toLowerCase() === owner.toLowerCase()) {
+                        document.getElementById("adminPanel").style.display = "block";
+                        loadHistory();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    updateStatus("Connection Failed. Please try again.", "error");
+                }
+            } else {
+                alert("Please install MetaMask!");
             }
         }
 
         async function loadHistory() {
             try {
-                // Blockchain se last 100 events nikalna
                 const filter = contract.filters.RewardClaimed();
-                const events = await contract.queryFilter(filter, -10000); // Last 10k blocks
+                // Last 5000 blocks check karega
+                const events = await contract.queryFilter(filter, -5000); 
                 const tbody = document.getElementById("adminTableBody");
+                
+                if (events.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='2'>No recent claims found.</td></tr>";
+                    return;
+                }
+
                 tbody.innerHTML = events.map(e => `
                     <tr>
-                        <td>${e.args.user.substring(0,8)}...</td>
+                        <td>${e.args.user.substring(0, 10)}...</td>
                         <td>${e.args.code}</td>
                     </tr>
                 `).reverse().join('');
-            } catch (err) { console.log("Event loading failed (Maybe no events in contract?)"); }
+            } catch (err) {
+                console.log("Note: Event history failed to load.");
+            }
         }
 
         async function claimTokens() {
-            const code = document.getElementById("toffeeCodeInput").value.trim();
-            if (!code || !contract) return alert("Connect wallet & enter code!");
+            const codeInput = document.getElementById("toffeeCodeInput");
+            const code = codeInput.value.trim();
+
+            if (!code) {
+                alert("Pehle toffee wrapper ka code enter karein!");
+                return;
+            }
+            if (!contract) {
+                alert("Pehle Wallet Connect karein!");
+                return;
+            }
 
             try {
-                showStatus("Sending to Blockchain...", "info");
+                updateStatus("Blockchain par transaction bhej rahe hain...", "info");
+                
+                // Transaction execute
                 const tx = await contract.claimReward(code);
-                showStatus("Transaction pending... Please wait.", "info");
-                await tx.wait();
-                showStatus("Success! 10 Tokens Claimed.", "success");
+                
+                updateStatus("Transaction pending... MetaMask confirm hone ka intezar karein.", "info");
+                await tx.wait(); // Wait for confirmation
+                
+                updateStatus("Mubarak Ho! 10 Tokens bhej diye gaye hain.", "success");
+                alert("Success! Check your wallet for TOFFEENVH tokens.");
+                codeInput.value = ""; // Clear input
+                
+                // Refresh admin log if visible
                 if (document.getElementById("adminPanel").style.display === "block") loadHistory();
+
             } catch (err) {
-                showStatus("Error: Code invalid ya used hai.", "error");
-            }
-        }
-    </script>
-</body>
-</html>
+                console.error(err);
+                if (err.message.includes("user rejected")) {
+                    updateStatus("Aapne transaction cancel kar di.", "
