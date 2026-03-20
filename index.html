@@ -8,21 +8,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 
     <style>
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #0f172a; color: white; padding: 40px 20px; }
-        .card { background: #1e293b; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: inline-block; max-width: 400px; width: 100%; border: 1px solid #334155; }
-        h1 { color: #38bdf8; margin-bottom: 10px; font-size: 28px; }
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: var(--bg); color: var(--text); padding: 40px 20px; margin: 0; }
+        
+        .card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: inline-block; max-width: 450px; width: 100%; border: 1px solid #334155; margin-bottom: 20px; }
+        
+        h1 { color: var(--primary); margin-bottom: 10px; font-size: 28px; }
+        h2 { color: var(--primary); font-size: 20px; margin-top: 0; }
         p { color: #94a3b8; margin-bottom: 20px; }
+        
         input { padding: 12px; width: 85%; margin: 15px 0; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: white; font-size: 16px; outline: none; }
-        input:focus { border-color: #38bdf8; }
+        input:focus { border-color: var(--primary); }
+        
         button { padding: 12px 25px; cursor: pointer; border-radius: 10px; border: none; font-weight: bold; margin: 10px 0; width: 95%; transition: 0.3s; font-size: 16px; }
         .btn-connect { background: #f59e0b; color: #0f172a; }
-        .btn-connect:hover { background: #d97706; }
-        .btn-claim { background: #38bdf8; color: #0f172a; }
-        .btn-claim:hover { background: #0ea5e9; }
+        .btn-claim { background: var(--primary); color: #0f172a; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+
         #status { margin-top: 20px; font-size: 14px; padding: 10px; border-radius: 8px; display: none; }
-        .msg-info { background: #334155; color: #38bdf8; display: block !important; }
+        .msg-info { background: #334155; color: var(--primary); display: block !important; }
         .msg-success { background: #064e3b; color: #34d399; display: block !important; }
         .msg-error { background: #450a0a; color: #f87171; display: block !important; }
+
+        /* Distributor & Admin Table Styling */
+        .info-section { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #334155; max-width: 450px; margin: 20px auto; text-align: left; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th { text-align: left; color: #94a3b8; padding: 8px; border-bottom: 1px solid #334155; }
+        td { padding: 10px 8px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
+        .stock-high { color: #34d399; font-weight: bold; }
+        .stock-low { color: #f87171; font-weight: bold; }
+        .map-link { color: #f59e0b; text-decoration: none; font-weight: bold; }
+        
+        #adminPanel { display: none; border: 1px dashed var(--primary); }
     </style>
 </head>
 <body>
@@ -32,26 +49,66 @@
         <p>Nihal Vihar Digital Rewards</p>
         
         <button id="walletBtn" class="btn-connect" onclick="connectWallet()">1. Connect Wallet</button>
-        
         <input type="text" id="toffeeCodeInput" placeholder="Enter Wrapper Code">
-        
         <button id="claimBtn" class="btn-claim" onclick="claimTokens()">2. Claim 10 Tokens</button>
         
         <div id="status"></div>
     </div>
 
+    <div class="info-section">
+        <h2>📍 Toffee Distributors</h2>
+        <p style="font-size: 12px; margin-bottom: 10px;">Yahan se toffee kharidein aur rewards payein:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Store Name</th>
+                    <th>Stock</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Raju General Store<br><small>Gali No. 4</small></td>
+                    <td class="stock-high">50+ Pkt</td>
+                    <td><a href="https://maps.google.com" target="_blank" class="map-link">📍 View</a></td>
+                </tr>
+                <tr>
+                    <td>Cyber Cafe Point<br><small>Main Market</small></td>
+                    <td class="stock-high">100+ Pkt</td>
+                    <td><a href="https://maps.google.com" target="_blank" class="map-link">📍 View</a></td>
+                </tr>
+                <tr>
+                    <td>Verma Provision<br><small>Nihal Vihar Chowk</small></td>
+                    <td class="stock-low">5 Pkt</td>
+                    <td><a href="https://maps.google.com" target="_blank" class="map-link">📍 View</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="adminPanel" class="info-section">
+        <h2>📊 Admin: Used Codes Log</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>User Address</th>
+                    <th>Code Used</th>
+                </tr>
+            </thead>
+            <tbody id="adminTableBody">
+                <tr><td colspan="2">No data yet...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
     <script>
-        // --- AAPKA LIVE CONTRACT DETAILS ---
         const contractAddress = "0xF5Fc412E1aE71924fd7C6bD44A3cDADa8e69fd37"; 
         const abi = [
             {"inputs":[{"internalType":"string[]","name":"codes","type":"string[]"}],"name":"addCodes","outputs":[],"stateMutability":"nonpayable","type":"function"},
             {"inputs":[{"internalType":"string","name":"code","type":"string"}],"name":"claimReward","outputs":[],"stateMutability":"nonpayable","type":"function"},
-            {"inputs":[{"internalType":"address","name":"_tokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},
             {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
-            {"inputs":[],"name":"rewardAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[],"name":"toffeeToken","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},
             {"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"usedCodes","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"validCodes","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}
+            {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"string","name":"code","type":"string"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"RewardClaimed","type":"event"}
         ];
 
         let provider, signer, contract;
@@ -66,60 +123,54 @@
             if (typeof window.ethereum !== 'undefined') {
                 try {
                     updateStatus("Connecting to MetaMask...", "info");
-                    
-                    // Naya tarika accounts lene ka
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    
                     provider = new ethers.providers.Web3Provider(window.ethereum);
                     signer = provider.getSigner();
                     contract = new ethers.Contract(contractAddress, abi, signer);
                     
                     const userAddress = accounts[0];
                     document.getElementById("walletBtn").innerText = "Connected: " + userAddress.substring(0, 6) + "...";
-                    updateStatus("Wallet Connected! Network: Celo", "success");
+                    updateStatus("Wallet Connected!", "success");
+
+                    // Check if Owner for Admin Panel
+                    const owner = await contract.owner();
+                    if (userAddress.toLowerCase() === owner.toLowerCase()) {
+                        document.getElementById("adminPanel").style.display = "block";
+                        loadHistory();
+                    }
                 } catch (err) {
-                    console.error(err);
-                    updateStatus("Connection Failed! Please try again.", "error");
+                    updateStatus("Connection Failed!", "error");
                 }
-            } else {
-                alert("MetaMask install karein ya Crypto browser use karein!");
-            }
+            } else { alert("Install MetaMask!"); }
+        }
+
+        async function loadHistory() {
+            try {
+                const filter = contract.filters.RewardClaimed();
+                const events = await contract.queryFilter(filter, -5000); 
+                const tbody = document.getElementById("adminTableBody");
+                if(events.length > 0) {
+                    tbody.innerHTML = events.map(e => `<tr><td>${e.args.user.substring(0,10)}...</td><td>${e.args.code}</td></tr>`).reverse().join('');
+                }
+            } catch (err) { console.log("History load failed"); }
         }
 
         async function claimTokens() {
             const codeInput = document.getElementById("toffeeCodeInput");
             const code = codeInput.value.trim();
-
-            if (!code) {
-                alert("Pehle toffee wrapper ka code enter karein!");
-                return;
-            }
-            if (!contract) {
-                alert("Pehle Wallet Connect karein (Step 1)!");
-                return;
-            }
+            if (!code || !contract) { alert("Connect wallet & enter code!"); return; }
 
             try {
-                updateStatus("Blockchain par transaction bhej rahe hain...", "info");
-                
-                // Contract call
+                updateStatus("Processing transaction...", "info");
                 const tx = await contract.claimReward(code);
-                
-                updateStatus("Transaction bhej di gayi hai. Confirmation ka intezar karein...", "info");
-                
-                await tx.wait(); // Confirm hone tak ruko
-                
-                updateStatus("Mubarak Ho! 10 Tokens bhej diye gaye hain.", "success");
-                alert("Success! Check your wallet for TOFFEENVH tokens.");
-                codeInput.value = ""; // Input saaf kar do
+                updateStatus("Waiting for confirmation...", "info");
+                await tx.wait();
+                updateStatus("Success! 10 Tokens Claimed.", "success");
+                alert("Mubarak ho! 10 TOFFEENVH tokens mil gaye.");
+                codeInput.value = "";
+                if(document.getElementById("adminPanel").style.display === "block") loadHistory();
             } catch (err) {
-                console.error(err);
-                // Error message ko thoda asaan banate hain
-                if (err.message.includes("user rejected")) {
-                    updateStatus("Aapne transaction cancel kar di.", "error");
-                } else {
-                    updateStatus("Error: Code galat hai ya pehle use ho chuka hai.", "error");
-                }
+                updateStatus("Error: Code invalid ya used hai.", "error");
             }
         }
     </script>
