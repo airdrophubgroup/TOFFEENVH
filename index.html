@@ -9,15 +9,13 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; }
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; margin: 0; }
-        
         .container { max-width: 450px; margin: 20px auto; background: var(--card); padding: 30px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #334155; }
-        
         h1 { color: var(--primary); font-size: 30px; margin-bottom: 5px; }
         .sub-title { color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
-
-        /* Balance & Progress */
+        
+        /* Balance Card */
         .balance-card { background: #0f172a; padding: 20px; border-radius: 18px; margin: 20px 0; border: 1px solid var(--primary); }
         .progress-container { background: #334155; border-radius: 10px; height: 18px; width: 100%; margin: 12px 0; overflow: hidden; }
         .progress-bar { background: var(--primary); width: 0%; height: 100%; transition: 0.8s ease; }
@@ -30,17 +28,10 @@
         .btn-claim { background: var(--primary); color: #0f172a; }
         .btn-withdraw { background: var(--success); color: white; display: none; }
         
-        button:hover { opacity: 0.9; transform: translateY(-2px); }
-
-        #status { margin-top: 15px; font-size: 13px; padding: 10px; border-radius: 10px; display: none; }
-        .msg-info { background: #334155; color: var(--primary); display: block; }
-        .msg-success { background: #064e3b; color: #34d399; display: block; }
-
-        /* Stores Table */
-        .info-box { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #334155; max-width: 450px; margin: 20px auto; text-align: left; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        th { text-align: left; color: #94a3b8; padding: 8px; border-bottom: 1px solid #334155; }
-        td { padding: 10px 8px; border-bottom: 1px solid #1e293b; }
+        #status { margin-top: 15px; font-size: 14px; padding: 12px; border-radius: 10px; display: none; }
+        .msg-info { background: #1e293b; color: var(--primary); border: 1px solid var(--primary); }
+        .msg-success { background: #064e3b; color: #34d399; }
+        .msg-error { background: #451a1a; color: #f87171; }
     </style>
 </head>
 <body>
@@ -53,7 +44,7 @@
 
         <div class="balance-card">
             <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                <span>Pending Rewards</span>
+                <span>Total Earned</span>
                 <span id="balText" style="color: var(--primary); font-weight: bold;">0 / 500 TOFFEE</span>
             </div>
             <div class="progress-container">
@@ -62,53 +53,39 @@
             <small id="pctText">0% Completed</small>
         </div>
 
-        <input type="text" id="codeInput" placeholder="Enter Wrapper Code">
+        <input type="text" id="codeInput" placeholder="Enter Toffee Wrapper Code">
         <button id="claimBtn" class="btn-claim" onclick="processClaim()">2. Add 10 to Balance</button>
         
-        <button id="withdrawBtn" class="btn-withdraw" onclick="initiateWithdrawal()">🚀 Claim 500 Tokens</button>
+        <button id="withdrawBtn" class="btn-withdraw" onclick="initiateWithdrawal()">🚀 Request Withdrawal (500 Tokens)</button>
 
         <div id="status"></div>
     </div>
 
-    <div class="info-box">
-        <h3 style="margin:0; color: var(--primary);">📍 Nearby Stores</h3>
-        <table>
-            <thead>
-                <tr><th>Store</th><th>Stock</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>Raju Store (Gali 4)</td><td style="color:#34d399">High</td></tr>
-                <tr><td>Cafe Point (Market)</td><td style="color:#34d399">High</td></tr>
-            </tbody>
-        </table>
-    </div>
-
     <script>
-        // --- 1. SETUP ---
+        // --- CONFIGURATION ---
         const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
         
-        // Alag naam use kar rahe hain taaki koi purana error na aaye
-        const toffeeDB = supabase.createClient(SB_URL, SB_KEY);
+        const db = supabase.createClient(SB_URL, SB_KEY);
         let userWallet = "";
 
-        // --- 2. WALLET CONNECT ---
-        window.connectWallet = async function() {
+        // --- 1. CONNECT WALLET ---
+        async function connectWallet() {
             if (window.ethereum) {
                 try {
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     userWallet = accounts[0].toLowerCase();
-                    document.getElementById("walletBtn").innerText = "Wallet: " + userWallet.substring(0,8) + "...";
+                    document.getElementById("walletBtn").innerText = "Wallet: " + userWallet.substring(0,10) + "...";
                     showStatus("Wallet Connected!", "success");
                     loadBalance();
-                } catch (err) { showStatus("Login Cancelled", "info"); }
-            } else { alert("MetaMask extension install karein!"); }
-        };
+                } catch (err) { showStatus("Connection Cancelled", "error"); }
+            } else { alert("Please install MetaMask!"); }
+        }
 
-        // --- 3. DATABASE BALANCE ---
+        // --- 2. LOAD BALANCE ---
         async function loadBalance() {
             if (!userWallet) return;
-            const { data, error } = await toffeeDB.from('user_balances').select('*').eq('wallet_address', userWallet).single();
+            const { data } = await db.from('user_balances').select('*').eq('wallet_address', userWallet).single();
             if (data) {
                 updateUI(data.pending_balance);
             }
@@ -126,37 +103,54 @@
             }
         }
 
-        // --- 4. CODE CLAIM ---
-        window.processClaim = async function() {
+        // --- 3. PROCESS CLAIM (With Double Claim Protection) ---
+        async function processClaim() {
             const codeInput = document.getElementById("codeInput");
-            const code = codeInput.value.trim();
-            if (!userWallet || !code) return alert("Pehle Wallet Connect karein aur Code likhein!");
+            const code = codeInput.value.trim().toUpperCase();
 
-            showStatus("Updating Balance...", "info");
+            if (!userWallet) return alert("Pehle Wallet Connect karein!");
+            if (!code) return alert("Code likhna zaroori hai!");
 
-            const { data } = await toffeeDB.from('user_balances').select('*').eq('wallet_address', userWallet).single();
+            showStatus("Checking Code...", "info");
+
+            // Check if code was already used
+            const { data: usedData } = await db.from('used_codes').select('*').eq('code', code).single();
             
-            let newBal = 10;
-            if (data) {
-                newBal = data.pending_balance + 10;
-                await toffeeDB.from('user_balances').update({ pending_balance: newBal }).eq('wallet_address', userWallet);
-            } else {
-                await toffeeDB.from('user_balances').insert([{ wallet_address: userWallet, pending_balance: 10 }]);
+            if (usedData) {
+                showStatus("Error: Ye code pehle hi use ho chuka hai!", "error");
+                return;
             }
 
-            showStatus("10 Tokens Added Successfully!", "success");
+            // If not used, mark it as used
+            const { error: insertError } = await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
+            
+            if (insertError) {
+                showStatus("Database Error. Policies check karein.", "error");
+                return;
+            }
+
+            // Update user balance
+            const { data: balanceData } = await db.from('user_balances').select('*').eq('wallet_address', userWallet).single();
+            let newBal = balanceData ? balanceData.pending_balance + 10 : 10;
+            
+            await db.from('user_balances').upsert({ 
+                wallet_address: userWallet, 
+                pending_balance: newBal 
+            });
+
+            showStatus("🎉 Success! 10 Tokens added to your balance.", "success");
             codeInput.value = "";
             updateUI(newBal);
-        };
+        }
 
-        window.initiateWithdrawal = function() {
-            alert("Admin ko verification request bhej di gayi hai. Verification ke baad tokens aapke wallet mein bhej diye jayenge.");
-        };
+        function initiateWithdrawal() {
+            alert("Withdrawal Request Sent! Admin will verify your balance and send tokens to your wallet.");
+        }
 
         function showStatus(msg, type) {
             const s = document.getElementById("status");
             s.innerText = msg;
-            s.className = type === 'success' ? 'msg-success' : 'msg-info';
+            s.className = `msg-${type}`;
             s.style.display = "block";
         }
     </script>
