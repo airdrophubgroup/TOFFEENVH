@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOFFEENVH - Full System</title>
+    <title>TOFFEENVH - Official Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --admin: #f43f5e; }
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; margin: 0; }
         .container { max-width: 480px; margin: 20px auto; background: var(--card); padding: 30px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        h1 { color: var(--primary); margin: 0; font-size: 28px; }
+        h1 { color: var(--primary); font-size: 28px; margin-bottom: 5px; }
         .balance-card { background: #0f172a; padding: 20px; border-radius: 18px; margin: 20px 0; border: 1px solid var(--primary); }
         .progress-container { background: #334155; border-radius: 10px; height: 20px; width: 100%; margin: 15px 0; overflow: hidden; }
         .progress-bar { background: var(--primary); width: 0%; height: 100%; transition: 0.8s ease; }
@@ -19,24 +19,24 @@
         button { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
         .btn-wallet { background: #f59e0b; color: #0f172a; }
         .btn-claim { background: var(--primary); color: #0f172a; }
-        .btn-withdraw { background: var(--success); color: white; display: none; border: 2px solid #fff; }
-        /* Admin Section */
-        #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #111827; border: 2px dashed var(--admin); border-radius: 20px; }
-        .req-card { background: #1f2937; padding: 12px; margin: 10px 0; border-radius: 10px; font-size: 13px; text-align: left; border-left: 4px solid var(--success); }
+        .btn-withdraw { background: var(--success); color: white; display: none; }
+        #status { margin-top: 15px; font-size: 14px; padding: 12px; border-radius: 10px; display: none; background: #334155; }
+        #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #111827; border: 2px dashed #f43f5e; border-radius: 20px; }
+        .req-card { background: #1f2937; padding: 12px; margin: 10px 0; border-radius: 10px; font-size: 13px; text-align: left; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>🍬 TOFFEENVH</h1>
-    <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Nihal Vihar Digital Rewards</p>
+    <p style="color: #94a3b8; font-size: 14px;">Nihal Vihar Digital Rewards</p>
 
     <button id="walletBtn" class="btn-wallet" onclick="connectWallet()">1. Connect MetaMask</button>
 
     <div id="userUI">
         <div class="balance-card">
-            <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                <span>Total Earned</span>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Balance Earned</span>
                 <span id="balText" style="font-weight: bold; color: var(--primary);">0 / 500 TOFFEE</span>
             </div>
             <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
@@ -48,18 +48,22 @@
         <button id="withdrawBtn" class="btn-withdraw" onclick="submitWithdrawRequest()">🚀 REQUEST 500 TOFFEE WITHDRAWAL</button>
     </div>
 
+    <div id="status"></div>
+
     <div id="adminPanel">
-        <h3 style="color: var(--admin);">👨‍💻 Admin Panel</h3>
+        <h3 style="color: #f43f5e;">👨‍💻 Admin Control</h3>
         <div id="reqList">Loading requests...</div>
     </div>
 </div>
 
 <script>
+    // --- CONFIG ---
     const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
     const db = supabase.createClient(SB_URL, SB_KEY);
-
-    const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b"; // Aapka address
+    
+    const V1_ADDRESS = "0xF5Fc412E1ae71924fd7C6bD44A3cDADa8e69fd37";
+    const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
     let userWallet = "";
 
     async function connectWallet() {
@@ -77,6 +81,7 @@
     }
 
     async function loadBalance() {
+        if(!userWallet) return;
         const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
         if (data) updateUI(data.pending_balance);
     }
@@ -91,45 +96,55 @@
 
     async function processClaim() {
         const input = document.getElementById("codeInput");
-        const code = input.value.trim().toUpperCase();
-        if (!userWallet || !code) return alert("Pehle Wallet Connect aur Code bhariye!");
+        const code = input.value.trim();
+        if (!userWallet || !code) return alert("Details bhariye!");
 
-        // 1. Global Code Check
-        const { data: alreadyUsed } = await db.from('used_codes').select('*').eq('code', code).maybeSingle();
-        if (alreadyUsed) return alert("❌ Ye code pehle hi kisi ne use kar liya hai!");
+        showStatus("Checking Code Validity...", "info");
 
-        // 2. Insert into Used Codes
-        const { error: insErr } = await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
-        if (insErr) return alert("❌ Error! Code unique hona chahiye.");
+        try {
+            // 1. BLOCKCHAIN CHECK (Asli Code Validation)
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const v1Contract = new ethers.Contract(V1_ADDRESS, ["function validCodes(string) view returns (bool)"], provider);
+            const isValid = await v1Contract.validCodes(code);
+            
+            if (!isValid) {
+                alert("❌ Ye code nakli hai ya use ho chuka hai!");
+                return showStatus("Invalid Code", "error");
+            }
 
-        // 3. Update Balance
-        const { data: curBal } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-        let newTotal = (curBal ? curBal.pending_balance : 0) + 10;
-        await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newTotal });
+            // 2. SUPABASE CHECK (Double Claim Protection)
+            const { data: used } = await db.from('used_codes').select('*').eq('code', code).maybeSingle();
+            if (used) return alert("❌ Ye code pehle hi claim ho chuka hai!");
 
-        alert("✅ 10 Tokens Added! Balance: " + newTotal);
-        input.value = "";
-        loadBalance();
+            // 3. UPDATE DATA
+            await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
+            
+            const { data: cur } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+            let newBal = (cur ? cur.pending_balance : 0) + 10;
+            
+            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newBal });
+
+            alert("✅ Asli Code! 10 Tokens Added.");
+            input.value = "";
+            loadBalance();
+            showStatus("Success!", "success");
+        } catch (e) { alert("Error checking code!"); }
     }
 
     async function submitWithdrawRequest() {
-        const { data: curBal } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-        if (curBal.pending_balance < 500) return alert("Min 500 required!");
-
         await db.from('withdrawals').insert([{ wallet_address: userWallet, amount: 500, status: 'pending' }]);
-        alert("🚀 Request Sent! Admin will verify and send tokens.");
+        alert("🚀 Request Sent to Admin!");
     }
 
-    // --- ADMIN PANEL FUNCTIONS ---
     async function loadAdminPanel() {
         const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
         let html = "";
         if (reqs && reqs.length > 0) {
             reqs.forEach(r => {
                 html += `<div class="req-card">
-                    <b>User:</b> ${r.wallet_address.substring(0,12)}...<br>
-                    <b>Amt:</b> ${r.amount} TOFFEE<br>
-                    <button onclick="approveAdmin('${r.wallet_address}', ${r.id})" style="background:var(--success); padding:5px; height:auto; margin-top:10px;">MARK PAID & RESET BAL</button>
+                    <b>User:</b> ${r.wallet_address.substring(0,15)}...<br>
+                    <b>Amt:</b> ${r.amount} <br>
+                    <button onclick="approveAdmin('${r.wallet_address}', ${r.id})" style="background:var(--success); padding:5px; height:auto; margin-top:5px;">MARK PAID & RESET</button>
                 </div>`;
             });
         } else { html = "No pending requests."; }
@@ -137,16 +152,17 @@
     }
 
     async function approveAdmin(userAddr, reqId) {
-        // 1. Update Status
         await db.from('withdrawals').update({ status: 'completed' }).eq('id', reqId);
-        // 2. Reset User Balance (minus 500)
         const { data: cur } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userAddr).single();
         await db.from('user_balances').update({ pending_balance: cur.pending_balance - 500 }).eq('wallet_address', userAddr);
-        
-        alert("User balance reset by 500. Now send tokens via Remix to: " + userAddr);
+        alert("Done! Now send tokens via Remix to: " + userAddr);
         loadAdminPanel();
     }
-</script>
 
+    function showStatus(msg, type) {
+        const s = document.getElementById("status");
+        s.innerText = msg; s.style.display = "block";
+    }
+</script>
 </body>
 </html>
