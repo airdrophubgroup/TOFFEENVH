@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; }
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; margin: 0; }
         .container { max-width: 480px; margin: 20px auto; background: var(--card); padding: 30px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         h1 { color: var(--primary); font-size: 28px; margin-bottom: 5px; }
@@ -17,12 +17,17 @@
         input { width: 90%; padding: 14px; margin: 10px 0; border-radius: 12px; background: #0f172a; color: white; border: 2px solid #334155; font-size: 16px; outline: none; }
         input:focus { border-color: var(--primary); }
         button { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        .btn-wallet { background: #f59e0b; color: #0f172a; }
+        .btn-wallet { background: var(--accent); color: #0f172a; }
         .btn-claim { background: var(--primary); color: #0f172a; }
         .btn-withdraw { background: var(--success); color: white; display: none; }
         #status { margin-top: 15px; font-size: 14px; padding: 12px; border-radius: 10px; display: none; background: #334155; }
         #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #111827; border: 2px dashed #f43f5e; border-radius: 20px; }
         .req-card { background: #1f2937; padding: 12px; margin: 10px 0; border-radius: 10px; font-size: 13px; text-align: left; }
+        
+        /* Spinner Styles */
+        #wheel { width: 140px; height: 140px; border: 5px solid var(--accent); border-radius: 50%; margin: 15px auto; position: relative; display: flex; align-items: center; justify-content: center; transition: transform 3.5s cubic-bezier(0.17, 0.67, 0.1, 0.99); background: conic-gradient(#38bdf8 0deg 72deg, #1e293b 72deg 144deg, #10b981 144deg 216deg, #f59e0b 216deg 288deg, #ef4444 288deg 360deg); }
+        .wheel-center { width: 15px; height: 15px; background: white; border-radius: 50%; z-index: 2; }
+        .wheel-needle { position: absolute; top: -12px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 20px solid white; z-index: 3; }
     </style>
 </head>
 <body>
@@ -45,6 +50,17 @@
 
         <input type="text" id="codeInput" placeholder="Enter Wrapper Code">
         <button class="btn-claim" onclick="processClaim()">2. Add 10 Tokens</button>
+
+        <div class="balance-card" style="border-color: var(--accent); background: rgba(245, 158, 11, 0.05);">
+            <h3 style="margin: 0; color: var(--accent); font-size: 18px;">🎡 Lucky Daily Spin</h3>
+            <div id="wheel">
+                <div class="wheel-center"></div>
+                <div class="wheel-needle"></div>
+            </div>
+            <button id="spinBtn" class="btn-wallet" style="margin-top: 5px;" onclick="handleSpin()">🎰 SPIN NOW</button>
+            <p id="spinTimer" style="font-size: 13px; color: var(--error); display: none; margin-top: 8px; font-weight: bold;"></p>
+        </div>
+
         <button id="withdrawBtn" class="btn-withdraw" onclick="submitWithdrawRequest()">🚀 REQUEST 500 TOFFEE WITHDRAWAL</button>
     </div>
 
@@ -102,7 +118,6 @@
         showStatus("Checking Code Validity...", "info");
 
         try {
-            // 1. BLOCKCHAIN CHECK (Asli Code Validation)
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const v1Contract = new ethers.Contract(V1_ADDRESS, ["function validCodes(string) view returns (bool)"], provider);
             const isValid = await v1Contract.validCodes(code);
@@ -112,13 +127,10 @@
                 return showStatus("Invalid Code", "error");
             }
 
-            // 2. SUPABASE CHECK (Double Claim Protection)
             const { data: used } = await db.from('used_codes').select('*').eq('code', code).maybeSingle();
             if (used) return alert("❌ Ye code pehle hi claim ho chuka hai!");
 
-            // 3. UPDATE DATA
             await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
-            
             const { data: cur } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
             let newBal = (cur ? cur.pending_balance : 0) + 10;
             
@@ -129,6 +141,42 @@
             loadBalance();
             showStatus("Success!", "success");
         } catch (e) { alert("Error checking code!"); }
+    }
+
+    // --- NEW SPINNER LOGIC ---
+    async function handleSpin() {
+        if (!userWallet) return alert("Pehle Wallet connect karein!");
+        const btn = document.getElementById("spinBtn");
+        const timerText = document.getElementById("spinTimer");
+        const wheel = document.getElementById("wheel");
+
+        const { data } = await db.from('daily_spins').select('last_spin_at').eq('wallet_address', userWallet).maybeSingle();
+        if (data) {
+            const hoursPassed = (new Date() - new Date(data.last_spin_at)) / (1000 * 60 * 60);
+            if (hoursPassed < 24) {
+                timerText.innerText = `⏳ Next spin in ${Math.ceil(24 - hoursPassed)} hours`;
+                timerText.style.display = "block";
+                return;
+            }
+        }
+
+        btn.disabled = true;
+        timerText.style.display = "none";
+        const randomDeg = Math.floor(Math.random() * 360) + 1800; 
+        wheel.style.transform = `rotate(${randomDeg}deg)`;
+
+        setTimeout(async () => {
+            const rewards = [5, 10, 20, 30, 50];
+            const win = rewards[Math.floor(Math.random() * rewards.length)];
+
+            const { data: balData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: (balData ? balData.pending_balance : 0) + win });
+            await db.from('daily_spins').upsert({ wallet_address: userWallet, last_spin_at: new Date().toISOString() });
+
+            alert(`🎉 You won ${win} TOFFEE!`);
+            loadBalance();
+            btn.disabled = false;
+        }, 3500);
     }
 
     async function submitWithdrawRequest() {
@@ -155,7 +203,7 @@
         await db.from('withdrawals').update({ status: 'completed' }).eq('id', reqId);
         const { data: cur } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userAddr).single();
         await db.from('user_balances').update({ pending_balance: cur.pending_balance - 500 }).eq('wallet_address', userAddr);
-        alert("Done! Now send tokens via Remix to: " + userAddr);
+        alert("Done! User updated.");
         loadAdminPanel();
     }
 
