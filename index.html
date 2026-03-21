@@ -8,57 +8,61 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; margin: 0; }
-        .container { max-width: 480px; margin: 20px auto; background: var(--card); padding: 30px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        h1 { color: var(--primary); font-size: 28px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
-        .balance-card { background: #0f172a; padding: 20px; border-radius: 18px; margin: 20px 0; border: 1px solid var(--primary); box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.1); }
-        .progress-container { background: #334155; border-radius: 10px; height: 18px; width: 100%; margin: 15px 0; overflow: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; margin: 0; overflow-x: hidden; }
+        .container { max-width: 480px; margin: 20px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); position: relative;}
+        h1 { color: var(--primary); font-size: 26px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .balance-card { background: #0f172a; padding: 18px; border-radius: 18px; margin: 15px 0; border: 1px solid var(--primary); box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.1); }
+        .progress-container { background: #334155; border-radius: 10px; height: 16px; width: 100%; margin: 12px 0; overflow: hidden; }
         .progress-bar { background: linear-gradient(90deg, var(--primary), #0ea5e9); width: 0%; height: 100%; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        input { width: 90%; padding: 14px; margin: 10px 0; border-radius: 12px; background: #0f172a; color: white; border: 2px solid #334155; font-size: 16px; outline: none; transition: 0.3s; }
+        input { width: 90%; padding: 14px; margin: 8px 0; border-radius: 12px; background: #0f172a; color: white; border: 2px solid #334155; font-size: 16px; outline: none; transition: 0.3s; }
         input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
-        button { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; active { transform: scale(0.98); } }
-        .btn-wallet { background: var(--accent); color: #0f172a; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+        button { width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
+        button:active { transform: scale(0.98); }
+        .btn-wallet { background: var(--accent); color: #0f172a; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2); }
         .btn-claim { background: var(--primary); color: #0f172a; }
-        .btn-withdraw { background: var(--success); color: white; display: none; margin-top: 15px; }
-        #status { margin-top: 15px; font-size: 14px; padding: 12px; border-radius: 10px; display: none; background: #1e293b; border: 1px solid #334155; }
-        #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #020617; border: 2px dashed var(--error); border-radius: 20px; text-align: left; }
-        .req-card { background: #1e293b; padding: 12px; margin: 10px 0; border-radius: 12px; font-size: 12px; border-left: 4px solid var(--primary); }
+        .btn-withdraw { background: var(--success); color: white; display: none; margin-top: 10px; }
+        #status { margin-top: 15px; font-size: 13px; padding: 10px; border-radius: 10px; display: none; background: #1e293b; border: 1px solid #334155; }
+        #adminPanel { display: none; margin-top: 25px; padding: 15px; background: #020617; border: 2px dashed var(--error); border-radius: 20px; text-align: left; }
+        .req-card { background: #1e293b; padding: 10px; margin: 8px 0; border-radius: 10px; font-size: 12px; border-left: 3px solid var(--primary); }
         
-        /* Fixed Wheel Styling */
-        #wheel { width: 160px; height: 160px; border: 6px solid var(--accent); border-radius: 50%; margin: 20px auto; position: relative; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); background: conic-gradient(#38bdf8 0deg 72deg, #1e293b 72deg 144deg, #10b981 144deg 216deg, #f59e0b 216deg 288deg, #ef4444 288deg 360deg); box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
-        .wheel-needle { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 25px solid #f8fafc; z-index: 20; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-        .wheel-dot { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 15px; height: 15px; background: white; border-radius: 50%; z-index: 10; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        /* Mobile Fixed Wheel Styling */
+        #wheel-container { position: relative; width: 140px; height: 140px; margin: 15px auto;}
+        #wheel { width: 100%; height: 100%; border: 5px solid var(--accent); border-radius: 50%; position: relative; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); background: conic-gradient(#38bdf8 0deg 72deg, #1e293b 72deg 144deg, #10b981 144deg 216deg, #f59e0b 216deg 288deg, #ef4444 288deg 360deg); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+        .wheel-needle { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 22px solid #f8fafc; z-index: 20; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4)); }
+        .wheel-dot { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; background: white; border-radius: 50%; z-index: 10; box-shadow: 0 0 4px rgba(0,0,0,0.4); }
+        
+        @media (max-width: 400px) { h1 {font-size: 22px;} .container {padding: 15px;} }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>🍬 TOFFEENVH</h1>
-    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">Nihal Vihar Digital Rewards Portal</p>
+    <p style="color: #94a3b8; font-size: 12px; margin-bottom: 15px;">Nihal Vihar Digital Rewards Portal</p>
 
-    <button id="walletBtn" class="btn-wallet" onclick="connectWallet()">🔑 1. CONNECT METAMASK</button>
+    <button id="walletBtn" class="btn-wallet" onclick="connectWallet()">🔑 1. CONNECT WALLET</button>
 
     <div id="userUI">
         <div class="balance-card">
-            <div style="display: flex; justify-content: space-between; font-size: 14px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px;">
                 <span>Available Balance</span>
                 <span id="balText" style="font-weight: bold; color: var(--primary);">0 / 500 TOFFEE</span>
             </div>
             <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
-            <small id="pctText" style="color: #64748b;">0% Completed</small>
+            <small id="pctText" style="color: #64748b; font-size: 11px;">0% Completed</small>
         </div>
 
         <input type="text" id="codeInput" placeholder="Enter Wrapper Code">
         <button class="btn-claim" id="claimBtn" onclick="processClaim()">💰 2. ADD 10 TOKENS</button>
 
         <div class="balance-card" style="border-color: var(--accent); background: rgba(245, 158, 11, 0.03);">
-            <h3 style="margin: 0; color: var(--accent); font-size: 18px;">🎡 LUCKY DAILY SPIN</h3>
-            <div id="wheel">
+            <h3 style="margin: 0 0 5px 0; color: var(--accent); font-size: 16px;">🎡 LUCKY DAILY SPIN</h3>
+            <div id="wheel-container">
                 <div class="wheel-needle"></div>
-                <div class="wheel-dot"></div>
+                <div id="wheel"><div class="wheel-dot"></div></div>
             </div>
-            <button id="spinBtn" class="btn-wallet" style="margin-top: 10px; height: 50px;" onclick="handleSpin()">🎰 SPIN NOW</button>
-            <p id="spinTimer" style="font-size: 13px; color: var(--error); display: none; margin-top: 10px; font-weight: 600;"></p>
+            <button id="spinBtn" class="btn-wallet" style="margin-top: 5px; height: 45px; padding: 0 15px;" onclick="handleSpin()">🎰 SPIN NOW</button>
+            <p id="spinTimer" style="font-size: 12px; color: var(--error); display: none; margin-top: 8px; font-weight: 600;"></p>
         </div>
 
         <button id="withdrawBtn" class="btn-withdraw" onclick="submitWithdrawRequest()">🚀 REQUEST 500 TOFFEE WITHDRAWAL</button>
@@ -67,17 +71,18 @@
     <div id="status"></div>
 
     <div id="adminPanel">
-        <h3 style="color: #f43f5e; margin-bottom: 15px; font-size: 18px;">👨‍💻 ADMIN DASHBOARD</h3>
-        <div id="reqList" style="font-size: 13px;">Loading data...</div>
+        <h3 style="color: #f43f5e; margin: 0 0 10px 0; font-size: 16px;">👨‍💻 ADMIN DASHBOARD</h3>
+        <div id="reqList" style="font-size: 12px;">Loading data...</div>
     </div>
 </div>
 
 <script>
-    // --- SUPABASE CONFIG ---
+    // --- CONFIG ---
     const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
     const db = supabase.createClient(SB_URL, SB_KEY);
     
+    // ⭐ FIXED: Capitalized checksum address (0xF5F...)
     const V1_ADDRESS = "0xF5Fc412E1ae71924fd7C6bD44A3cDADa8e69fd37";
     const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
     let userWallet = "";
@@ -88,24 +93,20 @@
                 const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 userWallet = accs[0].toLowerCase();
                 document.getElementById("walletBtn").innerText = "CONNECTED: " + userWallet.substring(0,6) + "..." + userWallet.slice(-4);
-                
                 if (userWallet === ADMIN_WALLET) {
                     document.getElementById("adminPanel").style.display = "block";
                     loadAdminPanel();
                 }
                 loadBalance();
             } catch (err) { alert("Connection failed!"); }
-        } else { alert("Please install MetaMask!"); }
+        } else { alert("Please open inside MetaMask browser!"); }
     }
 
     async function loadBalance() {
         if(!userWallet) return;
-        const { data, error } = await db.from('user_balances').select('*').eq('wallet_address', userWallet).maybeSingle();
-        if (data) {
-            updateUI(data.pending_balance);
-        } else {
-            updateUI(0);
-        }
+        const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+        if (data) updateUI(data.pending_balance);
+        else updateUI(0);
     }
 
     function updateUI(bal) {
@@ -121,76 +122,49 @@
         const input = document.getElementById("codeInput");
         const btn = document.getElementById("claimBtn");
         const code = input.value.trim();
+        if (!userWallet || !code) return alert("Enter Code!");
 
-        if (!userWallet || !code) return alert("Connect Wallet & Enter Code!");
-
-        showStatus("🔍 Validating on Blockchain...", "info");
+        showStatus("🔍 Validating Code...", "info");
         btn.disabled = true;
 
         try {
-            // 1. Contract Check
             const provider = new ethers.providers.Web3Provider(window.ethereum);
+            // Verify address is valid format before using
+            ethers.utils.getAddress(V1_ADDRESS); 
             const contract = new ethers.Contract(V1_ADDRESS, ["function validCodes(string) view returns (bool)"], provider);
             
-            // Timeout handle karne ke liye
             const isValid = await Promise.race([
                 contract.validCodes(code),
-                new Promise((_, reject) => setTimeout(() => reject(new Error("Blockchain Timeout")), 10000))
+                new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 15000))
             ]);
 
-            if (!isValid) {
-                btn.disabled = false;
-                alert("❌ Invalid or Already Used Code on Blockchain!");
-                return showStatus("Invalid Code", "error");
-            }
+            if (!isValid) return alert("❌ Invalid or Already Used!");
 
-            // 2. Database Check (Used Codes)
-            const { data: alreadyUsed } = await db.from('used_codes').select('*').eq('code', code).maybeSingle();
-            if (alreadyUsed) {
-                btn.disabled = false;
-                return alert("❌ This code was already claimed on this site!");
-            }
-
-            // 3. Update Balance
             const { data: cur } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
             let newBal = (cur ? cur.pending_balance : 0) + 10;
 
-            const { error: upsertErr } = await db.from('user_balances').upsert({ 
-                wallet_address: userWallet, 
-                pending_balance: newBal,
-                is_withdrawn: false 
-            }, { onConflict: 'wallet_address' });
+            const { error } = await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newBal, is_withdrawn: false }, { onConflict: 'wallet_address' });
+            if (error) throw error;
 
-            if (upsertErr) throw upsertErr;
-
-            // 4. Log code as used
             await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
-
-            alert("✅ SUCCESS! 10 TOFFEE Added to your balance.");
+            alert("✅ 10 TOFFEE Added!");
             input.value = "";
             loadBalance();
-            showStatus("Claim Successful!", "success");
-        } catch (e) {
-            console.error(e);
-            alert("Error: " + e.message);
-            showStatus("Transaction Failed", "error");
-        } finally {
-            btn.disabled = false;
-        }
+        } catch (e) { alert("Error: " + e.message); }
+        finally { btn.disabled = false; showStatus("", "none"); document.getElementById("status").style.display="none";}
     }
 
     async function handleSpin() {
-        if (!userWallet) return alert("Please connect wallet first!");
+        if (!userWallet) return alert("Connect Wallet!");
         const btn = document.getElementById("spinBtn");
         const timerText = document.getElementById("spinTimer");
         const wheel = document.getElementById("wheel");
 
-        // 24hr Cooldown Check
         const { data } = await db.from('daily_spins').select('last_spin_at').eq('wallet_address', userWallet).maybeSingle();
         if (data) {
-            const hours = (new Date() - new Date(data.last_spin_at)) / (1000 * 60 * 60);
-            if (hours < 24) {
-                timerText.innerText = `⏳ Come back in ${Math.ceil(24 - hours)} hours`;
+            const diff = (new Date() - new Date(data.last_spin_at)) / (1000 * 60 * 60);
+            if (diff < 24) {
+                timerText.innerText = `⏳ Try again in ${Math.ceil(24 - diff)} hours`;
                 timerText.style.display = "block";
                 return;
             }
@@ -198,92 +172,46 @@
 
         btn.disabled = true;
         timerText.style.display = "none";
-        
-        // Spin Animation (5 rounds + random)
-        const randomDeg = Math.floor(Math.random() * 360) + 1800; 
-        wheel.style.transform = `rotate(${randomDeg}deg)`;
+        wheel.style.transform = `rotate(${Math.floor(Math.random() * 360) + 1800}deg)`;
 
         setTimeout(async () => {
-            const rewards = [5, 10, 20, 30, 50];
-            const win = rewards[Math.floor(Math.random() * rewards.length)];
-
+            const win = [5, 10, 20, 30, 50][Math.floor(Math.random() * 5)];
             try {
                 const { data: bData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-                let currentTotal = bData ? bData.pending_balance : 0;
-
-                // Update Balance & Spin Log
-                await db.from('user_balances').upsert({ 
-                    wallet_address: userWallet, 
-                    pending_balance: currentTotal + win,
-                    is_withdrawn: false 
-                }, { onConflict: 'wallet_address' });
-
-                await db.from('daily_spins').upsert({ 
-                    wallet_address: userWallet, 
-                    last_spin_at: new Date().toISOString() 
-                }, { onConflict: 'wallet_address' });
-
-                alert(`🎉 CONGRATS! You won ${win} TOFFEE!`);
+                let currentBal = bData ? bData.pending_balance : 0;
+                await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: currentBal + win, is_withdrawn: false }, { onConflict: 'wallet_address' });
+                await db.from('daily_spins').upsert({ wallet_address: userWallet, last_spin_at: new Date().toISOString() }, { onConflict: 'wallet_address' });
+                alert(`🎉 You won ${win} TOFFEE!`);
                 loadBalance();
-            } catch (err) {
-                alert("Database Update Error!");
-            }
+            } catch (err) { alert("Save failed!"); }
             btn.disabled = false;
         }, 4000);
     }
 
     async function submitWithdrawRequest() {
-        const { error } = await db.from('withdrawals').insert([{ 
-            wallet_address: userWallet, 
-            amount: 500, 
-            status: 'pending' 
-        }]);
-        if (!error) alert("🚀 Request Sent! Admin will process it soon.");
-        else alert("Request failed. Try again.");
+        await db.from('withdrawals').insert([{ wallet_address: userWallet, amount: 500, status: 'pending' }]);
+        alert("🚀 Request Sent!");
     }
 
     async function loadAdminPanel() {
-        const listDiv = document.getElementById("reqList");
-        
-        // Fetch Withdrawals
         const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
-        // Fetch Top Users
-        const { data: topUsers } = await db.from('user_balances').select('*').order('pending_balance', {ascending: false}).limit(5);
-
-        let html = "<strong>Pending Withdrawals:</strong><br>";
-        if (reqs && reqs.length > 0) {
-            reqs.forEach(r => {
-                html += `<div class="req-card">
-                    User: ${r.wallet_address.slice(0,10)}... | Amt: ${r.amount}<br>
-                    <button onclick="approveAdmin('${r.wallet_address}', ${r.id})" style="padding:4px 8px; font-size:10px; background:var(--success); margin-top:5px; width:auto;">COMPLETE & RESET</button>
-                </div>`;
-            });
-        } else { html += "None.<br>"; }
-
-        html += "<br><strong>Top 5 Balances:</strong><br>";
-        if(topUsers) {
-            topUsers.forEach(u => {
-                html += `<div style="font-size:11px; margin-bottom:4px;">${u.wallet_address.slice(0,15)}... : <b>${u.pending_balance} TOFFEE</b></div>`;
-            });
-        }
-        listDiv.innerHTML = html;
+        let html = "<b>Pending:</b><br>";
+        if (reqs?.length > 0) reqs.forEach(r => html += `<div class="req-card">User: ${r.wallet_address.slice(0,8)} | Amt: ${r.amount}<br><button onclick="approveAdmin('${r.wallet_address}', ${r.id})" style="padding:3px 8px; font-size:10px; background:var(--success); width:auto; margin-top:3px;">MARK PAID</button></div>`);
+        else html += "None.<br>";
+        document.getElementById("reqList").innerHTML = html;
     }
 
-    async function approveAdmin(userAddr, reqId) {
-        // 1. Set withdrawal to completed
-        await db.from('withdrawals').update({ status: 'completed' }).eq('id', reqId);
-        // 2. Subtract 500 from user balance
-        const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userAddr).single();
-        await db.from('user_balances').update({ pending_balance: data.pending_balance - 500 }).eq('wallet_address', userAddr);
-        
-        alert("Payment Marked! Remember to send tokens via Remix.");
-        loadAdminPanel();
+    async function approveAdmin(addr, id) {
+        await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
+        const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', addr).single();
+        await db.from('user_balances').update({ pending_balance: data.pending_balance - 500 }).eq('wallet_address', addr);
+        alert("Done!"); loadAdminPanel();
     }
 
     function showStatus(msg, type) {
         const s = document.getElementById("status");
-        s.innerText = msg;
-        s.style.display = "block";
+        if(type === "none") { s.style.display = "none"; return; }
+        s.innerText = msg; s.style.display = "block";
         s.style.color = type === "error" ? "var(--error)" : "var(--primary)";
     }
 </script>
