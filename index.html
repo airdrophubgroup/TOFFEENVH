@@ -73,4 +73,125 @@
     async function connectWallet() {
         if (window.ethereum) {
             try {
-                const accs = await window
+                const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                userWallet = accs[0].toLowerCase();
+                document.getElementById("walletBtn").innerText = "ID: " + userWallet.substring(0,8);
+                document.getElementById("userUI").style.display = "block";
+                
+                if (userWallet === ADMIN_WALLET) {
+                    document.getElementById("adminPanel").style.display = "block";
+                    loadAdminPanel();
+                }
+                refreshData();
+            } catch (e) { alert("Connection Error!"); }
+        } else { window.location.href = "https://metamask.app.link/dapp/toffeenvh.vercel.app/"; }
+    }
+
+    async function refreshData() {
+        if(!userWallet) return;
+        
+        // 1. Balance Fetch
+        const { data: bData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+        userBalance = bData ? bData.pending_balance : 0;
+        document.getElementById("balText").innerText = userBalance + " TOFFEE";
+        
+        // 2. Withdrawal Button Logic
+        const wBtn = document.getElementById("withdrawBtn");
+        if(userBalance >= 500) {
+            wBtn.style.display = "block";
+            const { data: pending } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
+            if(pending) {
+                wBtn.disabled = true;
+                wBtn.innerText = "⏳ REQUEST PENDING...";
+            } else {
+                wBtn.disabled = false;
+                wBtn.innerText = "🚀 WITHDRAW 500 (CASH)";
+            }
+        } else { wBtn.style.display = "none"; }
+
+        loadLeaderboard();
+    }
+
+    async function requestCashOut() {
+        // --- DAILY LIMIT CHECK ---
+        const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
+        const { data: todayReq } = await db.from('withdrawals')
+            .select('*')
+            .eq('wallet_address', userWallet)
+            .gte('created_at', startOfDay.toISOString());
+
+        if (todayReq && todayReq.length > 0) {
+            return alert("❌ Daily Limit! Aap din mein sirf 1 baar request bhej sakte hain.");
+        }
+
+        const ok = confirm("Request 500 TOFFEE Cash-out?");
+        if(!ok) return;
+
+        const { error } = await db.from('withdrawals').insert([{ 
+            wallet_address: userWallet, amount: 500, status: 'pending', product_name: 'CASH' 
+        }]);
+
+        if(!error) { alert("🚀 Sent!"); refreshData(); }
+    }
+
+    async function loadAdminPanel() {
+        // Stats
+        const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
+        const { data: todayScans } = await db.from('used_codes').select('*').gte('created_at', startOfDay.toISOString());
+        document.getElementById("adminStats").innerHTML = `<div class="stat-box">Today's Scans: <b>${todayScans?.length || 0}</b></div>`;
+
+        // Requests
+        const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
+        let h = "<b>Pending:</b><br>";
+        reqs?.forEach(r => h += `
+            <div style="background:#111827; padding:10px; margin-top:5px; border-radius:10px; border:1px solid #334155;">
+                <span style="font-size:9px; color:gray;">${r.wallet_address}</span>
+                <button onclick="copyToClipboard('${r.wallet_address}')" style="width:auto; padding:2px 5px; font-size:9px; background:#334155; color:#38bdf8; border-radius:4px;">COPY</button>
+                <button onclick="approveAdmin(${r.id}, '${r.wallet_address}')" style="background:var(--success); color:white; padding:5px; margin-top:5px; border-radius:5px; font-size:10px;">MARK PAID & MINUS 500</button>
+            </div>`);
+        document.getElementById("reqList").innerHTML = h || "No requests.";
+    }
+
+    async function approveAdmin(id, addr) {
+        if(!confirm("Deduct 500 coins and mark paid?")) return;
+        await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
+        const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', addr).single();
+        await db.from('user_balances').update({ pending_balance: data.pending_balance - 500 }).eq('wallet_address', addr);
+        alert("Done!"); loadAdminPanel(); refreshData();
+    }
+
+    function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert("Address Copied!")); }
+
+    async function processClaim() {
+        const input = document.getElementById("codeInput");
+        const code = input.value.trim().toUpperCase();
+        const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
+        if(!valid) return alert("Invalid Code!");
+
+        await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10, is_withdrawn: false }, { onConflict: 'wallet_address' });
+        await db.from('valid_codes').update({ is_used: true }).eq('code', code);
+        await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
+        alert("Claimed!"); input.value = ""; refreshData();
+    }
+
+    async function loadLeaderboard() {
+        const { data } = await db.from('used_codes').select('user_wallet');
+        const counts = {}; data?.forEach(i => counts[i.user_wallet] = (counts[i.user_wallet] || 0) + 1);
+        const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
+        let h = ""; sorted.forEach((e, i) => h += `<div class="rank-item"><span>#${i+1} ${e[0].slice(0,6)}...</span><b>${e[1]} Scans</b></div>`);
+        document.getElementById("leaderboardList").innerHTML = h || "No scans.";
+    }
+
+    async function handleSpin() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const { data: claimed } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).gte('created_at', today.toISOString());
+        if(!claimed || claimed.length === 0) return alert("Pehle aaj ek wrapper claim karein!");
+        document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+1800}deg)`;
+        setTimeout(async () => {
+            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10, is_withdrawn: false }, { onConflict: 'wallet_address' });
+            alert("Won 10 TOFFEE!"); refreshData();
+        }, 4000);
+    }
+</script>
+</body>
+</html>
