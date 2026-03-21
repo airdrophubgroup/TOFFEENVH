@@ -3,23 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOFFEENVH - Official</title>
+    <title>TOFFEENVH - Rewards & Ranking</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; --gold: #ffd700; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; }
         .container { max-width: 450px; margin: 10px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .balance-card { background: #0f172a; padding: 18px; border-radius: 18px; margin: 12px 0; border: 1px solid var(--primary); }
+        
         button { width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; margin: 5px 0; }
         .btn-wallet { background: var(--accent); color: #0f172a; }
         .btn-claim { background: var(--primary); color: #0f172a; }
+        
         .btn-withdraw { background: var(--success); color: white; display: none; }
-        .btn-withdraw:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; }
+        .btn-withdraw:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
+
         .leaderboard { background: #020617; border-radius: 18px; padding: 15px; margin: 15px 0; border: 1px solid var(--gold); font-size: 13px; }
         .rank-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #1e293b; }
+        
         .store-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .product-card { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 10px; opacity: 0.6; font-size: 11px; }
+        
         input { width: 85%; padding: 14px; margin: 8px 0; border-radius: 12px; background: #0f172a; color: white; border: 2px solid #334155; font-size: 16px; outline: none; text-transform: uppercase; }
+        
         #wheel { width: 120px; height: 120px; border: 4px solid var(--accent); border-radius: 50%; margin: 15px auto; transition: 4s cubic-bezier(0.15, 0, 0.15, 1); background: conic-gradient(#38bdf8 0deg 72deg, #1e293b 72deg 144deg, #10b981 144deg 216deg, #f59e0b 216deg 288deg, #ef4444 288deg 360deg); }
         #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #020617; border: 2px dashed var(--error); border-radius: 20px; text-align: left; }
     </style>
@@ -28,6 +34,8 @@
 
 <div class="container">
     <h1 style="color: var(--primary); margin:0; font-size: 24px;">🍬 TOFFEENVH</h1>
+    <p style="font-size: 11px; color: #94a3b8; margin-bottom:15px;">Nihal Vihar Digital Rewards</p>
+
     <button id="walletBtn" class="btn-wallet" onclick="connectWallet()">🔑 CONNECT WALLET</button>
 
     <div id="userUI" style="display:none;">
@@ -36,11 +44,11 @@
             <button id="withdrawBtn" class="btn-withdraw" onclick="requestCashOut()">🚀 WITHDRAW 500 (CASH)</button>
         </div>
 
-        <input type="text" id="codeInput" placeholder="ENTER CODE">
+        <input type="text" id="codeInput" placeholder="ENTER WRAPPER CODE">
         <button class="btn-claim" onclick="processClaim()">💰 CLAIM 10 TOKENS</button>
 
         <div class="leaderboard">
-            <h3 style="margin: 0 0 10px 0; color: var(--gold); font-size: 14px;">🏆 TOP 5 WRAPPER KINGS</h3>
+            <h3 style="margin: 0 0 10px 0; color: var(--gold); font-size: 15px;">🏆 TOP 5 WRAPPER KINGS</h3>
             <div id="leaderboardList">Loading ranks...</div>
         </div>
 
@@ -51,7 +59,7 @@
         </div>
 
         <div class="balance-card" style="border-color: var(--accent); margin-top: 20px;">
-            <h3 style="margin: 0; color: var(--accent); font-size: 15px;">🎡 DAILY SPIN</h3>
+            <p style="font-size:11px; margin:0; color:var(--accent);">Claim today's wrapper to spin!</p>
             <div id="wheel"></div>
             <button class="btn-wallet" style="margin-top:10px; padding: 10px;" onclick="handleSpin()">🎰 SPIN NOW</button>
         </div>
@@ -59,7 +67,7 @@
 
     <div id="adminPanel">
         <h3 style="color: #f43f5e; margin: 0 0 10px 0;">👨‍💻 ADMIN DASHBOARD</h3>
-        <div id="reqList" style="font-size: 11px;">Fetching...</div>
+        <div id="reqList" style="font-size: 11px;">Fetching requests...</div>
     </div>
 </div>
 
@@ -72,6 +80,7 @@
     let userWallet = "";
     let userBalance = 0;
 
+    // 1. Connection Logic
     async function connectWallet() {
         if (window.ethereum) {
             try {
@@ -79,62 +88,98 @@
                 userWallet = accs[0].toLowerCase();
                 document.getElementById("walletBtn").innerText = "CONNECTED";
                 document.getElementById("userUI").style.display = "block";
-                if (userWallet === ADMIN_WALLET) { document.getElementById("adminPanel").style.display = "block"; loadAdminPanel(); }
+                
+                if (userWallet === ADMIN_WALLET) {
+                    document.getElementById("adminPanel").style.display = "block";
+                    loadAdminPanel();
+                }
                 refreshData();
-            } catch (e) { alert("MetaMask connect karein!"); }
-        } else { window.location.href = "https://metamask.app.link/dapp/toffeenvh.vercel.app/"; }
+            } catch (e) { alert("Please connect MetaMask!"); }
+        } else {
+            alert("Open inside MetaMask App Browser!");
+            window.location.href = "https://metamask.app.link/dapp/toffeenvh.vercel.app/";
+        }
     }
 
+    // 2. Refresh All Data
     async function refreshData() {
         if(!userWallet) return;
         
-        // Load Balance
-        const { data: bData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-        userBalance = bData ? bData.pending_balance : 0;
-        document.getElementById("balText").innerText = userBalance + " TOFFEE";
-        
-        // Show/Hide Withdraw Button
-        const wBtn = document.getElementById("withdrawBtn");
-        if(userBalance >= 500) {
-            wBtn.style.display = "block";
-            // Check if already pending
-            const { data: pending } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
-            if(pending) {
-                wBtn.disabled = true;
-                wBtn.innerText = "⏳ REQUEST PENDING...";
+        try {
+            // Load Balance
+            const { data: bData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+            userBalance = bData ? bData.pending_balance : 0;
+            document.getElementById("balText").innerText = userBalance + " TOFFEE";
+            
+            // Withdrawal Button Logic
+            const wBtn = document.getElementById("withdrawBtn");
+            if(userBalance >= 500) {
+                wBtn.style.display = "block";
+                // Check for existing pending request
+                const { data: pending } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
+                if(pending) {
+                    wBtn.disabled = true;
+                    wBtn.innerText = "⏳ REQUEST PENDING...";
+                } else {
+                    wBtn.disabled = false;
+                    wBtn.innerText = "🚀 WITHDRAW 500 (CASH)";
+                }
             } else {
-                wBtn.disabled = false;
-                wBtn.innerText = "🚀 WITHDRAW 500 (CASH)";
+                wBtn.style.display = "none";
             }
-        } else {
-            wBtn.style.display = "none";
-        }
-
-        loadLeaderboard();
+            
+            loadLeaderboard();
+        } catch (e) { console.error("Refresh Error:", e); }
     }
 
+    // 3. Claim Wrapper
+    async function processClaim() {
+        const input = document.getElementById("codeInput");
+        const code = input.value.trim().toUpperCase();
+        if(!code) return alert("Enter Code!");
+
+        try {
+            const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
+            if(!valid) return alert("Invalid or Used Code!");
+
+            const { error: balErr } = await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10, is_withdrawn: false }, { onConflict: 'wallet_address' });
+            if(balErr) throw balErr;
+
+            await db.from('valid_codes').update({ is_used: true }).eq('code', code);
+            await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
+
+            alert("✅ 10 TOFFEE Added!");
+            input.value = "";
+            refreshData();
+        } catch (e) { alert("Database Issue! Check SQL Settings."); }
+    }
+
+    // 4. Request Withdrawal
     async function requestCashOut() {
         const wBtn = document.getElementById("withdrawBtn");
         wBtn.disabled = true;
         wBtn.innerText = "SENDING...";
 
-        const { error } = await db.from('withdrawals').insert([{ 
-            wallet_address: userWallet, 
-            amount: 500, 
-            status: 'pending',
-            product_name: 'CASH WITHDRAWAL' 
-        }]);
+        try {
+            const { error } = await db.from('withdrawals').insert([{ 
+                wallet_address: userWallet, 
+                amount: 500, 
+                status: 'pending',
+                product_name: 'CASH WITHDRAWAL' 
+            }]);
 
-        if(!error) {
-            alert("✅ Request Sent!");
-            refreshData();
-        } else {
-            alert("Error: Database issue!");
-            wBtn.disabled = false;
-            wBtn.innerText = "🚀 WITHDRAW 500 (CASH)";
-        }
+            if(error) {
+                alert("Database Issue: " + error.message);
+                wBtn.disabled = false;
+                wBtn.innerText = "🚀 WITHDRAW 500 (CASH)";
+            } else {
+                alert("✅ Request Sent Successfully!");
+                refreshData();
+            }
+        } catch (e) { alert("System Error!"); wBtn.disabled = false; }
     }
 
+    // 5. Leaderboard
     async function loadLeaderboard() {
         try {
             const { data } = await db.from('used_codes').select('user_wallet');
@@ -144,50 +189,10 @@
             let h = "";
             sorted.forEach((e, i) => h += `<div class="rank-item"><span>#${i+1} ${e[0].slice(0,6)}...</span><b>${e[1]} Scans</b></div>`);
             document.getElementById("leaderboardList").innerHTML = h || "No scans yet.";
-        } catch (e) { document.getElementById("leaderboardList").innerHTML = "Error loading ranks."; }
+        } catch (e) { document.getElementById("leaderboardList").innerHTML = "Loading error."; }
     }
 
+    // 6. Spin Logic
     async function handleSpin() {
         const today = new Date(); today.setHours(0,0,0,0);
-        const { data: claimed } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).gte('created_at', today.toISOString());
-        if(!claimed || claimed.length === 0) return alert("Pehle aaj ek wrapper claim karein!");
-
-        document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+1800}deg)`;
-        setTimeout(async () => {
-            const win = 10;
-            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + win, is_withdrawn: false }, { onConflict: 'wallet_address' });
-            alert("Won 10 TOFFEE!"); refreshData();
-        }, 4000);
-    }
-
-    async function processClaim() {
-        const code = document.getElementById("codeInput").value.trim().toUpperCase();
-        const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-        if(!valid) return alert("Invalid Code!");
-        await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10, is_withdrawn: false }, { onConflict: 'wallet_address' });
-        await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-        await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
-        alert("Claimed!"); document.getElementById("codeInput").value = ""; refreshData();
-    }
-
-    async function loadAdminPanel() {
-        const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
-        let html = "<b>Pending Requests:</b><br>";
-        if(reqs?.length > 0) {
-            reqs.forEach(r => html += `<div style='background:#111827; padding:8px; margin-top:5px; border-radius:8px;'>
-                User: ${r.wallet_address.slice(0,10)}... | Amt: ${r.amount}<br>
-                <button onclick="approveAdmin(${r.id}, '${r.wallet_address}')" style="background:var(--success); color:white; padding:4px; margin-top:5px; border-radius:4px; font-size:10px;">MARK PAID</button>
-            </div>`);
-        } else { html += "No requests."; }
-        document.getElementById("reqList").innerHTML = html;
-    }
-
-    async function approveAdmin(id, userAddr) {
-        await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
-        const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userAddr).single();
-        await db.from('user_balances').update({ pending_balance: data.pending_balance - 500 }).eq('wallet_address', userAddr);
-        alert("Paid!"); loadAdminPanel(); refreshData();
-    }
-</script>
-</body>
-</html>
+        const { data: claimed } = await db.from('
