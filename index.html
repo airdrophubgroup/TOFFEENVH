@@ -141,4 +141,42 @@
 
     async function loadAdminPanel() {
         const today = new Date(); today.setHours(0,0,0,0);
-        const { data: scans } = await db.from('used_codes').select('*').gte('created_at', today
+        const { data: scans } = await db.from('used_codes').select('*').gte('created_at', today.toISOString()).not('code', 'eq', 'DAILY_SPIN_DONE');
+        document.getElementById("adminStats").innerHTML = `<div class="stat-box">Today's Wrapper Scans: <b>${scans?.length || 0}</b></div>`;
+
+        const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
+        let h = "<b>Requests:</b><br>";
+        reqs?.forEach(r => h += `<div style="background:#111827; padding:10px; margin-top:5px; border-radius:10px; border:1px solid #334155; font-size:10px;">
+            ${r.wallet_address.slice(0,18)}... <button onclick="copyToClipboard('${r.wallet_address}')" style="width:auto; padding:2px 5px; font-size:9px; background:#334155; color:#38bdf8;">COPY</button>
+            <button onclick="approveAdmin(${r.id}, '${r.wallet_address}')" style="background:var(--success); color:white; padding:5px; margin-top:5px; border-radius:5px; font-size:10px;">MARK PAID & MINUS 500</button></div>`);
+        document.getElementById("reqList").innerHTML = h || "No requests.";
+    }
+
+    async function approveAdmin(id, addr) {
+        if(!confirm("Minus 500 coins and mark paid?")) return;
+        await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
+        const { data: user } = await db.from('user_balances').select('pending_balance').eq('wallet_address', addr).single();
+        await db.from('user_balances').update({ pending_balance: user.pending_balance - 500 }).eq('wallet_address', addr);
+        alert("Done!"); loadAdminPanel(); refreshData();
+    }
+
+    async function uploadCodes() {
+        const input = document.getElementById("newCodesInput").value;
+        const codes = input.split(',').map(c => c.trim().toUpperCase()).filter(c => c !== "");
+        if(codes.length === 0) return alert("Codes likho!");
+        const { error } = await db.from('valid_codes').insert(codes.map(c => ({ code: c, is_used: false })));
+        if(!error) { alert("✅ Codes Uploaded!"); document.getElementById("newCodesInput").value = ""; }
+    }
+
+    function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert("Copied!")); }
+
+    async function loadLeaderboard() {
+        const { data } = await db.from('used_codes').select('user_wallet').not('code', 'eq', 'DAILY_SPIN_DONE');
+        const counts = {}; data?.forEach(i => counts[i.user_wallet] = (counts[i.user_wallet] || 0) + 1);
+        const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
+        let h = ""; sorted.forEach((e, i) => h += `<div class="rank-item"><span>#${i+1} ${e[0].slice(0,6)}</span><b>${e[1]} Scans</b></div>`);
+        document.getElementById("leaderboardList").innerHTML = h || "No data.";
+    }
+</script>
+</body>
+</html>
