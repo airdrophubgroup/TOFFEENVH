@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOFFEENVH - Rewards & Admin</title>
+    <title>TOFFEENVH - Official Portal</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; --gold: #ffd700; }
@@ -44,21 +44,20 @@
         </div>
 
         <div class="balance-card" style="border-color: var(--accent); margin-top: 20px;">
+            <p style="font-size:11px; margin:0; color:var(--accent);">Daily Spin: Claim 1 wrapper first!</p>
             <div id="wheel"></div>
-            <button class="btn-wallet" style="padding: 10px;" onclick="handleSpin()">🎰 SPIN NOW</button>
+            <button id="spinBtn" class="btn-wallet" style="padding: 10px;" onclick="handleSpin()">🎰 SPIN NOW</button>
         </div>
     </div>
 
     <div id="adminPanel">
         <h3 style="color: #f43f5e; margin: 0 0 10px 0;">👨‍💻 ADMIN DASHBOARD</h3>
         <div id="adminStats"></div>
-        
         <div style="background:#1e293b; padding:15px; border-radius:15px; margin-bottom:15px;">
-            <b style="font-size:12px; color:var(--accent);">➕ UPLOAD NEW CODES:</b><br>
-            <textarea id="newCodesInput" placeholder="C001, C002, C003..." rows="2" style="width:90%; font-size:11px; margin-top:5px;"></textarea>
-            <button onclick="uploadCodes()" style="background:var(--primary); color:white; padding:8px; font-size:11px; margin-top:5px;">ADD CODES TO DB</button>
+            <b style="font-size:11px; color:var(--accent);">➕ UPLOAD CODES:</b>
+            <textarea id="newCodesInput" placeholder="C101, C102..." rows="2" style="font-size:11px; margin-top:5px;"></textarea>
+            <button onclick="uploadCodes()" style="background:var(--primary); color:white; padding:8px; font-size:11px; margin-top:5px;">ADD CODES</button>
         </div>
-
         <div id="reqList" style="font-size: 11px;">Fetching requests...</div>
     </div>
 </div>
@@ -91,92 +90,55 @@
         
         const wBtn = document.getElementById("withdrawBtn");
         if(userBalance >= 500) {
-            wBtn.style.display = "block";
             const { data: pending } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
+            wBtn.style.display = "block";
             wBtn.disabled = !!pending;
-            wBtn.innerText = pending ? "⏳ PENDING..." : "🚀 WITHDRAW 500 (CASH)";
+            wBtn.innerText = pending ? "⏳ REQUEST PENDING..." : "🚀 WITHDRAW 500 (CASH)";
         } else { wBtn.style.display = "none"; }
         loadLeaderboard();
     }
 
-    async function uploadCodes() {
-        const input = document.getElementById("newCodesInput").value;
-        const codesArray = input.split(',').map(c => c.trim().toUpperCase()).filter(c => c !== "");
-        if(codesArray.length === 0) return alert("Kuch codes likho!");
-
-        const dataToUpload = codesArray.map(code => ({ code: code, is_used: false }));
-        const { error } = await db.from('valid_codes').insert(dataToUpload);
-        
-        if(!error) {
-            alert(`✅ ${codesArray.length} Codes uploaded!`);
-            document.getElementById("newCodesInput").value = "";
-        } else { alert("Error uploading codes!"); }
-    }
-
-    async function requestCashOut() {
-        const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
-        const { data: todayReq } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).gte('created_at', startOfDay.toISOString());
-        if (todayReq && todayReq.length > 0) return alert("❌ Aaj ki limit poori ho gayi!");
-
-        const { error } = await db.from('withdrawals').insert([{ wallet_address: userWallet, amount: 500, status: 'pending', product_name: 'CASH' }]);
-        if(!error) { alert("🚀 Sent!"); refreshData(); }
-    }
-
-    async function loadAdminPanel() {
-        const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
-        const { data: todayScans } = await db.from('used_codes').select('*').gte('created_at', startOfDay.toISOString());
-        document.getElementById("adminStats").innerHTML = `<div class="stat-box">Today's Scans: <b>${todayScans?.length || 0}</b></div>`;
-
-        const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
-        let h = "<b>Requests:</b><br>";
-        reqs?.forEach(r => h += `
-            <div style="background:#111827; padding:10px; margin-top:5px; border-radius:10px; border:1px solid #334155;">
-                <span style="font-size:9px;">${r.wallet_address.slice(0,15)}...</span>
-                <button onclick="copyToClipboard('${r.wallet_address}')" style="width:auto; padding:2px 5px; font-size:9px; background:#334155; color:#38bdf8;">COPY</button>
-                <button onclick="approveAdmin(${r.id}, '${r.wallet_address}')" style="background:var(--success); color:white; padding:5px; margin-top:5px; border-radius:5px; font-size:10px;">MARK PAID</button>
-            </div>`);
-        document.getElementById("reqList").innerHTML = h || "No requests.";
-    }
-
-    async function approveAdmin(id, addr) {
-        if(!confirm("Deduct 500 coins and mark paid?")) return;
-        await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
-        const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', addr).single();
-        await db.from('user_balances').update({ pending_balance: data.pending_balance - 500 }).eq('wallet_address', addr);
-        alert("Done!"); loadAdminPanel(); refreshData();
-    }
-
-    function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert("Copied!")); }
-
     async function processClaim() {
-        const code = document.getElementById("codeInput").value.trim().toUpperCase();
+        const input = document.getElementById("codeInput");
+        const code = input.value.trim().toUpperCase();
         const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-        if(!valid) return alert("Invalid Code!");
+        if(!valid) return alert("Invalid or Used Code!");
 
-        await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10, is_withdrawn: false }, { onConflict: 'wallet_address' });
+        await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' });
         await db.from('valid_codes').update({ is_used: true }).eq('code', code);
         await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
-        alert("Claimed!"); document.getElementById("codeInput").value = ""; refreshData();
-    }
-
-    async function loadLeaderboard() {
-        const { data } = await db.from('used_codes').select('user_wallet');
-        const counts = {}; data?.forEach(i => counts[i.user_wallet] = (counts[i.user_wallet] || 0) + 1);
-        const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
-        let h = ""; sorted.forEach((e, i) => h += `<div class="rank-item"><span>#${i+1} ${e[0].slice(0,6)}...</span><b>${e[1]} Scans</b></div>`);
-        document.getElementById("leaderboardList").innerHTML = h || "No scans.";
+        alert("✅ Claimed! Spin unlocked."); input.value = ""; refreshData();
     }
 
     async function handleSpin() {
         const today = new Date(); today.setHours(0,0,0,0);
-        const { data: claimed } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).gte('created_at', today.toISOString());
-        if(!claimed || claimed.length === 0) return alert("Pehle aaj ek wrapper claim karein!");
+        const iso = today.toISOString();
+
+        // 1. Check scan logic
+        const { data: scans } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).gte('created_at', iso);
+        if (!scans || scans.length === 0) return alert("❌ Pehle aaj ek wrapper scan karein!");
+
+        // 2. Check already spun logic
+        const { data: spun } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', iso);
+        if (spun && spun.length > 0) return alert("🚫 Aaj ka spin ho chuka hai!");
+
         document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+1800}deg)`;
         setTimeout(async () => {
-            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10, is_withdrawn: false }, { onConflict: 'wallet_address' });
-            alert("Won 10 TOFFEE!"); refreshData();
+            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' });
+            await db.from('used_codes').insert([{ code: 'DAILY_SPIN_DONE', user_wallet: userWallet }]);
+            alert("🎉 Won 10 TOFFEE!"); refreshData();
         }, 4000);
     }
-</script>
-</body>
-</html>
+
+    async function requestCashOut() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const { data: exists } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).gte('created_at', today.toISOString());
+        if (exists && exists.length > 0) return alert("❌ Aaj ki limit poori!");
+
+        await db.from('withdrawals').insert([{ wallet_address: userWallet, amount: 500, status: 'pending', product_name: 'CASH' }]);
+        alert("🚀 Sent!"); refreshData();
+    }
+
+    async function loadAdminPanel() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const { data: scans } = await db.from('used_codes').select('*').gte('created_at', today
