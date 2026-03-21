@@ -129,4 +129,29 @@
         
         if(!claimed || claimed.length === 0) return alert("Pehle aaj ek wrapper claim karein!");
 
-        const { data: spin } = await db.from
+        const { data: spin } = await db.from('daily_spins').select('*').eq('wallet_address', userWallet).maybeSingle();
+        if(spin && (new Date() - new Date(spin.last_spin_at)) < 86400000) return alert("Wait 24h!");
+
+        const deg = Math.floor(Math.random() * 360) + 1800;
+        document.getElementById("wheel").style.transform = `rotate(${deg}deg)`;
+
+        setTimeout(async () => {
+            const win = 10;
+            const { data: b } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: (b?b.pending_balance:0)+win, is_withdrawn:false }, { onConflict: 'wallet_address' });
+            await db.from('daily_spins').upsert({ wallet_address: userWallet, last_spin_at: new Date().toISOString() });
+            alert("Won 10 TOFFEE!");
+            loadBalance();
+        }, 4000);
+    }
+
+    async function loadAdminPanel() {
+        const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
+        let h = "<b>Pending Requests:</b><br>";
+        if(reqs?.length > 0) reqs.forEach(r => h += `<div style='font-size:11px; margin-top:5px;'>${r.wallet_address.slice(0,10)}: ${r.amount} <button onclick='approveAdmin(${r.id})'>PAID</button></div>`);
+        else h += "No requests.";
+        document.getElementById("reqList").innerHTML = h;
+    }
+</script>
+</body>
+</html>
