@@ -104,7 +104,7 @@
         const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
         if(!valid) return alert("Invalid or Used Code!");
 
-        await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' });
+        await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 500 }, { onConflict: 'wallet_address' });
         await db.from('valid_codes').update({ is_used: true }).eq('code', code);
         await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
         alert("✅ Claimed! Spin unlocked."); input.value = ""; refreshData();
