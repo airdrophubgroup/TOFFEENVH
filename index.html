@@ -82,12 +82,10 @@
         const today = new Date(); today.setHours(0,0,0,0);
         const isoDate = today.toISOString();
 
-        // 1. Balance Fetch
         const { data: bData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
         userBalance = bData ? bData.pending_balance : 0;
         document.getElementById("balText").innerText = userBalance + " TOFFEE";
         
-        // 2. Withdrawal Button Logic
         const wBtn = document.getElementById("withdrawBtn");
         if(userBalance >= 500) {
             const { data: pending } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
@@ -96,7 +94,6 @@
             wBtn.innerText = pending ? "⏳ REQUEST PENDING..." : "🚀 WITHDRAW 500 (CASH)";
         } else { wBtn.style.display = "none"; }
 
-        // 3. Spin Button Auto-Hide Logic
         const { data: spun } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', isoDate);
         if (spun && spun.length > 0) {
             document.getElementById("spinBtn").style.display = "none";
@@ -105,7 +102,6 @@
             document.getElementById("spinBtn").style.display = "block";
             document.getElementById("spinStatus").innerText = "Daily Spin: Scan wrapper first!";
         }
-
         loadLeaderboard();
     }
 
@@ -119,39 +115,28 @@
             const sBtn = document.getElementById("spinBtn");
             sBtn.disabled = true;
 
-            // Step 1: Check Real Wrapper Scan
             const { data: scans } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).neq('code', 'DAILY_SPIN_DONE').gte('created_at', isoDate);
             if (!scans || scans.length === 0) {
                 alert("❌ Lock: Pehle aaj ek wrapper scan karein!");
-                isSpinning = false; sBtn.disabled = false;
-                return;
+                isSpinning = false; sBtn.disabled = false; return;
             }
 
-            // Step 2: Double Check Already Spun
             const { data: spunCheck } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', isoDate);
             if (spunCheck && spunCheck.length > 0) {
                 alert("🚫 Aaj ka spin ho chuka hai!");
-                isSpinning = false; refreshData();
-                return;
+                isSpinning = false; refreshData(); return;
             }
 
-            // Animation Start
             document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+2160}deg)`;
 
             setTimeout(async () => {
-                // Step 3: Record Spin Entry First
                 const { error: spinErr } = await db.from('used_codes').insert([{ code: 'DAILY_SPIN_DONE', user_wallet: userWallet }]);
-                
                 if(!spinErr) {
-                    // Step 4: Add Reward
                     await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' });
                     alert("🎉 Spin Win: 10 TOFFEE Added!");
                 }
-                
-                isSpinning = false;
-                refreshData();
+                isSpinning = false; refreshData();
             }, 4000);
-
         } catch (e) { isSpinning = false; }
     }
 
@@ -159,24 +144,18 @@
         const input = document.getElementById("codeInput");
         const code = input.value.trim().toUpperCase();
         if(!code) return alert("Code dalein!");
-
         const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
         if(!valid) return alert("Invalid or Used Code!");
-
         await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' });
         await db.from('valid_codes').update({ is_used: true }).eq('code', code);
         await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
-        
-        alert("✅ Claimed! Spin unlocked.");
-        input.value = "";
-        refreshData();
+        alert("✅ Claimed!"); input.value = ""; refreshData();
     }
 
     async function requestCashOut() {
         const today = new Date(); today.setHours(0,0,0,0);
         const { data: exists } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).gte('created_at', today.toISOString());
         if (exists && exists.length > 0) return alert("❌ Aaj ki limit poori!");
-
         const { error } = await db.from('withdrawals').insert([{ wallet_address: userWallet, amount: 500, status: 'pending', product_name: 'CASH' }]);
         if(!error) { alert("🚀 Request Sent!"); refreshData(); }
     }
@@ -185,21 +164,24 @@
         const today = new Date(); today.setHours(0,0,0,0);
         const { data: scns } = await db.from('used_codes').select('*').gte('created_at', today.toISOString()).neq('code', 'DAILY_SPIN_DONE');
         document.getElementById("adminStats").innerHTML = `Today's Wrapper Scans: <b>${scns?.length || 0}</b>`;
-
         const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
         let h = "";
         reqs?.forEach(r => h += `<div style="background:#111827; padding:8px; margin-top:5px; border-radius:8px; font-size:10px;">
-            ${r.wallet_address.slice(0,18)}... <button onclick="copyToClipboard('${r.wallet_address}')" style="background:#334155; color:#38bdf8; font-size:9px;">COPY</button>
-            <button onclick="approveAdmin(${r.id}, '${r.wallet_address}')" style="background:var(--success); color:white; font-size:10px; margin-top:5px; width:100%;">MARK PAID</button></div>`);
+            ${r.wallet_address.slice(0,20)}... <button onclick="copyToClipboard('${r.wallet_address}')" style="background:#334155; color:#38bdf8; font-size:9px;">COPY</button>
+            <button onclick="approveAdmin(${r.id}, '${r.wallet_address}')" style="background:var(--success); color:white; font-size:10px; margin-top:5px; width:100%;">MARK PAID & MINUS 500</button></div>`);
         document.getElementById("reqList").innerHTML = h || "No requests.";
     }
 
     async function approveAdmin(id, addr) {
         if(!confirm("Deduct 500 and mark paid?")) return;
-        await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
-        const { data: user } = await db.from('user_balances').select('pending_balance').eq('wallet_address', addr).single();
-        await db.from('user_balances').update({ pending_balance: user.pending_balance - 500 }).eq('wallet_address', addr);
-        alert("Paid!"); loadAdminPanel(); refreshData();
+        try {
+            const { data: user } = await db.from('user_balances').select('pending_balance').eq('wallet_address', addr).single();
+            if(user) {
+                await db.from('user_balances').update({ pending_balance: user.pending_balance - 500 }).eq('wallet_address', addr);
+                await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
+                alert("✅ Success!"); loadAdminPanel(); refreshData();
+            }
+        } catch (e) { alert("Admin Update Failed!"); }
     }
 
     async function uploadCodes() {
