@@ -3,50 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOFFEENVH - Rewards</title>
+    <title>TOFFEENVH - Rewards Portal</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; }
-        .container { max-width: 420px; margin: 10px auto; background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #334155; }
-        .balance-card { background: #0f172a; padding: 15px; border-radius: 15px; margin: 15px 0; border: 1px solid var(--primary); }
-        .progress-container { background: #334155; border-radius: 10px; height: 14px; margin: 10px 0; overflow: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; margin: 0; }
+        .container { max-width: 450px; margin: 20px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        h1 { color: var(--primary); font-size: 26px; margin-bottom: 15px; text-transform: uppercase; }
+        .balance-card { background: #0f172a; padding: 20px; border-radius: 18px; margin: 15px 0; border: 1px solid var(--primary); }
+        .progress-container { background: #334155; border-radius: 10px; height: 16px; width: 100%; margin: 10px 0; overflow: hidden; }
         .progress-bar { background: var(--primary); width: 0%; height: 100%; transition: 0.5s; }
-        input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 2px solid #334155; background: #0f172a; color: white; outline: none; }
-        button { width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; margin: 5px 0; transition: 0.2s; }
-        .btn-wallet { background: var(--accent); color: #000; }
-        .btn-claim { background: var(--primary); color: #000; }
-        #wheel { width: 140px; height: 140px; border: 4px solid var(--accent); border-radius: 50%; margin: 15px auto; position: relative; transition: 4s cubic-bezier(0.1, 0, 0.1, 1); background: conic-gradient(#38bdf8 0deg 72deg, #1e293b 72deg 144deg, #10b981 144deg 216deg, #f59e0b 216deg 288deg, #ef4444 288deg 360deg); }
-        .wheel-needle { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 20px solid white; z-index: 5; }
+        input { width: 85%; padding: 14px; margin: 10px 0; border-radius: 12px; background: #0f172a; color: white; border: 2px solid #334155; font-size: 16px; outline: none; text-transform: uppercase; }
+        button { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-wallet { background: var(--accent); color: #0f172a; }
+        .btn-claim { background: var(--primary); color: #0f172a; }
+        #status { margin-top: 15px; font-size: 14px; padding: 10px; border-radius: 10px; display: none; background: #1e293b; border: 1px solid #334155; }
+        
+        /* Spinner Styling */
+        #wheel { width: 150px; height: 150px; border: 5px solid var(--accent); border-radius: 50%; margin: 20px auto; position: relative; transition: transform 4s cubic-bezier(0.1, 0, 0.1, 1); background: conic-gradient(#38bdf8 0deg 72deg, #1e293b 72deg 144deg, #10b981 144deg 216deg, #f59e0b 216deg 288deg, #ef4444 288deg 360deg); }
+        .wheel-needle { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 20px solid white; z-index: 10; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 style="color: var(--primary); margin:0;">🍬 TOFFEENVH</h2>
-    <p style="font-size: 12px; color: #94a3b8;">Nihal Vihar Digital Rewards</p>
-
-    <button id="walletBtn" class="btn-wallet" onclick="connectWallet()">Connect MetaMask</button>
+    <h1>🍬 TOFFEENVH</h1>
+    
+    <button id="walletBtn" class="btn-wallet" onclick="connectWallet()">1. CONNECT WALLET</button>
 
     <div id="userUI">
         <div class="balance-card">
-            <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                <span>Balance</span>
-                <span id="balText" style="color: var(--primary);">0 / 500 TOFFEE</span>
+            <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                <span>Balance Earned</span>
+                <span id="balText" style="font-weight: bold; color: var(--primary);">0 / 500 TOFFEE</span>
             </div>
             <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
         </div>
 
-        <input type="text" id="codeInput" placeholder="Enter Wrapper Code">
-        <button class="btn-claim" id="claimBtn" onclick="processClaim()">CLAIM 10 TOKENS</button>
+        <input type="text" id="codeInput" placeholder="Enter TOFFEE-XXXX Code">
+        <button class="btn-claim" id="claimBtn" onclick="processClaim()">2. CLAIM 10 TOKENS</button>
 
         <div class="balance-card" style="border-color: var(--accent);">
-            <div class="wheel-needle"></div>
-            <div id="wheel"></div>
-            <button class="btn-wallet" style="margin-top:10px;" id="spinBtn" onclick="handleSpin()">DAILY SPIN</button>
-            <p id="spinTimer" style="font-size: 11px; color: var(--error); display: none;"></p>
+            <h3 style="margin: 0; color: var(--accent); font-size: 16px;">🎡 DAILY SPIN</h3>
+            <div style="position: relative;">
+                <div class="wheel-needle"></div>
+                <div id="wheel"></div>
+            </div>
+            <button id="spinBtn" class="btn-wallet" style="margin-top: 10px;" onclick="handleSpin()">🎰 SPIN NOW</button>
+            <p id="spinTimer" style="font-size: 12px; color: var(--error); display: none; margin-top: 5px;"></p>
         </div>
     </div>
+
+    <div id="status"></div>
 </div>
 
 <script>
@@ -59,9 +67,9 @@
         if (window.ethereum) {
             const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
             userWallet = accs[0].toLowerCase();
-            document.getElementById("walletBtn").innerText = userWallet.substring(0,10) + "...";
+            document.getElementById("walletBtn").innerText = "WALLET: " + userWallet.substring(0,8) + "...";
             loadBalance();
-        } else { alert("Open in MetaMask Browser!"); }
+        } else { alert("Please use MetaMask Browser!"); }
     }
 
     async function loadBalance() {
@@ -73,47 +81,97 @@
     }
 
     async function processClaim() {
-        const code = document.getElementById("codeInput").value.trim();
-        if(!userWallet || !code) return alert("Fill details!");
+        const input = document.getElementById("codeInput");
+        const btn = document.getElementById("claimBtn");
+        const code = input.value.trim().toUpperCase();
+        
+        if (!userWallet || !code) return alert("Connect Wallet & Enter Code!");
+        
+        btn.disabled = true;
+        showStatus("Validating Code...", "info");
 
-        // 1. Check if code is valid and unused in Supabase
-        const { data: validData, error } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
+        try {
+            // 1. Check if code exists and is NOT used
+            const { data: validData, error: fetchError } = await db.from('valid_codes')
+                .select('*')
+                .eq('code', code)
+                .eq('is_used', false)
+                .maybeSingle();
 
-        if(!validData) return alert("❌ Invalid or Already Used Code!");
+            if (fetchError || !validData) {
+                alert("❌ Invalid Code or Already Claimed!");
+                btn.disabled = false;
+                return showStatus("Invalid Code", "error");
+            }
 
-        // 2. Update User Balance
-        const { data: cur } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-        let newBal = (cur ? cur.pending_balance : 0) + 10;
+            // 2. Get User Balance
+            const { data: curBal } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+            let newTotal = (curBal ? curBal.pending_balance : 0) + 10;
 
-        await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newBal, is_withdrawn: false }, { onConflict: 'wallet_address' });
+            // 3. Update Balance
+            const { error: upsertErr } = await db.from('user_balances').upsert({ 
+                wallet_address: userWallet, 
+                pending_balance: newTotal,
+                is_withdrawn: false 
+            }, { onConflict: 'wallet_address' });
 
-        // 3. Mark code as used
-        await db.from('valid_codes').update({ is_used: true }).eq('code', code);
+            if (upsertErr) throw upsertErr;
 
-        alert("✅ 10 TOFFEE Added!");
-        loadBalance();
-        document.getElementById("codeInput").value = "";
+            // 4. Mark the code as USED in valid_codes table
+            await db.from('valid_codes').update({ is_used: true }).eq('id', validData.id);
+
+            alert("✅ Success! 10 TOFFEE added.");
+            input.value = "";
+            loadBalance();
+            showStatus("Claimed Successfully!", "success");
+
+        } catch (e) {
+            console.error(e);
+            alert("Error claiming code!");
+        } finally {
+            btn.disabled = false;
+        }
     }
 
     async function handleSpin() {
-        if(!userWallet) return alert("Connect Wallet!");
+        if (!userWallet) return alert("Connect Wallet!");
         const btn = document.getElementById("spinBtn");
-        
+        const wheel = document.getElementById("wheel");
+        const timerText = document.getElementById("spinTimer");
+
+        // Cooldown check
         const { data } = await db.from('daily_spins').select('last_spin_at').eq('wallet_address', userWallet).maybeSingle();
-        if(data && (new Date() - new Date(data.last_spin_at)) < 86400000) return alert("Wait 24h!");
+        if (data) {
+            const hours = (new Date() - new Date(data.last_spin_at)) / (1000 * 60 * 60);
+            if (hours < 24) {
+                timerText.innerText = `⏳ Wait ${Math.ceil(24 - hours)} hours`;
+                timerText.style.display = "block";
+                return;
+            }
+        }
 
         btn.disabled = true;
-        document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+1800}deg)`;
+        const deg = Math.floor(Math.random() * 360) + 1800;
+        wheel.style.transform = `rotate(${deg}deg)`;
 
         setTimeout(async () => {
-            const win = 10; // Fixed win for simple test
+            const win = 10; // Fixed for testing, you can randomize
             const { data: b } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: (b?b.pending_balance:0)+win, is_withdrawn:false }, { onConflict: 'wallet_address' });
+            let current = b ? b.pending_balance : 0;
+            
+            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: current + win, is_withdrawn: false }, { onConflict: 'wallet_address' });
             await db.from('daily_spins').upsert({ wallet_address: userWallet, last_spin_at: new Date().toISOString() }, { onConflict: 'wallet_address' });
-            alert("Won 10 TOFFEE!");
+            
+            alert(`🎉 Won ${win} TOFFEE!`);
             loadBalance();
             btn.disabled = false;
         }, 4000);
+    }
+
+    function showStatus(msg, type) {
+        const s = document.getElementById("status");
+        s.innerText = msg; s.style.display = "block";
+        s.style.color = type === "error" ? "var(--error)" : "var(--primary)";
     }
 </script>
 </body>
