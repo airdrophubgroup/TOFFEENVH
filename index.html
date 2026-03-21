@@ -6,45 +6,29 @@
     <title>TOFFEENVH - Rewards</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; --gold: #ffd700; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; }
-        .container { max-width: 450px; margin: 10px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .balance-card { background: #0f172a; padding: 18px; border-radius: 18px; margin: 12px 0; border: 1px solid var(--primary); }
-        .btn-withdraw { background: var(--success); color: white; display: none; margin-top: 15px; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; border: none; cursor: pointer; }
-        input { width: 85%; padding: 14px; margin: 8px 0; border-radius: 12px; background: #0f172a; color: white; border: 2px solid #334155; font-size: 16px; outline: none; text-transform: uppercase; }
-        button { width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; }
-        .btn-wallet { background: var(--accent); color: #0f172a; }
-        .btn-claim { background: var(--primary); color: #0f172a; }
-        #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #020617; border: 2px dashed var(--error); border-radius: 20px; text-align: left; }
-        .leaderboard { background: #020617; border-radius: 18px; padding: 15px; margin: 15px 0; border: 1px solid var(--gold); font-size: 12px; }
-        .rank-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1e293b; }
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; }
+        .container { max-width: 400px; margin: auto; background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #334155; }
+        .btn-wallet { background: var(--accent); color: #0f172a; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; }
+        .btn-withdraw { background: var(--success); color: white; display: none; margin-top: 15px; width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
+        #userUI { display: none; margin-top: 20px; }
+        .balance-card { background: #0f172a; padding: 20px; border-radius: 15px; border: 1px solid var(--primary); margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 style="color: var(--primary); margin:0;">🍬 TOFFEENVH</h1>
+    <h1 style="color: var(--primary);">🍬 TOFFEENVH</h1>
     
     <button id="walletBtn" class="btn-wallet" onclick="connectWallet()">🔑 CONNECT WALLET</button>
 
-    <div id="userUI" style="display:none;">
+    <div id="userUI">
         <div class="balance-card">
-            <span id="balText" style="font-size: 24px; font-weight: bold; color: var(--primary);">0 TOFFEE</span>
+            <span id="balText" style="font-size: 22px; font-weight: bold; color: var(--primary);">0 TOFFEE</span>
             <button id="withdrawBtn" class="btn-withdraw" onclick="requestCashOut()">🚀 WITHDRAW 500 (CASH)</button>
         </div>
-
-        <input type="text" id="codeInput" placeholder="ENTER WRAPPER CODE">
-        <button class="btn-claim" onclick="processClaim()">💰 CLAIM 10 TOKENS</button>
-
-        <div class="leaderboard">
-            <h3 style="margin: 0 0 10px 0; color: var(--gold); font-size: 14px;">🏆 TOP 5 KINGS</h3>
-            <div id="leaderboardList">Loading...</div>
-        </div>
-    </div>
-
-    <div id="adminPanel">
-        <h3 style="color: #f43f5e; margin: 0 0 10px 0;">👨‍💻 ADMIN DASHBOARD</h3>
-        <div id="reqList" style="font-size: 12px;">No requests.</div>
+        <input type="text" id="codeInput" placeholder="ENTER CODE" style="width:80%; padding:12px; border-radius:10px; margin-bottom:10px;">
+        <button onclick="processClaim()" style="background:var(--primary); width:100%; padding:15px; border-radius:12px; border:none; font-weight:bold;">CLAIM 10 TOKENS</button>
     </div>
 </div>
 
@@ -52,113 +36,45 @@
     const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
     const db = supabase.createClient(SB_URL, SB_KEY);
-    const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
     let userWallet = "";
-    let userBalance = 0;
 
     async function connectWallet() {
-        // --- Wallet Detection Fix ---
-        if (typeof window.ethereum !== 'undefined') {
+        // --- MOBILE FIX: Agar Chrome mein hai toh MetaMask App kholo ---
+        if (window.ethereum) {
             try {
                 const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 userWallet = accs[0].toLowerCase();
-                
-                document.getElementById("walletBtn").innerText = "ID: " + userWallet.substring(0,8) + "...";
+                document.getElementById("walletBtn").innerText = "CONNECTED";
                 document.getElementById("userUI").style.display = "block";
-                
-                if(userWallet === ADMIN_WALLET) {
-                    document.getElementById("adminPanel").style.display = "block";
-                    loadAdminPanel();
-                }
-                refreshData();
-            } catch (err) {
-                console.error(err);
-                alert("Connection rejected! Please approve in MetaMask.");
-            }
+                loadBalance();
+            } catch (e) { alert("Please allow connection!"); }
         } else {
-            alert("🦊 Wallet Not Found! Please open this site INSIDE MetaMask App Browser.");
-            // Mobile users ko seedhe MetaMask browser ka link dikhana behtar hota hai
+            // DEEP LINK: Ye user ko MetaMask App ke andar website par bhej dega
+            alert("Opening in MetaMask App...");
             window.location.href = "https://metamask.app.link/dapp/toffeenvh.vercel.app/";
         }
     }
 
-    async function refreshData() {
-        if(!userWallet) return;
+    async function loadBalance() {
         const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-        userBalance = data ? data.pending_balance : 0;
-        document.getElementById("balText").innerText = userBalance + " TOFFEE";
+        const bal = data ? data.pending_balance : 0;
+        document.getElementById("balText").innerText = bal + " TOFFEE";
         
-        // Show/Hide Withdraw Button
-        const wBtn = document.getElementById("withdrawBtn");
-        if(userBalance >= 500) { wBtn.style.display = "block"; } 
-        else { wBtn.style.display = "none"; }
-
-        loadLeaderboard();
-    }
-
-    async function processClaim() {
-        const input = document.getElementById("codeInput");
-        const code = input.value.trim().toUpperCase();
-        if(!code) return alert("Enter Code!");
-
-        const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-        if(!valid) return alert("Invalid or Used Code!");
-
-        const { error } = await db.from('user_balances').upsert({ 
-            wallet_address: userWallet, 
-            pending_balance: userBalance + 10, 
-            is_withdrawn: false 
-        }, { onConflict: 'wallet_address' });
-
-        if(!error) {
-            await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-            await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
-            alert("✅ 10 Tokens Claimed!");
-            input.value = "";
-            refreshData();
+        // Button Logic: Agar 500+ hai toh dikhao
+        if (bal >= 500) {
+            document.getElementById("withdrawBtn").style.display = "block";
         }
     }
 
     async function requestCashOut() {
-        const confirmReq = confirm("Request 500 TOFFEE Cash-out?");
-        if(!confirmReq) return;
-
         const { error } = await db.from('withdrawals').insert([{ 
             wallet_address: userWallet, 
             amount: 500, 
             status: 'pending',
             product_name: 'CASH WITHDRAWAL' 
         }]);
-
-        if(!error) {
-            alert("🚀 Request Sent to Admin!");
-            refreshData();
-        }
+        if (!error) alert("🚀 Request Sent!");
     }
-
-    async function loadLeaderboard() {
-        const { data } = await db.from('used_codes').select('user_wallet');
-        const counts = {};
-        data?.forEach(i => counts[i.user_wallet] = (counts[i.user_wallet] || 0) + 1);
-        const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
-        let h = "";
-        sorted.forEach((e, i) => h += `<div class="rank-item"><span>#${i+1} ${e[0].slice(0,6)}</span><b>${e[1]} Scans</b></div>`);
-        document.getElementById("leaderboardList").innerHTML = h || "No scans yet.";
-    }
-
-    async function loadAdminPanel() {
-        const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
-        let html = "<b>Pending Requests:</b><br>";
-        if(reqs?.length > 0) {
-            reqs.forEach(r => html += `<div style='background:#111827; padding:8px; margin-top:5px; border-radius:8px;'>
-                User: ${r.wallet_address.slice(0,10)}... | Item: ${r.product_name}<br>
-                <button onclick="approveAdmin(${r.id}, '${r.wallet_address}')" style="background:var(--success); color:white; padding:4px; margin-top:5px; border-radius:4px; font-size:10px;">MARK PAID</button>
-            </div>`);
-        } else { html += "No requests."; }
-        document.getElementById("reqList").innerHTML = html;
-    }
-
-    async function approveAdmin(id, userAddr) {
-        await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
-        const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userAddr).single();
-        await db.from('user_balances
+</script>
+</body>
+</html>
