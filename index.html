@@ -15,13 +15,12 @@
         .btn-wallet { background: var(--accent); color: #0f172a; }
         .btn-claim { background: var(--primary); color: #0f172a; }
         .btn-withdraw { background: var(--success); color: white; display: none; }
+        .btn-logout { background: #334155; color: white; font-size: 11px; padding: 8px; width: auto; margin-top: 10px; }
         input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; background: #0f172a; color: white; border: 1px solid #334155; box-sizing: border-box; outline: none; }
         
-        /* New Coming Soon Section Style */
-        .coming-soon-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px; border-radius: 18px; margin-top: 20px; border: 1px dashed var(--accent); position: relative; overflow: hidden; }
+        .coming-soon-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px; border-radius: 18px; margin-top: 20px; border: 1px dashed var(--accent); }
         .coming-soon-card h3 { color: var(--accent); margin: 0 0 10px 0; font-size: 18px; }
-        .coming-soon-card p { font-size: 13px; color: #94a3b8; line-height: 1.5; margin: 5px 0; }
-        .badge { background: var(--accent); color: #0f172a; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; vertical-align: middle; }
+        .badge { background: var(--accent); color: #0f172a; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; }
         
         #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #020617; border: 2px dashed var(--error); border-radius: 20px; text-align: left; }
         .rank-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #1e293b; font-size: 13px; }
@@ -44,13 +43,12 @@
 
         <div class="coming-soon-card">
             <h3>🎁 REWARDS STORE <span class="badge">COMING SOON</span></h3>
-            <p>Exchange your <b>TOFFEE</b> coins for amazing products!</p>
-            <p style="color: var(--primary);">🎧 Neckbands • 🎮 Games • 🧸 Toys • ⚡ And More!</p>
-            <hr style="border: 0; border-top: 1px solid #334155; margin: 10px 0;">
-            <p style="font-style: italic; font-size: 11px; color: var(--gold);">🎰 Spin & Win feature is also coming back soon!</p>
+            <p style="font-size: 13px; color: #94a3b8;">Exchange coins for Neckbands, Games & Toys!</p>
+            <p style="font-style: italic; font-size: 11px; color: var(--gold); margin-top:10px;">🎰 Spin & Win feature will be back shortly!</p>
         </div>
 
         <div id="leaderboardList" style="margin-top:20px;"></div>
+        <button class="btn-logout" onclick="location.reload()">🔄 SWITCH WALLET / LOGOUT</button>
     </div>
 
     <div id="adminPanel">
@@ -63,4 +61,109 @@
 
 <script>
     const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
+    const db = supabase.createClient(SB_URL, SB_KEY);
+    const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
+    
+    let userWallet = "";
+    let userBalance = 0;
+
+    async function connectWallet() {
+        const btn = document.getElementById("walletBtn");
+        try {
+            if (window.ethereum) {
+                // Requesting account with a fallback for stuck requests
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (accounts.length > 0) {
+                    userWallet = accounts[0].toLowerCase();
+                    btn.innerText = "CONNECTED: " + userWallet.substring(0,8);
+                    btn.style.background = "#10b981";
+                    document.getElementById("userUI").style.display = "block";
+                    
+                    if (userWallet === ADMIN_WALLET.toLowerCase()) {
+                        document.getElementById("adminPanel").style.display = "block";
+                    }
+                    refreshData();
+                }
+            } else {
+                window.location.href = "https://metamask.app.link/dapp/toffeenvh.vercel.app/";
+            }
+        } catch (e) {
+            alert("Connection Failed! Please unlock MetaMask.");
+            console.error(e);
+        }
+    }
+
+    async function refreshData() {
+        if(!userWallet) return;
+        try {
+            const { data: bData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+            userBalance = bData ? bData.pending_balance : 0;
+            document.getElementById("balText").innerText = userBalance + " TOFFEE";
+            
+            const wBtn = document.getElementById("withdrawBtn");
+            if(userBalance >= 500) {
+                wBtn.style.display = "block";
+                const { data: p } = await db.from('withdrawals').select('id').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
+                wBtn.disabled = !!p;
+                wBtn.innerText = p ? "⏳ PENDING..." : "🚀 WITHDRAW 500 (CASH)";
+            } else wBtn.style.display = "none";
+
+            loadLeaderboard();
+        } catch (e) { console.log("Sync Error"); }
+    }
+
+    async function processClaim() {
+        const btn = document.getElementById("claimBtn");
+        const codeInput = document.getElementById("codeInput");
+        const code = codeInput.value.trim().toUpperCase();
+        if(!code || btn.disabled) return;
+
+        btn.disabled = true;
+        btn.innerText = "⌛ CHECKING...";
+
+        try {
+            const { data: valid, error } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
+            if (error || !valid) throw new Error("Invalid or Used Code!");
+
+            const newBal = userBalance + 10;
+            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newBal }, { onConflict: 'wallet_address' });
+            await db.from('valid_codes').update({ is_used: true }).eq('code', code);
+            await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
+
+            userBalance = newBal;
+            alert("✅ Success! 10 TOFFEE Added.");
+            codeInput.value = "";
+            refreshData(); 
+        } catch (e) { 
+            alert(e.message); 
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "💰 CLAIM 10 TOKENS";
+        }
+    }
+
+    async function uploadCodes() {
+        const input = document.getElementById("newCodesInput").value;
+        const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false })).filter(c => c.code !== "");
+        if(codes.length === 0) return;
+        try {
+            await db.from('valid_codes').insert(codes);
+            alert("✅ Uploaded!");
+            document.getElementById("newCodesInput").value = "";
+        } catch (e) { alert("Upload error!"); }
+    }
+
+    async function loadLeaderboard() {
+        try {
+            const { data } = await db.from('used_codes').select('user_wallet');
+            const counts = {}; data?.forEach(i => counts[i.user_wallet] = (counts[i.user_wallet] || 0) + 1);
+            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
+            let h = "<b>🏆 TOP 5 WRAPPERS</b>";
+            sorted.forEach((e, i) => h += `<div class="rank-item"><span>#${i+1} ${e[0].slice(0,6)}...</span><b>${e[1]}</b></div>`);
+            document.getElementById("leaderboardList").innerHTML = h;
+        } catch (e) { }
+    }
+</script>
+</body>
+</html>
