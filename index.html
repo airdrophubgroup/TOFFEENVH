@@ -37,9 +37,9 @@
         <button id="claimBtn" class="btn-claim" onclick="processClaim()">💰 CLAIM 10 TOKENS</button>
 
         <div id="spinContainer" class="balance-card" style="border-color: var(--accent); margin-top: 20px;">
-            <p id="spinStatus" style="font-size:11px; margin:0; color:var(--accent);">Daily Spin: Scan wrapper first!</p>
+            <p id="spinStatus" style="font-size:11px; margin:0; color:var(--accent);">🔒 Daily Spin: Scan 1 wrapper first!</p>
             <div id="wheel"></div>
-            <button id="spinBtn" class="btn-wallet" onclick="handleSpin()">🎰 SPIN NOW</button>
+            <button id="spinBtn" class="btn-wallet" onclick="handleSpin()" disabled style="opacity:0.5;">🎰 SPIN NOW</button>
         </div>
         <div id="leaderboardList" style="margin-top:20px;"></div>
     </div>
@@ -80,10 +80,14 @@
     async function refreshData() {
         if(!userWallet) return;
         try {
+            const today = new Date().toISOString().split('T')[0];
+
+            // 1. Balance Fetch
             const { data: bData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
             userBalance = bData ? bData.pending_balance : 0;
             document.getElementById("balText").innerText = userBalance + " TOFFEE";
             
+            // 2. Withdrawal Check
             const wBtn = document.getElementById("withdrawBtn");
             if(userBalance >= 500) {
                 wBtn.style.display = "block";
@@ -91,33 +95,63 @@
                 wBtn.disabled = !!p;
                 wBtn.innerText = p ? "⏳ PENDING..." : "🚀 WITHDRAW 500 (CASH)";
             } else wBtn.style.display = "none";
+
+            // 3. Spin Logic (Strict Check)
+            const { data: alreadySpun } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', today).maybeSingle();
+            
+            const spinBtn = document.getElementById("spinBtn");
+            const spinStatus = document.getElementById("spinStatus");
+
+            if (alreadySpun) {
+                spinStatus.innerText = "✅ Today's Spin Completed!";
+                spinStatus.style.color = "#10b981";
+                spinBtn.style.display = "none";
+            } else {
+                const { data: scanToday } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).neq('code', 'DAILY_SPIN_DONE').gte('created_at', today).limit(1);
+                
+                if (scanToday && scanToday.length > 0) {
+                    spinStatus.innerText = "🔓 Spin Unlocked! Good Luck.";
+                    spinStatus.style.color = "#10b981";
+                    spinBtn.disabled = false;
+                    spinBtn.style.opacity = "1";
+                } else {
+                    spinStatus.innerText = "🔒 Daily Spin: Scan 1 wrapper first!";
+                    spinStatus.style.color = "#f59e0b";
+                    spinBtn.disabled = true;
+                    spinBtn.style.opacity = "0.5";
+                }
+            }
             loadLeaderboard();
-        } catch (e) { console.log("Refresh fail"); }
+        } catch (e) { console.log("Sync Error"); }
     }
 
     async function processClaim() {
         const btn = document.getElementById("claimBtn");
-        const code = document.getElementById("codeInput").value.trim().toUpperCase();
+        const codeInput = document.getElementById("codeInput");
+        const code = codeInput.value.trim().toUpperCase();
         if(!code || btn.disabled) return;
 
         btn.disabled = true;
         btn.innerText = "⌛ CHECKING...";
 
         try {
-            const { data: valid, error: e1 } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-            if(e1 || !valid) throw new Error("Invalid or Used Code!");
+            const { data: valid, error } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
+            if (error || !valid) throw new Error("Invalid or Used Code!");
 
-            // Sequential updates for mobile stability
-            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' });
+            const newBal = userBalance + 10;
+            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newBal }, { onConflict: 'wallet_address' });
             await db.from('valid_codes').update({ is_used: true }).eq('code', code);
             await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
 
+            userBalance = newBal;
             alert("✅ Success! 10 TOFFEE Added.");
-            document.getElementById("codeInput").value = "";
-            refreshData();
-        } catch (e) { alert(e.message); }
-        btn.disabled = false;
-        btn.innerText = "💰 CLAIM 10 TOKENS";
+            codeInput.value = "";
+            refreshData(); 
+        } catch (e) { 
+            alert(e.message); 
+            btn.disabled = false;
+            btn.innerText = "💰 CLAIM 10 TOKENS";
+        }
     }
 
     async function handleSpin() {
@@ -126,34 +160,45 @@
         const today = new Date().toISOString().split('T')[0];
 
         try {
-            const { data: scanToday } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).neq('code', 'DAILY_SPIN_DONE').gte('created_at', today).maybeSingle();
-            if(!scanToday) throw new Error("Pehle aaj ek wrapper scan karein!");
+            sBtn.disabled = true;
+            sBtn.innerText = "⌛ VALIDATING...";
 
             const { data: already } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', today).maybeSingle();
             if(already) throw new Error("Aaj ka spin ho gaya!");
 
             isSpinning = true;
-            sBtn.disabled = true;
-            document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+1800}deg)`;
+            sBtn.innerText = "🎰 SPINNING...";
+            document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+3600}deg)`;
 
             setTimeout(async () => {
+                const newBal = userBalance + 10;
                 await db.from('used_codes').insert([{ code: 'DAILY_SPIN_DONE', user_wallet: userWallet }]);
-                await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' });
-                alert("🎉 Won 10 TOFFEE!");
+                await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newBal }, { onConflict: 'wallet_address' });
+                
+                userBalance = newBal;
+                alert("🎉 Spin Win: 10 TOFFEE Added!");
                 isSpinning = false;
                 refreshData();
             }, 4000);
-        } catch (e) { alert(e.message); sBtn.disabled = false; }
+        } catch (e) { 
+            alert(e.message); 
+            sBtn.disabled = false;
+            sBtn.innerText = "🎰 SPIN NOW";
+        }
     }
 
     async function uploadCodes() {
+        const btn = document.getElementById("uploadBtn");
         const input = document.getElementById("newCodesInput").value;
         const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false })).filter(c => c.code !== "");
         if(codes.length === 0) return;
+        btn.disabled = true;
         try {
-            const { error } = await db.from('valid_codes').insert(codes);
-            if(!error) { alert("✅ Uploaded!"); document.getElementById("newCodesInput").value = ""; }
+            await db.from('valid_codes').insert(codes);
+            alert("✅ Uploaded!");
+            document.getElementById("newCodesInput").value = "";
         } catch (e) { alert("Upload error!"); }
+        btn.disabled = false;
     }
 
     async function loadLeaderboard() {
