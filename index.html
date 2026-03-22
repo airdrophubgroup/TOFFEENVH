@@ -6,7 +6,7 @@
     <title>TOFFEENVH - Rewards</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; }
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; --gold: #ffd700; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; }
         .container { max-width: 450px; margin: 10px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .balance-card { background: #0f172a; padding: 18px; border-radius: 18px; margin: 12px 0; border: 1px solid var(--primary); }
@@ -16,7 +16,13 @@
         .btn-claim { background: var(--primary); color: #0f172a; }
         .btn-withdraw { background: var(--success); color: white; display: none; }
         input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; background: #0f172a; color: white; border: 1px solid #334155; box-sizing: border-box; outline: none; }
-        #wheel { width: 120px; height: 120px; border: 4px solid var(--accent); border-radius: 50%; margin: 15px auto; transition: 4s cubic-bezier(0.15, 0, 0.15, 1); background: conic-gradient(#38bdf8 0deg 72deg, #1e293b 72deg 144deg, #10b981 144deg 216deg, #f59e0b 216deg 288deg, #ef4444 288deg 360deg); }
+        
+        /* New Coming Soon Section Style */
+        .coming-soon-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px; border-radius: 18px; margin-top: 20px; border: 1px dashed var(--accent); position: relative; overflow: hidden; }
+        .coming-soon-card h3 { color: var(--accent); margin: 0 0 10px 0; font-size: 18px; }
+        .coming-soon-card p { font-size: 13px; color: #94a3b8; line-height: 1.5; margin: 5px 0; }
+        .badge { background: var(--accent); color: #0f172a; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; vertical-align: middle; }
+        
         #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #020617; border: 2px dashed var(--error); border-radius: 20px; text-align: left; }
         .rank-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #1e293b; font-size: 13px; }
     </style>
@@ -36,11 +42,14 @@
         <input type="text" id="codeInput" placeholder="ENTER WRAPPER CODE">
         <button id="claimBtn" class="btn-claim" onclick="processClaim()">💰 CLAIM 10 TOKENS</button>
 
-        <div id="spinContainer" class="balance-card" style="border-color: var(--accent); margin-top: 20px;">
-            <p id="spinStatus" style="font-size:11px; margin:0; color:var(--accent);">🔒 Daily Spin: Scan 1 wrapper first!</p>
-            <div id="wheel"></div>
-            <button id="spinBtn" class="btn-wallet" onclick="handleSpin()" disabled style="opacity:0.5;">🎰 SPIN NOW</button>
+        <div class="coming-soon-card">
+            <h3>🎁 REWARDS STORE <span class="badge">COMING SOON</span></h3>
+            <p>Exchange your <b>TOFFEE</b> coins for amazing products!</p>
+            <p style="color: var(--primary);">🎧 Neckbands • 🎮 Games • 🧸 Toys • ⚡ And More!</p>
+            <hr style="border: 0; border-top: 1px solid #334155; margin: 10px 0;">
+            <p style="font-style: italic; font-size: 11px; color: var(--gold);">🎰 Spin & Win feature is also coming back soon!</p>
         </div>
+
         <div id="leaderboardList" style="margin-top:20px;"></div>
     </div>
 
@@ -54,173 +63,4 @@
 
 <script>
     const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
-    const db = supabase.createClient(SB_URL, SB_KEY);
-    const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
-    
-    let userWallet = "";
-    let userBalance = 0;
-    let isSpinning = false;
-
-    async function connectWallet() {
-        try {
-            if (window.ethereum) {
-                const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                userWallet = accs[0].toLowerCase();
-                document.getElementById("walletBtn").innerText = "ID: " + userWallet.substring(0,10);
-                document.getElementById("userUI").style.display = "block";
-                if (userWallet === ADMIN_WALLET.toLowerCase()) document.getElementById("adminPanel").style.display = "block";
-                refreshData();
-            } else {
-                window.location.href = "https://metamask.app.link/dapp/toffeenvh.vercel.app/";
-            }
-        } catch (e) { alert("Connect Error!"); }
-    }
-
-    async function refreshData() {
-        if(!userWallet) return;
-        try {
-            const today = new Date().toISOString().split('T')[0];
-
-            const { data: bData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-            userBalance = bData ? bData.pending_balance : 0;
-            document.getElementById("balText").innerText = userBalance + " TOFFEE";
-            
-            const wBtn = document.getElementById("withdrawBtn");
-            if(userBalance >= 500) {
-                wBtn.style.display = "block";
-                const { data: p } = await db.from('withdrawals').select('id').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
-                wBtn.disabled = !!p;
-                wBtn.innerText = p ? "⏳ PENDING..." : "🚀 WITHDRAW 500 (CASH)";
-            } else wBtn.style.display = "none";
-
-            // Spin UI Logic
-            const { data: alreadySpun } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', today).maybeSingle();
-            
-            const spinBtn = document.getElementById("spinBtn");
-            const spinStatus = document.getElementById("spinStatus");
-
-            if (alreadySpun) {
-                spinStatus.innerText = "✅ Today's Spin Completed!";
-                spinStatus.style.color = "#10b981";
-                spinBtn.style.display = "none";
-            } else {
-                const { data: scanToday } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).neq('code', 'DAILY_SPIN_DONE').gte('created_at', today).limit(1);
-                
-                if (scanToday && scanToday.length > 0) {
-                    spinStatus.innerText = "🔓 Spin Unlocked! Good Luck.";
-                    spinStatus.style.color = "#10b981";
-                    spinBtn.disabled = false;
-                    spinBtn.style.opacity = "1";
-                } else {
-                    spinStatus.innerText = "🔒 Daily Spin: Scan 1 wrapper first!";
-                    spinStatus.style.color = "#f59e0b";
-                    spinBtn.disabled = true;
-                    spinBtn.style.opacity = "0.5";
-                }
-            }
-            loadLeaderboard();
-        } catch (e) { console.log("Refresh Error"); }
-    }
-
-    async function processClaim() {
-        const btn = document.getElementById("claimBtn");
-        const codeInput = document.getElementById("codeInput");
-        const code = codeInput.value.trim().toUpperCase();
-        if(!code || btn.disabled) return;
-
-        btn.disabled = true;
-        btn.innerText = "⌛ CHECKING...";
-
-        try {
-            const { data: valid, error } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-            if (error || !valid) throw new Error("Invalid or Used Code!");
-
-            const newBal = userBalance + 10;
-            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newBal }, { onConflict: 'wallet_address' });
-            await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-            await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
-
-            userBalance = newBal;
-            alert("✅ Success! 10 TOFFEE Added.");
-            codeInput.value = "";
-            refreshData(); 
-        } catch (e) { 
-            alert(e.message); 
-            btn.disabled = false;
-            btn.innerText = "💰 CLAIM 10 TOKENS";
-        }
-    }
-
-    async function handleSpin() {
-        if(isSpinning || !userWallet) return;
-        const sBtn = document.getElementById("spinBtn");
-        const today = new Date().toISOString().split('T')[0];
-
-        try {
-            sBtn.disabled = true;
-            sBtn.innerText = "⌛ CHECKING...";
-
-            // STRICT DATABASE CHECK
-            const { data: already } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', today).maybeSingle();
-            
-            if(already) {
-                alert("🚫 Aaj ka spin ho chuka hai!");
-                sBtn.style.display = "none";
-                return;
-            }
-
-            isSpinning = true;
-            sBtn.innerText = "🎰 SPINNING...";
-            document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+3600}deg)`;
-
-            setTimeout(async () => {
-                try {
-                    // PEHLE ENTRY MARO TAKI DUBAARA NA HO
-                    await db.from('used_codes').insert([{ code: 'DAILY_SPIN_DONE', user_wallet: userWallet }]);
-                    
-                    const newBal = userBalance + 10;
-                    await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newBal }, { onConflict: 'wallet_address' });
-                    
-                    userBalance = newBal;
-                    document.getElementById("balText").innerText = userBalance + " TOFFEE";
-                    alert("🎉 Spin Win: 10 TOFFEE Added!");
-                } catch(e) { alert("Error saving spin!"); }
-                
-                isSpinning = false;
-                refreshData();
-            }, 4000);
-        } catch (e) { 
-            alert(e.message); 
-            sBtn.disabled = false;
-            sBtn.innerText = "🎰 SPIN NOW";
-        }
-    }
-
-    async function uploadCodes() {
-        const btn = document.getElementById("uploadBtn");
-        const input = document.getElementById("newCodesInput").value;
-        const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false })).filter(c => c.code !== "");
-        if(codes.length === 0) return;
-        btn.disabled = true;
-        try {
-            await db.from('valid_codes').insert(codes);
-            alert("✅ Uploaded!");
-            document.getElementById("newCodesInput").value = "";
-        } catch (e) { alert("Upload error!"); }
-        btn.disabled = false;
-    }
-
-    async function loadLeaderboard() {
-        try {
-            const { data } = await db.from('used_codes').select('user_wallet').neq('code', 'DAILY_SPIN_DONE');
-            const counts = {}; data?.forEach(i => counts[i.user_wallet] = (counts[i.user_wallet] || 0) + 1);
-            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
-            let h = "<b>🏆 TOP 5 WRAPPERS</b>";
-            sorted.forEach((e, i) => h += `<div class="rank-item"><span>#${i+1} ${e[0].slice(0,6)}...</span><b>${e[1]}</b></div>`);
-            document.getElementById("leaderboardList").innerHTML = h;
-        } catch (e) { }
-    }
-</script>
-</body>
-</html>
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6
