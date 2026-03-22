@@ -82,12 +82,10 @@
         try {
             const today = new Date().toISOString().split('T')[0];
 
-            // 1. Balance Fetch
             const { data: bData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
             userBalance = bData ? bData.pending_balance : 0;
             document.getElementById("balText").innerText = userBalance + " TOFFEE";
             
-            // 2. Withdrawal Check
             const wBtn = document.getElementById("withdrawBtn");
             if(userBalance >= 500) {
                 wBtn.style.display = "block";
@@ -96,7 +94,7 @@
                 wBtn.innerText = p ? "⏳ PENDING..." : "🚀 WITHDRAW 500 (CASH)";
             } else wBtn.style.display = "none";
 
-            // 3. Spin Logic (Strict Check)
+            // Spin UI Logic
             const { data: alreadySpun } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', today).maybeSingle();
             
             const spinBtn = document.getElementById("spinBtn");
@@ -122,7 +120,7 @@
                 }
             }
             loadLeaderboard();
-        } catch (e) { console.log("Sync Error"); }
+        } catch (e) { console.log("Refresh Error"); }
     }
 
     async function processClaim() {
@@ -161,22 +159,34 @@
 
         try {
             sBtn.disabled = true;
-            sBtn.innerText = "⌛ VALIDATING...";
+            sBtn.innerText = "⌛ CHECKING...";
 
+            // STRICT DATABASE CHECK
             const { data: already } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', today).maybeSingle();
-            if(already) throw new Error("Aaj ka spin ho gaya!");
+            
+            if(already) {
+                alert("🚫 Aaj ka spin ho chuka hai!");
+                sBtn.style.display = "none";
+                return;
+            }
 
             isSpinning = true;
             sBtn.innerText = "🎰 SPINNING...";
             document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+3600}deg)`;
 
             setTimeout(async () => {
-                const newBal = userBalance + 10;
-                await db.from('used_codes').insert([{ code: 'DAILY_SPIN_DONE', user_wallet: userWallet }]);
-                await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newBal }, { onConflict: 'wallet_address' });
+                try {
+                    // PEHLE ENTRY MARO TAKI DUBAARA NA HO
+                    await db.from('used_codes').insert([{ code: 'DAILY_SPIN_DONE', user_wallet: userWallet }]);
+                    
+                    const newBal = userBalance + 10;
+                    await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: newBal }, { onConflict: 'wallet_address' });
+                    
+                    userBalance = newBal;
+                    document.getElementById("balText").innerText = userBalance + " TOFFEE";
+                    alert("🎉 Spin Win: 10 TOFFEE Added!");
+                } catch(e) { alert("Error saving spin!"); }
                 
-                userBalance = newBal;
-                alert("🎉 Spin Win: 10 TOFFEE Added!");
                 isSpinning = false;
                 refreshData();
             }, 4000);
