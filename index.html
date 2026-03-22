@@ -6,19 +6,20 @@
     <title>TOFFEENVH - Rewards</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; --gold: #ffd700; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; }
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; overflow-x: hidden; }
         .container { max-width: 450px; margin: 10px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .balance-card { background: #0f172a; padding: 18px; border-radius: 18px; margin: 12px 0; border: 1px solid var(--primary); }
         button { width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; margin: 5px 0; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; transform: scale(0.98); }
         .btn-wallet { background: var(--accent); color: #0f172a; }
         .btn-claim { background: var(--primary); color: #0f172a; }
         .btn-withdraw { background: var(--success); color: white; display: none; }
-        .btn-withdraw:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; }
-        input, textarea { width: 90%; padding: 12px; margin: 8px 0; border-radius: 10px; background: #0f172a; color: white; border: 1px solid #334155; outline: none; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; background: #0f172a; color: white; border: 1px solid #334155; box-sizing: border-box; }
         #wheel { width: 120px; height: 120px; border: 4px solid var(--accent); border-radius: 50%; margin: 15px auto; transition: 4s cubic-bezier(0.15, 0, 0.15, 1); background: conic-gradient(#38bdf8 0deg 72deg, #1e293b 72deg 144deg, #10b981 144deg 216deg, #f59e0b 216deg 288deg, #ef4444 288deg 360deg); }
         #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #020617; border: 2px dashed var(--error); border-radius: 20px; text-align: left; }
-        .rank-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #1e293b; font-size: 13px; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-right: 10px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -29,30 +30,26 @@
 
     <div id="userUI" style="display:none;">
         <div class="balance-card">
-            <span id="balText" style="font-size: 24px; font-weight: bold; color: var(--primary);">0 TOFFEE</span>
+            <div id="balText" style="font-size: 24px; font-weight: bold; color: var(--primary);">0 TOFFEE</div>
             <button id="withdrawBtn" class="btn-withdraw" onclick="requestCashOut()">🚀 WITHDRAW 500 (CASH)</button>
         </div>
 
         <input type="text" id="codeInput" placeholder="ENTER WRAPPER CODE">
-        <button class="btn-claim" onclick="processClaim()">💰 CLAIM 10 TOKENS</button>
+        <button id="claimBtn" class="btn-claim" onclick="processClaim()">💰 CLAIM 10 TOKENS</button>
 
         <div id="spinContainer" class="balance-card" style="border-color: var(--accent); margin-top: 20px;">
             <p id="spinStatus" style="font-size:11px; margin:0; color:var(--accent);">Daily Spin: Scan wrapper first!</p>
             <div id="wheel"></div>
             <button id="spinBtn" class="btn-wallet" style="padding: 10px;" onclick="handleSpin()">🎰 SPIN NOW</button>
         </div>
-
-        <div id="leaderboardList" style="margin-top:20px;"></div>
+        <div id="leaderboardList" style="margin-top:20px; font-size: 13px;"></div>
     </div>
 
     <div id="adminPanel">
         <h3 style="color: #f43f5e; margin: 0 0 10px 0;">👨‍💻 ADMIN DASHBOARD</h3>
-        <div id="adminStats" style="font-size:12px; margin-bottom:10px;"></div>
-        <div style="background:#1e293b; padding:10px; border-radius:12px; margin-bottom:15px;">
-            <textarea id="newCodesInput" placeholder="C001, C002..." rows="2" style="font-size:10px;"></textarea>
-            <button onclick="uploadCodes()" style="background:var(--primary); color:white; padding:5px; font-size:11px;">UPLOAD CODES</button>
-        </div>
-        <div id="reqList" style="font-size: 11px;"></div>
+        <textarea id="newCodesInput" placeholder="C001, C002..." rows="2"></textarea>
+        <button id="uploadBtn" onclick="uploadCodes()" style="background:var(--primary); color:white;">UPLOAD CODES</button>
+        <div id="reqList" style="margin-top:15px;"></div>
     </div>
 </div>
 
@@ -67,170 +64,103 @@
     let isSpinning = false;
 
     async function connectWallet() {
+        if (!window.ethereum) return window.location.href = "https://metamask.app.link/dapp/toffeenvh.vercel.app/";
         try {
-            if (window.ethereum) {
-                const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                userWallet = accs[0].toLowerCase();
-                document.getElementById("walletBtn").innerText = "ID: " + userWallet.substring(0,8);
-                document.getElementById("userUI").style.display = "block";
-                if (userWallet === ADMIN_WALLET) {
-                    document.getElementById("adminPanel").style.display = "block";
-                    loadAdminPanel();
-                }
-                refreshData();
-            } else {
-                window.location.href = "https://metamask.app.link/dapp/toffeenvh.vercel.app/";
-            }
-        } catch (e) { alert("Connection error!"); }
+            const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            userWallet = accs[0].toLowerCase();
+            document.getElementById("walletBtn").innerText = "ID: " + userWallet.substring(0,10);
+            document.getElementById("userUI").style.display = "block";
+            if (userWallet === ADMIN_WALLET.toLowerCase()) document.getElementById("adminPanel").style.display = "block";
+            refreshData();
+        } catch (e) { alert("Wallet error!"); }
     }
 
     async function refreshData() {
         if(!userWallet) return;
         try {
-            const today = new Date(); today.setHours(0,0,0,0);
-            const isoDate = today.toISOString();
-
             const { data: bData } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
             userBalance = bData ? bData.pending_balance : 0;
             document.getElementById("balText").innerText = userBalance + " TOFFEE";
             
             const wBtn = document.getElementById("withdrawBtn");
             if(userBalance >= 500) {
-                const { data: pending } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
                 wBtn.style.display = "block";
-                wBtn.disabled = !!pending;
-                wBtn.innerText = pending ? "⏳ REQUEST PENDING..." : "🚀 WITHDRAW 500 (CASH)";
-            } else { wBtn.style.display = "none"; }
-
-            const { data: spun } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', isoDate);
-            if (spun && spun.length > 0) {
-                document.getElementById("spinBtn").style.display = "none";
-                document.getElementById("spinStatus").innerText = "✅ Daily Spin Completed!";
-            } else {
-                document.getElementById("spinBtn").style.display = "block";
-                document.getElementById("spinStatus").innerText = "Daily Spin: Scan wrapper first!";
-            }
-            loadLeaderboard();
-        } catch (e) { console.error(e); }
+                const { data: p } = await db.from('withdrawals').select('id').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
+                wBtn.disabled = !!p;
+                wBtn.innerText = p ? "⏳ PENDING..." : "🚀 WITHDRAW 500 (CASH)";
+            } else wBtn.style.display = "none";
+        } catch (e) { console.error("Refresh Error"); }
     }
 
     async function processClaim() {
-        const input = document.getElementById("codeInput");
-        const code = input.value.trim().toUpperCase();
-        if(!code) return alert("Code dalein!");
+        const btn = document.getElementById("claimBtn");
+        const code = document.getElementById("codeInput").value.trim().toUpperCase();
+        if(!code || btn.disabled) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span> CHECKING...';
 
         try {
             const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-            if(!valid) return alert("Invalid or Used Code!");
+            if(!valid) throw new Error("Invalid or Used!");
 
-            const { error: balErr } = await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' });
-            if(balErr) throw balErr;
+            // Parallel Update for speed
+            await Promise.all([
+                db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' }),
+                db.from('valid_codes').update({ is_used: true }).eq('code', code),
+                db.from('used_codes').insert([{ code: code, user_wallet: userWallet }])
+            ]);
 
-            await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-            await db.from('used_codes').insert([{ code: code, user_wallet: userWallet }]);
-            
-            alert("✅ Claimed! 10 Tokens added.");
-            input.value = "";
+            alert("✅ Success! 10 TOFFEE added.");
+            document.getElementById("codeInput").value = "";
             refreshData();
-        } catch (err) { alert("Claim Error: " + err.message); }
+        } catch (e) { alert(e.message); }
+        btn.disabled = false;
+        btn.innerText = "💰 CLAIM 10 TOKENS";
     }
 
     async function handleSpin() {
-        if(!userWallet || isSpinning) return;
-        const today = new Date(); today.setHours(0,0,0,0);
-        const isoDate = today.toISOString();
-
+        if(isSpinning) return;
+        const sBtn = document.getElementById("spinBtn");
+        sBtn.disabled = true;
+        
         try {
+            const today = new Date().toISOString().split('T')[0];
+            const { data: already } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', today).maybeSingle();
+            
+            if(already) throw new Error("Aaj ka spin ho gaya!");
+
+            const { data: scanToday } = await db.from('used_codes').select('id').eq('user_wallet', userWallet).neq('code', 'DAILY_SPIN_DONE').gte('created_at', today).maybeSingle();
+            if(!scanToday) throw new Error("Pehle ek wrapper scan karein!");
+
             isSpinning = true;
-            const sBtn = document.getElementById("spinBtn");
-            sBtn.disabled = true;
-
-            const { data: scans } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).neq('code', 'DAILY_SPIN_DONE').gte('created_at', isoDate);
-            if (!scans || scans.length === 0) {
-                alert("❌ Lock: Pehle aaj ek wrapper scan karein!");
-                isSpinning = false; sBtn.disabled = false; return;
-            }
-
-            const { data: spunCheck } = await db.from('used_codes').select('*').eq('user_wallet', userWallet).eq('code', 'DAILY_SPIN_DONE').gte('created_at', isoDate);
-            if (spunCheck && spunCheck.length > 0) {
-                alert("🚫 Aaj ka spin ho chuka hai!");
-                isSpinning = false; refreshData(); return;
-            }
-
-            document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+2160}deg)`;
+            document.getElementById("wheel").style.transform = `rotate(${Math.floor(Math.random()*360)+1800}deg)`;
 
             setTimeout(async () => {
-                const { error: spinErr } = await db.from('used_codes').insert([{ code: 'DAILY_SPIN_DONE', user_wallet: userWallet }]);
-                if(!spinErr) {
-                    await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' });
-                    alert("🎉 Won 10 TOFFEE!");
-                }
+                await Promise.all([
+                    db.from('used_codes').insert([{ code: 'DAILY_SPIN_DONE', user_wallet: userWallet }]),
+                    db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' })
+                ]);
+                alert("🎉 Won 10 TOFFEE!");
                 isSpinning = false;
                 refreshData();
             }, 4000);
-        } catch (e) { isSpinning = false; sBtn.disabled = false; }
-    }
-
-    async function requestCashOut() {
-        const today = new Date(); today.setHours(0,0,0,0);
-        try {
-            const { data: exists } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).gte('created_at', today.toISOString());
-            if (exists && exists.length > 0) return alert("❌ Din mein ek hi limit hai!");
-
-            const { error } = await db.from('withdrawals').insert([{ wallet_address: userWallet, amount: 500, status: 'pending', product_name: 'CASH' }]);
-            if(!error) { alert("🚀 Request Sent!"); refreshData(); }
-        } catch (e) { alert("Withdraw error!"); }
-    }
-
-    async function loadAdminPanel() {
-        try {
-            const today = new Date(); today.setHours(0,0,0,0);
-            const { data: scns } = await db.from('used_codes').select('*').gte('created_at', today.toISOString()).neq('code', 'DAILY_SPIN_DONE');
-            document.getElementById("adminStats").innerHTML = `Today's Scans: <b>${scns?.length || 0}</b>`;
-            const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
-            let h = "";
-            reqs?.forEach(r => {
-                h += `<div style="background:#111827; padding:8px; margin-top:5px; border-radius:8px; font-size:10px;">
-                    ${r.wallet_address.slice(0,20)}... <button onclick="copyToClipboard('${r.wallet_address}')" style="background:#334155; color:#38bdf8; font-size:9px;">COPY</button>
-                    <button onclick="approveAdmin(${r.id}, '${r.wallet_address}')" style="background:var(--success); color:white; font-size:10px; margin-top:5px; width:100%;">MARK PAID & -500</button></div>`;
-            });
-            document.getElementById("reqList").innerHTML = h || "No pending requests.";
-        } catch (e) { console.error(e); }
-    }
-
-    async function approveAdmin(id, addr) {
-        if(!confirm("Deduct 500 and mark paid?")) return;
-        try {
-            const { data: user } = await db.from('user_balances').select('pending_balance').eq('wallet_address', addr).single();
-            if(user) {
-                await db.from('user_balances').update({ pending_balance: user.pending_balance - 500 }).eq('wallet_address', addr);
-                await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
-                alert("✅ PAID!"); loadAdminPanel(); refreshData();
-            }
-        } catch (e) { alert("Admin Update Failed!"); }
+        } catch (e) { alert(e.message); sBtn.disabled = false; }
     }
 
     async function uploadCodes() {
+        const btn = document.getElementById("uploadBtn");
         const input = document.getElementById("newCodesInput").value;
-        const codes = input.split(',').map(c => c.trim().toUpperCase()).filter(c => c !== "");
-        if(codes.length === 0) return alert("Codes likho!");
+        const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false })).filter(c => c.code !== "");
+        
+        if(codes.length === 0) return;
+        btn.disabled = true;
         try {
-            const { error } = await db.from('valid_codes').insert(codes.map(c => ({ code: c, is_used: false })));
+            const { error } = await db.from('valid_codes').insert(codes);
             if(!error) { alert("✅ Uploaded!"); document.getElementById("newCodesInput").value = ""; }
-        } catch (e) { alert("Upload error!"); }
-    }
-
-    function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert("Copied!")); }
-
-    async function loadLeaderboard() {
-        try {
-            const { data } = await db.from('used_codes').select('user_wallet').neq('code', 'DAILY_SPIN_DONE');
-            const counts = {}; data?.forEach(i => counts[i.user_wallet] = (counts[i.user_wallet] || 0) + 1);
-            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,5);
-            let h = "<b>🏆 TOP 5 WRAPPERS</b>";
-            sorted.forEach((e, i) => h += `<div class="rank-item"><span>#${i+1} ${e[0].slice(0,6)}...</span><b>${e[1]}</b></div>`);
-            document.getElementById("leaderboardList").innerHTML = h;
-        } catch (e) { }
+            else throw error;
+        } catch (e) { alert("Upload Failed!"); }
+        btn.disabled = false;
     }
 </script>
 </body>
