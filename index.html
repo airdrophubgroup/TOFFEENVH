@@ -2,225 +2,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TOFFEENVH - Rewards</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <title>Typing Fix Test</title>
     <style>
-        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; }
-        
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; line-height: 1.6; }
-        
-        .container { max-width: 450px; margin: 10px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        
-        .balance-card { background: #0f172a; padding: 18px; border-radius: 18px; margin: 12px 0; border: 1px solid var(--primary); }
-        
-        /* FIXED INPUT STYLING (For Better Typing) */
-        input, textarea { 
-            width: 100%; 
-            padding: 16px; 
-            margin: 12px 0; 
-            border-radius: 12px; 
-            background: #020617; 
-            color: white; 
-            border: 2px solid #334155; 
-            box-sizing: border-box; 
-            outline: none; 
-            font-size: 16px; /* Prevents auto-zoom on mobile */
-            position: relative;
-            z-index: 5;
-            display: block;
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-        input:focus { border-color: var(--primary); background: #0f172a; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
-
-        button { width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; margin: 8px 0; }
-        button:active { transform: scale(0.98); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .btn-wallet { background: var(--accent); color: #0f172a; }
-        .btn-claim { background: var(--primary); color: #0f172a; }
-        .btn-withdraw { background: var(--success); color: white; display: none; }
-
-        /* SECTIONS STYLING */
-        .info-card { text-align: left; margin-top: 25px; padding: 18px; background: rgba(15, 23, 42, 0.5); border-radius: 18px; border: 1px solid #334155; }
-        .info-card h3 { color: var(--primary); margin: 0 0 10px 0; font-size: 18px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
-        
-        .social-box { display: flex; justify-content: space-around; margin-top: 20px; padding: 15px; background: #020617; border-radius: 15px; border: 1px solid var(--primary); }
-        .social-box a { color: var(--text); text-decoration: none; font-size: 12px; font-weight: bold; display: flex; flex-direction: column; align-items: center; }
-        .social-box span { font-size: 24px; margin-bottom: 5px; }
-
-        .roadmap-item { font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; }
-        .roadmap-item::before { content: "🚀"; margin-right: 10px; }
-
-        .rewards-store { background: linear-gradient(145deg, #1e293b, #020617); padding: 15px; border-radius: 20px; margin-top: 25px; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .reward-items { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .item-box { background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 12px; border: 1px solid #334155; font-size: 12px; }
-        
-        #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #020617; border: 2px dashed var(--error); border-radius: 20px; text-align: left; }
-        footer { margin-top: 40px; padding-bottom: 30px; font-size: 11px; opacity: 0.6; }
+        .test-box {
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        /* HARD FIX FOR INPUT */
+        input {
+            width: 100%;
+            height: 60px; /* Bada tap area */
+            background: #1e293b !important;
+            border: 2px solid #38bdf8 !important;
+            border-radius: 12px;
+            color: white !important;
+            font-size: 18px !important; /* Force 16px+ for no zoom */
+            padding: 0 15px;
+            box-sizing: border-box;
+            outline: none;
+            /* Inset shadow se pata chalta hai focus hai */
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            
+            /* Disable any browser interference */
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            cursor: text !important;
+        }
+        input:focus {
+            background: #2d3e50 !important;
+            border-color: #f59e0b !important;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #38bdf8;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1 style="color: var(--primary); margin:0;">🍬 TOFFEENVH</h1>
-    <p style="font-size: 11px; color: var(--accent);">Physical Candy, Digital Wealth</p>
-
-    <button id="walletBtn" class="btn-wallet" onclick="connectWallet()">🔑 CONNECT WALLET</button>
-
-    <div id="userUI" style="display:none;">
-        <div class="balance-card">
-            <span id="balText" style="font-size: 28px; font-weight: bold; color: var(--primary);">0 TOFFEE</span>
-            <button id="withdrawBtn" class="btn-withdraw" onclick="requestWithdrawal()">🚀 WITHDRAW 500 (CASH)</button>
-        </div>
-
-        <input type="text" id="codeInput" placeholder="ENTER WRAPPER CODE HERE" autocomplete="off">
-        <button id="claimBtn" class="btn-claim" onclick="processClaim()">💰 CLAIM 10 TOKENS</button>
-
-        <div class="rewards-store">
-            <h3>🎁 STORE <small style="font-size:9px; background:var(--accent); color:black; padding:2px 5px; border-radius:4px;">SOON</small></h3>
-            <div class="reward-items">
-                <div class="item-box">🎧 Neckbands</div>
-                <div class="item-box">🎮 Games</div>
-            </div>
-        </div>
-        <button style="background:transparent; color:#64748b; font-size:11px; margin-top:10px;" onclick="location.reload()">🔄 Switch Wallet</button>
-    </div>
-
-    <div class="info-card">
-        <h3>📖 About Our Project</h3>
-        <p style="font-size: 14px; margin:0;">Nihal Vihar ke hamare Cyber Cafe se shuru hua ye project har meethi bite ko blockchain reward mein badal raha hai. Swaad bhi, Fayda bhi!</p>
-    </div>
-
-    <div class="info-card">
-        <h3>🚀 Roadmap</h3>
-        <div class="roadmap-item">QR Codes on Wrappers</div>
-        <div class="roadmap-item">Nihal Vihar Shop Network</div>
-        <div class="roadmap-item">Toffee Swap Launch</div>
-    </div>
-
-    <div class="social-box">
-        <a href="https://t.me/ToffeenVh" target="_blank"><span>✈️</span>Telegram</a>
-        <a href="https://x.com/ToffeenVh" target="_blank"><span>🐦</span>X (Twitter)</a>
-        <a href="https://www.youtube.com/@ToffeeTeam" target="_blank"><span>🎥</span>YouTube</a>
-    </div>
-
-    <div id="adminPanel">
-        <h3 style="color: var(--error);">👨‍💻 OWNER DASHBOARD</h3>
-        <textarea id="newCodesInput" placeholder="C001, C002..." rows="2"></textarea>
-        <button id="uploadBtn" onclick="uploadCodes()" style="background:var(--primary); color:white;">UPLOAD CODES</button>
-        <div id="reqList" style="font-size: 11px; margin-top:10px;"></div>
-    </div>
+<div class="test-box">
+    <label for="codeInput">YAHAN CLICK KAREIN (TYPING TEST):</label>
+    <input type="text" id="codeInput" placeholder="TYPE SOMETHING..." inputmode="text">
+    <p style="font-size: 12px; margin-top: 20px; color: #64748b;">
+        Agar yahan typing ho rahi hai, toh iska matlab purane code mein koi overlay (layer) input ko hide kar raha tha.
+    </p>
 </div>
 
-<footer>
-    <p>© 2026 ToffeeNVH | Nihal Vihar, Delhi</p>
-    <p>Powered by Celo Network</p>
-</footer>
-
 <script>
-    const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
-    const db = supabase.createClient(SB_URL, SB_KEY);
-    const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
-    
-    let userWallet = "";
-    let userBalance = 0;
-
-    async function connectWallet() {
-        try {
-            if (window.ethereum) {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                userWallet = accounts[0].toLowerCase();
-                document.getElementById("walletBtn").innerText = "ID: " + userWallet.substring(0,10);
-                document.getElementById("userUI").style.display = "block";
-                if (userWallet === ADMIN_WALLET.toLowerCase()) {
-                    document.getElementById("adminPanel").style.display = "block";
-                    loadAdminRequests();
-                }
-                refreshData();
-            } else {
-                window.location.href = "https://metamask.app.link/dapp/toffeenvh.vercel.app/";
-            }
-        } catch (e) { alert("Wallet Error!"); }
-    }
-
-    async function refreshData() {
-        if(!userWallet) return;
-        try {
-            const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-            userBalance = data ? data.pending_balance : 0;
-            document.getElementById("balText").innerText = userBalance + " TOFFEE";
-            
-            const wBtn = document.getElementById("withdrawBtn");
-            if(userBalance >= 500) {
-                const { data: pending } = await db.from('withdrawals').select('id').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
-                wBtn.style.display = "block";
-                wBtn.disabled = !!pending;
-                wBtn.innerText = pending ? "⏳ REQUEST SENT" : "🚀 WITHDRAW 500 (CASH)";
-            } else { wBtn.style.display = "none"; }
-        } catch (e) { console.error("Sync Error"); }
-    }
-
-    async function processClaim() {
-        const btn = document.getElementById("claimBtn");
-        const codeInput = document.getElementById("codeInput");
-        const code = codeInput.value.trim().toUpperCase();
-        if(!code || btn.disabled) return;
-        btn.disabled = true;
-        btn.innerText = "⌛ CHECKING...";
-        try {
-            const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-            if (!valid) throw new Error("Invalid or Used Code!");
-
-            await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 }, { onConflict: 'wallet_address' });
-            await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-            
-            alert("✅ 10 TOFFEE Added!");
-            codeInput.value = "";
-            refreshData(); 
-        } catch (e) { alert(e.message); }
-        btn.disabled = false;
-        btn.innerText = "💰 CLAIM 10 TOKENS";
-    }
-
-    async function requestWithdrawal() {
-        const btn = document.getElementById("withdrawBtn");
-        btn.disabled = true;
-        try {
-            await db.from('withdrawals').insert([{ wallet_address: userWallet, amount: 500, status: 'pending' }]);
-            alert("🚀 Request sent to Owner!");
-            refreshData();
-        } catch (e) { alert("Error!"); btn.disabled = false; }
-    }
-
-    async function loadAdminRequests() {
-        const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
-        let h = "";
-        reqs?.forEach(r => {
-            h += `<div style="background:#1e293b; padding:10px; border-radius:10px; margin-top:5px; border-left:4px solid var(--success);">
-                User: ${r.wallet_address.substring(0,10)}... <button onclick="approveWithdrawal(${r.id}, '${r.wallet_address}')" style="width:auto; padding:5px; font-size:10px;">MARK PAID</button>
-            </div>`;
+    // Force focus on load for testing
+    window.onload = () => {
+        const input = document.getElementById('codeInput');
+        input.addEventListener('touchstart', function() {
+            input.focus();
         });
-        document.getElementById("reqList").innerHTML = h || "No requests.";
-    }
-
-    async function approveWithdrawal(id, address) {
-        if(!confirm("Deduct 500 from user?")) return;
-        const { data: user } = await db.from('user_balances').select('pending_balance').eq('wallet_address', address).single();
-        await db.from('user_balances').update({ pending_balance: user.pending_balance - 500 }).eq('wallet_address', address);
-        await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
-        alert("DONE!");
-        loadAdminRequests();
-        refreshData();
-    }
-
-    async function uploadCodes() {
-        const input = document.getElementById("newCodesInput").value;
-        const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false })).filter(c => c.code !== "");
-        await db.from('valid_codes').insert(codes);
-        alert("Uploaded!");
-        document.getElementById("newCodesInput").value = "";
-    }
+    };
 </script>
+
 </body>
 </html>
