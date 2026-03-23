@@ -2,74 +2,86 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>TOFFEENVH - Rewards</title>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; }
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --accent: #f59e0b; }
         
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; line-height: 1.6; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
         
-        .container { max-width: 450px; margin: 10px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); position: relative; }
-        
-        .balance-card { background: #0f172a; padding: 18px; border-radius: 18px; margin: 12px 0; border: 1px solid var(--primary); }
-        
-        /* 🚨 METAMASK TYPING FIX 🚨 */
-        input#codeInput, textarea { 
-            width: 100% !important; height: 55px !important; margin: 12px 0 !important; border-radius: 12px !important; 
-            background: #020617 !important; color: #ffffff !important; border: 2px solid #334155 !important; 
-            box-sizing: border-box !important; outline: none !important; font-size: 16px !important;
-            position: relative !important; z-index: 9999 !important; pointer-events: auto !important;
-        }
-        input#codeInput:focus { border-color: var(--primary) !important; background: #0f172a !important; }
+        /* Container settings */
+        .container { max-width: 450px; margin: 10px auto; background: var(--card); padding: 20px; border-radius: 24px; border: 1px solid #334155; position: relative; z-index: 1; }
 
-        button { width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; margin: 8px 0; position: relative; z-index: 10; }
-        button:active { transform: scale(0.96); }
-        
+        /* 🚨 THE ULTIMATE METAMASK INPUT FIX 🚨 */
+        .input-wrapper {
+            position: relative;
+            margin: 20px 0;
+            width: 100%;
+            z-index: 99999 !important; /* Extremely high z-index */
+        }
+
+        input#codeInput {
+            width: 100% !important;
+            height: 60px !important;
+            background: #020617 !important;
+            color: #ffffff !important;
+            border: 3px solid var(--primary) !important;
+            border-radius: 15px !important;
+            font-size: 18px !important; /* Bigger font to prevent zoom */
+            padding: 0 15px !important;
+            box-sizing: border-box !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            /* Force focus ability */
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            cursor: text !important;
+        }
+
+        /* Highlight when focused */
+        input#codeInput:focus {
+            border-color: var(--accent) !important;
+            background: #0f172a !important;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        button { width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; margin: 10px 0; }
         .btn-wallet { background: var(--accent); color: #0f172a; }
-        .btn-claim { background: var(--primary); color: #0f172a; }
+        .btn-claim { background: var(--primary); color: #0f172a; font-size: 16px; }
         .btn-withdraw { background: var(--success); color: white; display: none; }
 
-        /* SECTIONS */
-        .info-card { text-align: left; margin-top: 25px; padding: 18px; background: rgba(15, 23, 42, 0.5); border-radius: 18px; border: 1px solid #334155; }
-        .info-card h3 { color: var(--primary); margin: 0 0 10px 0; font-size: 18px; }
-
+        /* Dashboard & Socials */
+        .balance-card { background: #0f172a; padding: 20px; border-radius: 18px; border: 1px solid var(--primary); margin-bottom: 15px; }
         .social-box { display: flex; justify-content: space-around; margin-top: 20px; padding: 15px; background: #020617; border-radius: 15px; border: 1px solid var(--primary); }
-        .social-box a { color: var(--text); text-decoration: none; font-size: 12px; font-weight: bold; display: flex; flex-direction: column; align-items: center; }
-        .social-box span { font-size: 24px; margin-bottom: 5px; }
-
-        /* ADMIN STYLE */
+        .social-box a { color: var(--text); text-decoration: none; font-size: 12px; display: flex; flex-direction: column; align-items: center; }
+        
         #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #020617; border: 2px dashed var(--error); border-radius: 20px; text-align: left; }
         .req-card { background: #1e293b; padding: 12px; border-radius: 12px; margin-top: 10px; border-left: 4px solid var(--success); }
-        .copy-btn { background: #334155; color: white; padding: 5px 10px; border-radius: 6px; font-size: 10px; cursor: pointer; border: none; width: auto; display: inline-block; margin-left: 5px; }
-
-        footer { margin-top: 40px; padding-bottom: 30px; font-size: 11px; opacity: 0.6; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1 style="color: var(--primary); margin:0;">🍬 TOFFEENVH</h1>
-    <p style="font-size: 11px; color: var(--accent);">Nihal Vihar's Digital Sweet Reward 🚀</p>
+    <p style="font-size: 11px; color: var(--accent); margin-bottom: 20px;">Nihal Vihar's Digital Sweet Reward</p>
 
     <button id="walletBtn" class="btn-wallet" onclick="connectWallet()">🔑 CONNECT WALLET</button>
 
     <div id="userUI" style="display:none;">
         <div class="balance-card">
-            <span id="balText" style="font-size: 28px; font-weight: bold; color: var(--primary);">0 TOFFEE</span>
+            <span id="balText" style="font-size: 32px; font-weight: bold; color: var(--primary);">0 TOFFEE</span>
             <button id="withdrawBtn" class="btn-withdraw" onclick="requestWithdrawal()">🚀 WITHDRAW 500</button>
         </div>
 
-        <input type="text" id="codeInput" placeholder="CLICK TO ENTER CODE" inputmode="text" autocomplete="off">
+        <div class="input-wrapper">
+            <input type="text" id="codeInput" placeholder="TAP HERE TO TYPE CODE" inputmode="text" autocomplete="off">
+        </div>
+        
         <button id="claimBtn" class="btn-claim" onclick="processClaim()">💰 CLAIM 10 TOKENS</button>
-    </div>
-
-    <div class="info-card">
-        <h3>📖 About Us</h3>
-        <p style="font-size: 13px; margin:0;">Hamari toffee khaiye aur blockchain rewards paiye! Har wrapper mein ek mauka hai $TOFFEENVH earn karne ka.</p>
     </div>
 
     <div class="social-box">
@@ -79,17 +91,12 @@
     </div>
 
     <div id="adminPanel">
-        <h3 style="color: var(--error); margin:0;">👨‍💻 OWNER DASHBOARD</h3>
-        <p style="font-size: 10px; color: #64748b;">Upload codes (Comma separated):</p>
-        <textarea id="newCodesInput" placeholder="C01, C02, C03..." rows="2" style="height: auto !important; color: white !important;"></textarea>
+        <h3 style="color: var(--error);">👨‍💻 OWNER DASHBOARD</h3>
+        <textarea id="newCodesInput" placeholder="C01, C02..." rows="2" style="width:100%; background:white; color:black; border-radius:10px; padding:10px;"></textarea>
         <button onclick="uploadCodes()" style="background:var(--primary); color:white;">⬆️ UPLOAD CODES</button>
-        <hr style="border:0; border-top:1px solid #334155; margin:15px 0;">
-        <h4 style="margin:0; color:var(--success);">WITHDRAWAL REQUESTS:</h4>
         <div id="reqList" style="font-size: 11px; margin-top:10px;"></div>
     </div>
 </div>
-
-<footer>© 2026 ToffeeNVH | Nihal Vihar, Delhi</footer>
 
 <script>
     const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
@@ -100,8 +107,14 @@
     let userWallet = "";
     let userBalance = 0;
 
-    // MetaMask Typing Hack
-    document.getElementById('codeInput').addEventListener('touchstart', function() { this.focus(); }, {passive: true});
+    // 🚨 METAMASK TOUCH FORCE FOCUS 🚨
+    const inputField = document.getElementById('codeInput');
+    
+    // Force focus on any touch inside the input wrapper
+    document.querySelector('.input-wrapper').addEventListener('touchstart', function(e) {
+        inputField.style.zIndex = "999999";
+        inputField.focus();
+    }, {passive: false});
 
     async function connectWallet() {
         try {
@@ -115,8 +128,8 @@
                     loadAdminRequests();
                 }
                 refreshData();
-            } else { alert("Please use MetaMask Browser!"); }
-        } catch (e) { alert("Connection Error!"); }
+            } else { alert("Open this in MetaMask Browser!"); }
+        } catch (e) { alert("Wallet Error!"); }
     }
 
     async function refreshData() {
@@ -130,13 +143,12 @@
             wBtn.style.display = "block";
             wBtn.disabled = !!pending;
             wBtn.innerText = pending ? "⏳ PENDING..." : "🚀 WITHDRAW 500";
-        } else { wBtn.style.display = "none"; }
+        }
     }
 
     async function processClaim() {
         const btn = document.getElementById("claimBtn");
-        const codeInput = document.getElementById("codeInput");
-        const code = codeInput.value.trim().toUpperCase();
+        const code = inputField.value.trim().toUpperCase();
         if(!code || btn.disabled) return;
         
         btn.disabled = true;
@@ -144,15 +156,14 @@
         try {
             const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
             if (!valid) {
-                alert("❌ INVALID OR ALREADY USED CODE!");
+                alert("❌ INVALID OR USED CODE!");
             } else {
                 await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 });
                 await db.from('valid_codes').update({ is_used: true }).eq('code', code);
                 
-                // Success Celebration
                 confetti({ particleCount: 100, spread: 70, origin: { y: 0.8 } });
                 alert("✅ RECEIVED 10 TOFFEE TOKENS!");
-                codeInput.value = "";
+                inputField.value = "";
                 refreshData(); 
             }
         } catch (e) { alert("Error!"); }
@@ -160,47 +171,25 @@
         btn.innerText = "💰 CLAIM 10 TOKENS";
     }
 
-    async function requestWithdrawal() {
-        try {
-            await db.from('withdrawals').insert([{ wallet_address: userWallet, amount: 500, status: 'pending' }]);
-            confetti({ particleCount: 200, spread: 100, colors: ['#10b981', '#ffffff'] });
-            alert("🚀 SUCCESS! Request sent to Owner.");
-            refreshData();
-        } catch (e) { alert("Request Failed!"); }
-    }
-
-    // Admin Functions
-    function copyText(text) {
-        navigator.clipboard.writeText(text);
-        alert("📋 Copied: " + text.substring(0,10) + "...");
+    // Admin & Support Functions
+    async function uploadCodes() {
+        const input = document.getElementById("newCodesInput").value;
+        const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false })).filter(c => c.code !== "");
+        const { error } = await db.from('valid_codes').insert(codes);
+        if(!error) { alert("✅ CODE SUCCESSFULLY UPLOADED!"); document.getElementById("newCodesInput").value = ""; }
     }
 
     async function loadAdminRequests() {
         const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
         let h = "";
         reqs?.forEach(r => {
-            h += `<div class="req-card">
-                <span style="font-size:10px;">${r.wallet_address}</span>
-                <button class="copy-btn" onclick="copyText('${r.wallet_address}')">📋 COPY</button>
-                <button onclick="approveWithdrawal(${r.id}, '${r.wallet_address}')" style="background:var(--success); padding:5px; margin-top:5px; font-size:10px;">MARK PAID</button>
-            </div>`;
+            h += `<div class="req-card">${r.wallet_address.substring(0,15)}... <button onclick="approveWithdrawal(${r.id}, '${r.wallet_address}')" style="width:auto; padding:5px; font-size:10px; background:var(--success); color:white;">PAID</button></div>`;
         });
-        document.getElementById("reqList").innerHTML = h || "No pending requests.";
-    }
-
-    async function uploadCodes() {
-        const input = document.getElementById("newCodesInput").value;
-        const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false })).filter(c => c.code !== "");
-        if(codes.length === 0) return;
-        const { error } = await db.from('valid_codes').insert(codes);
-        if(!error) {
-            alert("✅ CODE SUCCESSFULLY UPLOADED!");
-            document.getElementById("newCodesInput").value = "";
-        } else { alert("Upload Error!"); }
+        document.getElementById("reqList").innerHTML = h || "No requests.";
     }
 
     async function approveWithdrawal(id, address) {
-        if(!confirm("Deduct 500 and complete?")) return;
+        if(!confirm("Deduct 500?")) return;
         const { data: user } = await db.from('user_balances').select('pending_balance').eq('wallet_address', address).single();
         await db.from('user_balances').update({ pending_balance: user.pending_balance - 500 }).eq('wallet_address', address);
         await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
