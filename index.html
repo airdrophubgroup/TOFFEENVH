@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --error: #ef4444; --accent: #f59e0b; --gold: #ffd700; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 15px; margin: 0; line-height: 1.6; }
         .container { max-width: 450px; margin: 10px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .balance-card { background: #0f172a; padding: 18px; border-radius: 18px; margin: 12px 0; border: 1px solid var(--primary); }
         button { width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; margin: 5px 0; }
@@ -22,6 +22,17 @@
         .item-box { background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 12px; border: 1px solid #334155; font-size: 12px; }
         .coming-tag { background: var(--accent); color: #000; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         
+        /* New Sections Styling */
+        .info-section { text-align: left; margin-top: 30px; padding: 15px; background: rgba(30, 41, 59, 0.5); border-radius: 15px; border: 1px solid #334155; }
+        .info-section h3 { color: var(--primary); margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 5px; }
+        .social-links { display: flex; justify-content: space-around; margin-top: 20px; padding: 15px; background: #0f172a; border-radius: 15px; }
+        .social-links a { color: var(--text); text-decoration: none; font-size: 14px; font-weight: bold; display: flex; flex-direction: column; align-items: center; }
+        .social-links span { font-size: 24px; margin-bottom: 5px; }
+        .faq-item { margin-bottom: 15px; font-size: 14px; }
+        .faq-q { color: var(--accent); font-weight: bold; }
+        .roadmap-list { font-size: 14px; padding-left: 20px; }
+        footer { margin-top: 40px; padding-bottom: 30px; font-size: 12px; color: #64748b; }
+
         #adminPanel { display: none; margin-top: 30px; padding: 20px; background: #020617; border: 2px dashed var(--error); border-radius: 20px; text-align: left; }
         .req-card { background: #1e293b; padding: 12px; border-radius: 12px; margin-top: 10px; border-left: 4px solid var(--success); }
     </style>
@@ -30,6 +41,8 @@
 
 <div class="container">
     <h1 style="color: var(--primary); margin:0;">🍬 TOFFEENVH</h1>
+    <p style="font-size: 12px; color: var(--accent); margin-top: 5px;">Nihal Vihar's First Phygital Reward System</p>
+    
     <button id="walletBtn" class="btn-wallet" onclick="connectWallet()">🔑 CONNECT WALLET</button>
 
     <div id="userUI" style="display:none;">
@@ -51,6 +64,38 @@
         <button style="background:#334155; color:white; font-size:11px; margin-top:15px; width:auto; padding:8px 15px;" onclick="location.reload()">🔄 SWITCH WALLET</button>
     </div>
 
+    <div class="info-section">
+        <h3>📖 About Us</h3>
+        <p style="font-size: 14px;">Cyber Cafe se shuru hua ye safar ab Blockchain tak pahunch gaya hai! Hum Nihal Vihar mein technology aur sweets ko jod kar khushiyan baant rahe hain.</p>
+    </div>
+
+    <div class="info-section">
+        <h3>🚀 Roadmap 2026</h3>
+        <ul class="roadmap-list">
+            <li><b>Q2:</b> Unique QR Packaging Launch</li>
+            <li><b>Q3:</b> Nihal Vihar Merchant Network</li>
+            <li><b>Q4:</b> Toffee Swap Portal Launch</li>
+        </ul>
+    </div>
+
+    <div class="info-section">
+        <h3>❓ FAQ</h3>
+        <div class="faq-item">
+            <div class="faq-q">Code kahan milega?</div>
+            <div class="faq-a">Toffee wrapper ke andar print hua milega.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Withdrawal kab milega?</div>
+            <div class="faq-a">500 TOFFEE hone par owner ko request bhejein.</div>
+        </div>
+    </div>
+
+    <div class="social-links">
+        <a href="https://t.me/ToffeenVh" target="_blank"><span>✈️</span>Telegram</a>
+        <a href="https://x.com/ToffeenVh" target="_blank"><span>🐦</span>X (Twitter)</a>
+        <a href="https://www.youtube.com/@ToffeeTeam" target="_blank"><span>🎥</span>YouTube</a>
+    </div>
+
     <div id="adminPanel">
         <h3 style="color: #f43f5e; margin: 0 0 10px 0;">👨‍💻 OWNER DASHBOARD</h3>
         <textarea id="newCodesInput" placeholder="C001, C002..." rows="2"></textarea>
@@ -60,6 +105,11 @@
         <div id="reqList" style="font-size: 11px;"></div>
     </div>
 </div>
+
+<footer>
+    <p>© 2026 ToffeeNVH Ecosystem | Nihal Vihar, Delhi</p>
+    <p style="font-size: 10px; opacity: 0.6;">Disclaimer: Rewards are promotional and for community engagement.</p>
+</footer>
 
 <script>
     const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
@@ -131,7 +181,6 @@
         btn.innerText = "💰 CLAIM 10 TOKENS";
     }
 
-    // Fixed: Withdrawal Request function
     async function requestWithdrawal() {
         if(userBalance < 500) return alert("Min 500 required!");
         const btn = document.getElementById("withdrawBtn");
@@ -152,7 +201,6 @@
         }
     }
 
-    // Owner: Load Requests
     async function loadAdminRequests() {
         try {
             const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
@@ -167,16 +215,13 @@
         } catch(e) { console.error(e); }
     }
 
-    // Owner: Approve & Deduct
     async function approveWithdrawal(id, address) {
         if(!confirm("Are you sure? User tokens will be deducted.")) return;
         try {
             const { data: user } = await db.from('user_balances').select('pending_balance').eq('wallet_address', address).single();
             if(!user) return alert("User not found!");
 
-            // 1. Deduct 500 from user balance
             await db.from('user_balances').update({ pending_balance: user.pending_balance - 500 }).eq('wallet_address', address);
-            // 2. Mark withdrawal as completed
             await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
             
             alert("✅ PAID & DEDUCTED!");
