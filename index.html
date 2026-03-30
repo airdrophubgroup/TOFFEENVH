@@ -13,12 +13,11 @@
         :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --accent: #f59e0b; --error: #ef4444; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; }
         html { scroll-behavior: smooth; }
-        #rewardsApp { display: none; padding: 15px; }
-        .app-container { max-width: 450px; margin: 20px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; }
+        #rewardsApp { display: none; padding: 15px; animation: fadeIn 0.5s ease-in; }
+        .app-container { max-width: 450px; margin: 20px auto; background: var(--card); padding: 25px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         input#codeInput { width: 100%; height: 65px; background: #020617; color: #ffffff; border: 3px solid var(--primary); border-radius: 15px; text-align: center; text-transform: uppercase; outline: none; }
         .btn-app { width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; border: none; }
-        .btn-wallet { background: var(--accent); color: #0f172a; }
-        .section-visible { display: block !important; animation: fadeIn 0.5s ease-in; }
+        .section-visible { display: block !important; }
         .section-hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -30,89 +29,129 @@
             <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
                 <div class="flex items-center space-x-2">
                     <i class="fas fa-candy-cane text-2xl text-sky-400"></i>
-                    <span class="text-xl font-bold text-white uppercase">Toffeenvh</span>
+                    <span class="text-xl font-bold text-white uppercase tracking-wider">Toffeenvh</span>
                 </div>
-                <button onclick="showApp()" class="bg-sky-500 hover:bg-sky-600 text-slate-900 px-6 py-2 rounded-full font-bold transition">Launch App</button>
+                <button onclick="showApp()" class="bg-sky-500 hover:bg-sky-600 text-slate-900 px-6 py-2 rounded-full font-bold transition transform hover:scale-105">Launch App</button>
             </div>
         </nav>
 
         <header class="py-20 text-center px-4 bg-gradient-to-b from-sky-900/20 to-slate-900">
-            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-sky-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">Sweet Crypto Rewards</h1>
-            <p class="text-slate-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">Claim your $TOFFEE tokens on the Celo Network. Fast, secure, and decentralized.</p>
-            <button onclick="showApp()" class="bg-sky-500 text-slate-900 px-10 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition shadow-lg shadow-sky-500/20">Start Claiming</button>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-sky-400 via-blue-500 to-purple-600 bg-clip-text text-transparent italic tracking-tighter">Sweet Crypto Rewards</h1>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-medium">Claim your $TOFFEE tokens on the Celo Network. Safe, fast, and decentralized rewards for the Nihal Vihar community.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="showApp()" class="bg-sky-500 text-slate-900 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-sky-400 transition shadow-lg shadow-sky-500/20 transform hover:-translate-y-1">Start Claiming Now</button>
+            </div>
         </header>
 
-        <section class="py-16 bg-slate-800/30">
+        <section id="tokenInfo" class="py-16 bg-slate-800/30">
             <div class="max-w-4xl mx-auto px-4">
                 <div class="text-center mb-10">
-                    <h2 class="text-3xl font-bold text-white mb-2">Token Information</h2>
-                    <p class="text-slate-400">Project details you need to know</p>
+                    <h2 class="text-3xl font-bold text-white mb-2">Token & Setup</h2>
+                    <p class="text-slate-400 text-sm italic">Connect to the future of rewards</p>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-8">
-                    <div class="bg-slate-900 p-6 rounded-3xl border border-slate-700">
-                        <h3 class="text-sky-400 font-bold mb-4 flex items-center"><i class="fas fa-file-contract mr-2"></i> Contract Details</h3>
-                        <div class="space-y-4 text-sm">
-                            <div><p class="text-slate-500">Blockchain Network</p><p class="text-white font-mono">CELO (Layer-1)</p></div>
-                            <div><p class="text-slate-500">Contract Address</p><p class="text-sky-300 font-mono break-all text-[12px]">0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88</p></div>
-                            <div><p class="text-slate-500">Token Symbol</p><p class="text-white">TOFFEE</p></div>
+                    <div class="bg-slate-900 p-8 rounded-3xl border border-slate-700 shadow-2xl">
+                        <h3 class="text-sky-400 font-bold mb-6 flex items-center text-xl"><i class="fas fa-file-contract mr-2"></i> Contract Details</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest mb-1">Blockchain Network</p>
+                                <p class="text-white font-mono bg-slate-800/50 p-2 rounded border border-slate-700">CELO (Layer-1)</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest mb-1">Contract Address</p>
+                                <div class="relative group">
+                                    <p id="contractAddr" class="text-sky-300 font-mono break-all bg-slate-950 p-3 rounded-xl border border-sky-900/50 text-[12px]">0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88</p>
+                                    <button onclick="copyAddress()" id="copyBtn" class="mt-3 w-full bg-slate-800 hover:bg-sky-600 text-sky-400 hover:text-white py-2 rounded-lg text-xs font-bold transition-all border border-sky-900/30 flex items-center justify-center gap-2">
+                                        <i class="fas fa-copy"></i> Copy Address
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex justify-between gap-4">
+                                <div class="flex-1 bg-slate-800/30 p-2 rounded border border-slate-700 text-center"><p class="text-slate-500 text-[10px] font-bold">SYMBOL</p><p class="text-white font-black italic">TOFFEE</p></div>
+                                <div class="flex-1 bg-slate-800/30 p-2 rounded border border-slate-700 text-center"><p class="text-slate-500 text-[10px] font-bold">DECIMALS</p><p class="text-white font-black italic">18</p></div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-slate-900 p-6 rounded-3xl border border-slate-700">
-                        <h3 class="text-amber-500 font-bold mb-4 flex items-center"><i class="fas fa-plus-circle mr-2"></i> Add to MetaMask</h3>
-                        <ol class="text-xs text-slate-400 space-y-2 list-decimal ml-4">
-                            <li>Open MetaMask & switch to <b>Celo Network</b>.</li>
-                            <li>Scroll down and tap <b>'Import Tokens'</b>.</li>
-                            <li>Paste the Contract Address above.</li>
-                            <li>Token Symbol & Decimals will auto-fill.</li>
-                            <li>Tap <b>'Add Custom Token'</b>.</li>
+                    <div class="bg-slate-900 p-8 rounded-3xl border border-slate-700 shadow-2xl">
+                        <h3 class="text-amber-500 font-bold mb-6 flex items-center text-xl"><i class="fas fa-wallet mr-2"></i> MetaMask Guide</h3>
+                        <ol class="text-sm text-slate-400 space-y-4 list-decimal ml-4 leading-relaxed font-medium">
+                            <li>Open <b>MetaMask</b> & switch to <span class="text-amber-500">Celo Network</span>.</li>
+                            <li>Tap <b class="text-slate-200">'Import Tokens'</b> at the bottom of the list.</li>
+                            <li>Paste the <b>Contract Address</b> copied from the left card.</li>
+                            <li>Wait 2 seconds; Symbol & Decimals will auto-fill.</li>
+                            <li>Tap <b>'Add Custom Token'</b> & then <b>'Import'</b>.</li>
                         </ol>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="roadmap" class="py-20">
-            <div class="max-w-4xl mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center mb-12 text-white">Roadmap 2026-27</h2>
-                <div class="grid gap-4">
-                    <div class="bg-slate-800/40 p-6 rounded-2xl border-l-4 border-sky-500"><h4 class="text-sky-400 font-bold">Q1-Q3 2026</h4><p class="text-slate-400 text-sm">Platform development, Token Deployment on Celo & Local Partnerships.</p></div>
-                    <div class="bg-slate-800/40 p-6 rounded-2xl border-l-4 border-amber-500"><h4 class="text-amber-500 font-bold">Q4 2027</h4><p class="text-slate-400 text-sm">DEX Listing, Liquidity Pool activation & Global Expansion.</p></div>
+        <section id="roadmap" class="py-24 bg-slate-900">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h2 class="text-4xl font-bold text-white mb-12 italic tracking-tighter">Project Roadmap</h2>
+                <div class="grid gap-6 text-left">
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border-l-8 border-sky-500"><h3 class="text-xl font-bold text-sky-400">Q1 2026 - Launch</h3><p class="text-slate-400 text-sm mt-1 font-medium">Nihal Vihar stores partnerships & website beta rollout.</p></div>
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border-l-8 border-blue-500"><h3 class="text-xl font-bold text-blue-400">Q2 2026 - Token</h3><p class="text-slate-400 text-sm mt-1 font-medium">Smart contract deployment on Celo & security audits.</p></div>
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border-l-8 border-purple-500"><h3 class="text-xl font-bold text-purple-400">Q3 2026 - Growth</h3><p class="text-slate-400 text-sm mt-1 font-medium">Referral system launch & new toffee flavor varieties.</p></div>
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border-l-8 border-amber-500"><h3 class="text-xl font-bold text-amber-400">Q4 2027 - DEX</h3><p class="text-slate-400 text-sm mt-1 font-medium">Listing on DEX & global liquidity pools activation.</p></div>
                 </div>
             </div>
         </section>
 
-        <footer class="py-10 text-center text-slate-600 border-t border-slate-800">
-            <p>© 2026-2027 Toffeenvh Project. Made in Nihal Vihar.</p>
+        <footer class="py-12 text-center text-slate-500 border-t border-slate-800 bg-slate-900">
+            <div class="flex justify-center space-x-12 mb-8">
+                <a href="https://t.me/ToffeenVh" target="_blank" class="hover:text-sky-400 transition-all transform hover:scale-125 text-center">
+                    <i class="fab fa-telegram text-3xl"></i>
+                    <span class="block text-[10px] mt-1 font-bold">Telegram</span>
+                </a>
+                <a href="https://x.com/ToffeenVh" target="_blank" class="hover:text-sky-400 transition-all transform hover:scale-125 text-center">
+                    <i class="fab fa-twitter text-3xl"></i>
+                    <span class="block text-[10px] mt-1 font-bold">Twitter</span>
+                </a>
+                <a href="https://www.youtube.com/@ToffeeTeam" target="_blank" class="hover:text-red-500 transition-all transform hover:scale-125 text-center">
+                    <i class="fab fa-youtube text-3xl"></i>
+                    <span class="block text-[10px] mt-1 font-bold">YouTube</span>
+                </a>
+            </div>
+            <div class="px-4">
+                <p class="text-sm font-bold text-slate-400">© 2026-2027 Toffeenvh Project</p>
+                <p class="text-[11px] mt-1 italic">Building a sweet future for Nihal Vihar community.</p>
+            </div>
         </footer>
     </div>
 
     <div id="rewardsApp">
         <div class="flex justify-between items-center max-w-lg mx-auto mb-6 px-4">
-            <button onclick="showLanding()" class="text-sky-400 font-bold bg-sky-500/10 px-4 py-2 rounded-lg"><i class="fas fa-arrow-left"></i> Home</button>
+            <button onclick="showLanding()" class="text-sky-400 font-bold bg-sky-500/10 px-5 py-2 rounded-xl hover:bg-sky-500/20 transition"><i class="fas fa-arrow-left"></i> Home</button>
+            <span class="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Celo Mainnet</span>
         </div>
 
         <div class="app-container">
-            <h1 class="text-3xl font-black text-center text-sky-400">🍬 TOFFEENVH</h1>
-            <p class="text-[10px] text-amber-500 font-bold text-center mb-8 uppercase tracking-widest italic">Nihal Vihar Digital Rewards</p>
+            <h1 class="text-3xl font-black text-center text-sky-400 tracking-tighter">🍬 TOFFEENVH</h1>
+            <p class="text-[10px] text-amber-500 font-bold text-center mb-8 uppercase tracking-widest italic">Digital Rewards App</p>
 
-            <button id="walletBtn" class="btn-app btn-wallet shadow-lg" onclick="connectWallet()">🔑 CONNECT WALLET</button>
+            <button id="walletBtn" class="btn-app bg-amber-500 text-slate-900 shadow-lg shadow-amber-500/20" onclick="connectWallet()">
+                <i class="fas fa-wallet mr-2"></i> CONNECT WALLET
+            </button>
 
             <div id="userUI" style="display:none;" class="mt-6">
-                <div class="bg-slate-900 p-6 rounded-3xl border border-sky-500/30 text-center mb-6">
-                    <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Balance</p>
-                    <span id="balText" class="text-3xl font-black text-sky-400">0 TOFFEE</span>
-                    <button id="withdrawBtn" class="btn-app bg-green-600 text-white mt-4" onclick="requestWithdrawal()">🚀 WITHDRAW 500</button>
+                <div class="bg-slate-900 p-8 rounded-3xl border border-sky-500/30 text-center mb-6">
+                    <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Total Balance</p>
+                    <span id="balText" class="text-4xl font-black text-sky-400">0 TOFFEE</span>
+                    <button id="withdrawBtn" class="btn-app bg-green-600 text-white mt-4 hidden" onclick="requestWithdrawal()">🚀 WITHDRAW 500</button>
                 </div>
-                <div class="input-wrapper"><input type="text" id="codeInput" placeholder="TYPE CODE"></div>
-                <button id="claimBtn" class="btn-app bg-sky-500 text-slate-900" onclick="processClaim()">💰 CLAIM 10 TOKENS</button>
+                <div class="input-wrapper">
+                    <input type="text" id="codeInput" placeholder="ENTER CODE" spellcheck="false" autocomplete="off" class="tracking-widest">
+                </div>
+                <button id="claimBtn" class="btn-app bg-sky-500 text-slate-900 hover:bg-sky-400" onclick="processClaim()">💰 CLAIM 10 TOKENS</button>
             </div>
             
-            <div id="adminPanel" style="display:none;" class="mt-8 p-6 border-2 border-dashed border-red-500 rounded-3xl bg-slate-900">
-                <h3 class="text-red-500 font-bold mb-2">OWNER PANEL</h3>
-                <textarea id="newCodesInput" placeholder="C01, C02..." class="w-full bg-slate-800 text-white rounded-lg p-2 mb-2 text-sm border-none"></textarea>
-                <button onclick="uploadCodes()" class="btn-app bg-red-600 text-white">⬆️ UPLOAD CODES</button>
+            <div id="adminPanel" style="display:none;" class="mt-8 p-6 border-2 border-dashed border-red-500/50 rounded-3xl bg-slate-900/50">
+                <h3 class="text-red-500 font-bold mb-3 text-sm flex items-center justify-center"><i class="fas fa-shield-alt mr-2"></i> OWNER DASHBOARD</h3>
+                <textarea id="newCodesInput" placeholder="Codes: C01, C02..." class="w-full bg-slate-800 text-white rounded-xl p-3 mb-3 text-sm border-none outline-none focus:ring-1 ring-red-500"></textarea>
+                <button onclick="uploadCodes()" class="btn-app bg-red-600 text-white text-sm">⬆️ UPLOAD CODES</button>
                 <div id="reqList" class="text-[10px] mt-4 space-y-2"></div>
             </div>
         </div>
@@ -122,6 +161,22 @@
         function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').classList.add('section-visible'); window.scrollTo(0,0); }
         function showLanding() { document.getElementById('landingPage').classList.remove('section-hidden'); document.getElementById('rewardsApp').classList.remove('section-visible'); }
 
+        // --- NEW COPY FUNCTION ---
+        function copyAddress() {
+            const addr = document.getElementById('contractAddr').innerText;
+            const btn = document.getElementById('copyBtn');
+            navigator.clipboard.writeText(addr).then(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.classList.replace('bg-slate-800', 'bg-green-600');
+                btn.classList.replace('text-sky-400', 'text-white');
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-copy"></i> Copy Address';
+                    btn.classList.replace('bg-green-600', 'bg-slate-800');
+                    btn.classList.replace('text-white', 'text-sky-400');
+                }, 2000);
+            });
+        }
+
         const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
         const db = supabase.createClient(SB_URL, SB_KEY);
@@ -130,13 +185,15 @@
 
         async function connectWallet() {
             if (window.ethereum) {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                userWallet = accounts[0].toLowerCase();
-                document.getElementById("walletBtn").innerText = userWallet.substring(0,8) + "...";
-                document.getElementById("userUI").style.display = "block";
-                if (userWallet === ADMIN_WALLET.toLowerCase()) document.getElementById("adminPanel").style.display = "block";
-                refreshData();
-            } else { alert("Use MetaMask Browser!"); }
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    userWallet = accounts[0].toLowerCase();
+                    document.getElementById("walletBtn").innerText = userWallet.substring(0,8) + "...";
+                    document.getElementById("userUI").style.display = "block";
+                    if (userWallet === ADMIN_WALLET.toLowerCase()) document.getElementById("adminPanel").style.display = "block";
+                    refreshData();
+                } catch(e) { alert("Wallet connection rejected."); }
+            } else { alert("Please use MetaMask Browser!"); }
         }
 
         async function refreshData() {
@@ -144,28 +201,38 @@
             const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
             userBalance = data ? data.pending_balance : 0;
             document.getElementById("balText").innerText = userBalance + " TOFFEE";
+            const wBtn = document.getElementById("withdrawBtn");
+            if(userBalance >= 500) { wBtn.classList.remove('hidden'); } else { wBtn.classList.add('hidden'); }
         }
 
         async function processClaim() {
-            const code = document.getElementById('codeInput').value.trim().toUpperCase();
-            if(!code) return;
-            const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-            if (valid) {
-                await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 });
-                await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-                confetti({ particleCount: 100 }); alert("10 TOFFEE CLAIMED!"); refreshData();
-            } else { alert("Invalid Code!"); }
+            const btn = document.getElementById("claimBtn");
+            const codeInput = document.getElementById('codeInput');
+            const code = codeInput.value.trim().toUpperCase();
+            if(!code || btn.disabled) return;
+            btn.disabled = true; btn.innerText = "CHECKING CODE...";
+            try {
+                const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
+                if (valid) {
+                    await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 });
+                    await db.from('valid_codes').update({ is_used: true }).eq('code', code);
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 } });
+                    alert("Success! 10 TOFFEE Added."); refreshData();
+                    codeInput.value = "";
+                } else { alert("Invalid or Used Code!"); }
+            } catch (e) { alert("Network Error!"); }
+            btn.disabled = false; btn.innerText = "💰 CLAIM 10 TOKENS";
         }
 
         async function requestWithdrawal() {
-            await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
-            alert("Request Sent!");
+            const { error } = await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
+            if(!error) alert("Request Submitted! Admin will review.");
         }
 
         async function uploadCodes() {
             const input = document.getElementById("newCodesInput").value;
-            const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false }));
-            await db.from('valid_codes').insert(codes); alert("Uploaded!");
+            const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false })).filter(c => c.code !== "");
+            await db.from('valid_codes').insert(codes); alert("New codes uploaded to DB.");
         }
     </script>
 </body>
