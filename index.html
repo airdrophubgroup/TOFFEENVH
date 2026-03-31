@@ -15,36 +15,25 @@
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; position: relative; }
         html { scroll-behavior: smooth; }
 
-        /* --- 🍬 ORIGINAL BACKGROUND TOFFEE SHOWER --- */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 200%;
-            z-index: -1;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj48cGF0aCBmaWxsPSJyZ2JhKDU2LCAxODksIDI0OCwgMC4wNikiIGQ9Ik00MDAgMzJDNDI2LjUgMzIgNDQ4IDUzLjU5IDQ0OCA4MFYxOTJDMzguNSAzMTIuNSAyMjcuNSAzMjkgMTcyIDMxMkMxMTYuNSAyOTUgNzQuNyAyMzguOCAzMiAyMTBDMy40MDEgMTgyLjQgLTcuMzQyIDExMy40IDEzLjIgNDkuODFDMTguNTEgMzQuMTMgNDMuNjUgLTggNjMuNDYgLTE0LjQ5Qzc1LjQ5IC0xOS45NSA5My4wMiAtMTguNCAxMDQuMiAtNi41MzVMMTQwIDE2LjY3QzE1Ni4yIDM5LjY0IDIxMi45IDM5LjY0IDIyOSAxNi42N0wyNjQuOCAtNi41MzVDMjc2IC0xOC40IDI5My41IC0xOS45NSAzMDUuNSAtMTQuNDlDMzI1LjQgLTguMzAyIDM1MC41IDMzLjg3IDM1NS44IDQ5LjU5QzM3Ny4zIDExMy40IDM2NC45IDE4Mi40IDMzNSA5NkMyOTIuNCAxODkuNyAyNDkuOSAyOTUuNSA0MDAgMTkyVjgwaC0xNkg0MDZ2LTQ4ek0yMzggNTY4QzIzNSA2MjMuMSAyMDEuNyA2ODcuMyAxNTguOCA3MjBDMTI3LjcgNzQyLjIgMTA0IDE4MC45IDc1IDI1NUMzNi45NyAyNDAuNyAyOS4zNSAyMzEuMyAyNSAyMjBDMTkuNTggMjA1LjggNDguMjcgMTUyLjEgODAgMTA4VjgwaC0xNkg4MHY5NkM4MCAxNjguMyA5NS45IDE4NC4zIDExNi4yIDE4NC4zQzExOS44IDE4NC4zIDEyMy44IDE4NC4xIDEyNy43IDE4My45TDEzMy45IDE4My44TDE0NS44IDE4My44QzE4NS44IDE4My44IDIyNC41IDE1Ni40IDIzNSAxMzYuOEMyNDUuNSAxMTcuMiAyNTAgOTkuMjQgMjUwIDgwVjE0MEgyNjZ2LTk2QzI2NiA4OC4zNyAyNTcuNCA4MCAyNDYgODBIMjM4djE0MHogTTQwMSA1NThDNDA2LjUgNjEzLjEgMzgyLjEgNjg3LjMgMzM5LjUgNzIwQzMwNy45IDc0Mi4yIDI4My44IDE4MC45IDI1NSAyNTVDMjE2Ljk3IDI0MC43IDIwOS4zNSAyMzEuMyAyMDUgMjIwQzE5OS41OCAyMDUuOCA5OS4xOCA0MDQgNzA1Qy01Ni43NSAtMjIzLjcgLTEwMC45IDE3NS41IC03OC41NCA5Ni4xQy03NC44NyA3OS4xMyAtNTAuMjIgLTggLTMwLjEyIC0xNC40OUMtMTkuNzQgLTE5Ljk1IDEuMzI2IC0xOC40IDEyLjIxIC02LjUzNUw1My4wNyAxNi42N0M2OS43NCAzOS42NCAxMTcuNCAzOS42NCAxMzMuNyAxNi42N0wxNzQuNSAtNi41MzVDMTg1LjQgLTE4LjQgMjAyLjQgLTE5Ljk1IDIxNS40IC0xNC40OUMyMzUuMSAtOC4zMDIgMjU5LjQgMzMuODcgMjY0LjcgNDkuNTlDMjg4LjUgMTEzLjQgMjczLjggMTgyLjQgMjQwIDk2QzE5Ni4xIDE4OS43IDE1MS44IDI5NS41IDQwMCAxOTJWODBILTExNkgyNjZ2LTE0MEgyOTR2LTQwSDMwNXY0MEgzMjB2LTQwSDM2NXY0MEg0MDZ2LTQ4ek0xNjEgMjk3QzE3Mi41IDI3MS44IDIyNi41IDI3NS41IDI1OSAzMDVDMjcxLjIgMzMxLjkgMjU4LjUgMzg5LjMgMjE1IDQwMkMxNzEuNSA0MTQuNyAxMjguOCAzNzkuMyAxMTYgMzQ5QzEwMy4yIDMxOC43IDEyMi4zIDI5Mi41IDE2MSAyOTd6TTczLjUgNTQyQzgyLjQgNTUxLjg5IDU0IDIwNS44IDE4NCAzMTVDMjQ3LjMgMzg1LjEgMjMzLjYgNDgxLjcgMTY5IDQ5NUMxMDQuNCA1MDguMyAxNCA0MjUuMyAtNyAyODhDLTguNjMgMjUxLjEgMTAuODMgMjM0LjIgMjkuNCAyMjF6TTE3MS41IDE3OEMxNTkuOCAxODkuMyAxMzUuMyAxODQuNSAxMjQuNSA0NDRDNzkuMDkgNDE5LjUgMzAuOTEgMzA3LjEgMzIuNjkgMjE0QzM1LjAxIDE4MC4yIDgzLjIxIDExMC44IDExNCA4MHYxNjhIMTcySDE3MS41ejI4Ni45IC0yNDVDMjc2LjkgLTE1OS45IDI0My45IC0xMTUgMjA3IDExNUMxNzAuMSAxMTUgMTM3LjEgOTIuODkgMTI3LjEgMzVDMTE3LjEgLTQyLjg5IDE1MC4xIC05NSAxODcgLTk1QzIyMy45IC05NSAyNTYuOSAtNDIuODkgMjY2LjkgMzV6Ii8+PC9zdmc+');
-            background-size: 160px;
-            animation: backgroundToffeeMelt 180s linear infinite;
-        }
-
-        @keyframes backgroundToffeeMelt {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-50%); }
-        }
-
-        /* --- ✨ ORIGINAL GLASSMORPHISM --- */
+        /* --- 🚀 ANIMATIONS REMOVED FOR PERFORMANCE --- */
+        
         #rewardsApp { display: none; padding: 15px; animation: fadeIn 0.3s ease-in; }
         .app-container { max-width: 450px; margin: 20px auto; background: var(--card); padding: 25px; border-radius: 28px; border: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(15px); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7); }
         
-        .glass-card { background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.15); transition: 0.3s; }
-        .glass-card:hover { border-color: rgba(56, 189, 248, 0.5); transform: translateY(-5px); }
+        input#codeInput { width: 100%; height: 70px; background: #01040a; color: #ffffff; border: 3px solid #1e293b; border-radius: 18px; text-align: center; text-transform: uppercase; outline: none; transition: 0.3s; font-weight: bold; }
+        input#codeInput:focus { border-color: var(--primary); box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); }
 
-        .btn-app { width: 100%; padding: 18px; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; border: none; text-transform: uppercase; }
+        .btn-app { width: 100%; padding: 18px; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s transform; border: none; font-size: 15px; text-transform: uppercase; }
         .btn-app:active { transform: scale(0.97); }
 
+        .section-visible { display: block !important; }
         .section-hidden { display: none !important; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Atomic Pulse for Copy */
+        .glass-card { background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.15); transition: 0.3s border; }
+        .glass-card:hover { border-color: rgba(56, 189, 248, 0.5); }
+
         @keyframes pulseSuccess { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); } 100% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } }
         .pulse-atomic { animation: pulseSuccess 0.5s ease-out; }
     </style>
@@ -78,7 +67,7 @@
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-10">
-                    <div class="glass-card p-10 rounded-3xl shadow-2xl">
+                    <div class="glass-card p-10 rounded-3xl shadow-2xl text-left">
                         <h3 class="text-sky-400 font-extrabold mb-7 flex items-center text-2xl tracking-tight"><i class="fas fa-atom mr-3 text-3xl"></i> Contract Atomic Details</h3>
                         <div class="space-y-7">
                             <div>
@@ -94,14 +83,14 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="flex justify-between gap-5 pt-2">
-                                <div class="flex-1 bg-black/50 p-3 rounded-xl border border-slate-700/60 text-center"><p class="text-slate-500 text-[11px] font-bold tracking-wider">SYMBOL</p><p class="text-white text-lg font-black italic tracking-tight">TOFFEE</p></div>
-                                <div class="flex-1 bg-black/50 p-3 rounded-xl border border-slate-700/60 text-center"><p class="text-slate-500 text-[11px] font-bold tracking-wider">DECIMALS</p><p class="text-white text-lg font-black italic tracking-tight">18</p></div>
+                            <div class="flex justify-between gap-5 pt-2 text-center">
+                                <div class="flex-1 bg-black/50 p-3 rounded-xl border border-slate-700/60"><p class="text-slate-500 text-[11px] font-bold tracking-wider">SYMBOL</p><p class="text-white text-lg font-black italic tracking-tight">TOFFEE</p></div>
+                                <div class="flex-1 bg-black/50 p-3 rounded-xl border border-slate-700/60"><p class="text-slate-500 text-[11px] font-bold tracking-wider">DECIMALS</p><p class="text-white text-lg font-black italic tracking-tight">18</p></div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="glass-card p-10 rounded-3xl shadow-2xl">
+                    <div class="glass-card p-10 rounded-3xl shadow-2xl text-left">
                         <h3 class="text-amber-500 font-extrabold mb-7 flex items-center text-2xl tracking-tight"><i class="fas fa-wallet mr-3 text-3xl"></i> MetaMask 2026 Guide</h3>
                         <ol class="text-sm text-slate-300 space-y-5 list-decimal ml-5 leading-relaxed font-medium">
                             <li>Open <b class="text-white">MetaMask</b> & switch to <span class="text-amber-400 font-bold">Celo Mainnet</span>.</li>
@@ -123,19 +112,19 @@
                 <div class="grid gap-7 text-left">
                     <div class="glass-card p-9 rounded-3xl border-l-sky-500 border-l-8">
                         <h3 class="text-2xl font-black text-sky-400">Q1 2026 - LIVE</h3>
-                        <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Nihal Vihar area ke stores mein Toffeenvh की distribution और website launch. Pehla movement.</p>
+                        <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Nihal Vihar Store distribution & Staking activation.</p>
                     </div>
                     <div class="glass-card p-9 rounded-3xl border-l-blue-500 border-l-8">
                         <h3 class="text-2xl font-black text-blue-400">Q2 2026</h3>
-                        <p class="text-slate-400 text-sm mt-2.5 font-medium">Smart Contract Audits & $TOFFEE official deployment.</p>
+                        <p class="text-slate-400 text-sm mt-2.5 font-medium">Smart Contract Audits & $TOFFEE Deployment.</p>
                     </div>
                     <div class="glass-card p-9 rounded-3xl border-l-purple-500 border-l-8">
                         <h3 class="text-2xl font-black text-purple-400">Q3 2026</h3>
-                        <p class="text-slate-400 text-sm mt-2.5 font-medium">Advanced Referral System rollout. Community earn together.</p>
+                        <p class="text-slate-400 text-sm mt-2.5 font-medium">Advanced Referral System rollout.</p>
                     </div>
                     <div class="glass-card p-9 rounded-3xl border-l-amber-500 border-l-8">
                         <h3 class="text-2xl font-black text-amber-400">Q4 2027</h3>
-                        <p class="text-slate-400 text-sm mt-2.5 font-medium">Uniswap/Worldcoin listing & DEX liquidity activation.</p>
+                        <p class="text-slate-400 text-sm mt-2.5 font-medium">Uniswap/Worldcoin listing & DEX liquidity.</p>
                     </div>
                 </div>
             </div>
@@ -143,9 +132,9 @@
 
         <footer class="py-14 text-center text-slate-600 border-t border-slate-800/60 bg-slate-950">
             <div class="flex justify-center space-x-12 mb-9">
-                <a href="https://t.me/ToffeenVh" target="_blank" class="text-sky-500 hover:scale-125 transition-all transform"><i class="fab fa-telegram text-4xl"></i></a>
-                <a href="https://x.com/ToffeenVh" target="_blank" class="text-sky-500 hover:scale-125 transition-all transform"><i class="fab fa-twitter text-4xl"></i></a>
-                <a href="https://www.youtube.com/@ToffeeTeam" target="_blank" class="text-red-600 hover:scale-125 transition-all transform"><i class="fab fa-youtube text-4xl"></i></a>
+                <a href="https://t.me/ToffeenVh" target="_blank" class="text-sky-500 text-4xl hover:scale-110 transition"><i class="fab fa-telegram"></i></a>
+                <a href="https://x.com/ToffeenVh" target="_blank" class="text-sky-500 text-4xl hover:scale-110 transition"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.youtube.com/@ToffeeTeam" target="_blank" class="text-red-600 text-4xl hover:scale-110 transition"><i class="fab fa-youtube"></i></a>
             </div>
             <p class="text-sm font-black text-slate-500 uppercase tracking-wide">© 2026-2027 Toffeenvh Project</p>
         </footer>
@@ -158,26 +147,25 @@
         </div>
 
         <div class="app-container relative">
-            <i class="fas fa-candy-cane text-sky-400 opacity-5 text-9xl absolute top-10 right-10 pointer-events-none"></i>
-            <h1 class="text-3xl font-black text-center text-sky-400 tracking-tighter">🍬 TOFFEENVH</h1>
+            <h1 class="text-3xl font-black text-center text-sky-400 tracking-tighter uppercase">🍬 TOFFEENVH</h1>
             <p class="text-[10px] text-amber-500 font-bold text-center mb-9 uppercase tracking-widest italic">Nihal Vihar Digital Rewards</p>
 
-            <button id="walletBtn" class="btn-app bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20 active:scale-95" onclick="connectWallet()"><i class="fas fa-wallet mr-2.5"></i> CONNECT METAMASK</button>
+            <button id="walletBtn" class="btn-app bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20 active:scale-95" onclick="connectWallet()"><i class="fas fa-wallet mr-2.5"></i> CONNECT WALLET</button>
 
             <div id="userUI" style="display:none;" class="mt-7 space-y-6">
                 <div class="bg-black/80 p-9 rounded-3xl border border-sky-500/30 text-center shadow-inner">
-                    <p class="text-slate-500 text-[11px] uppercase font-bold mb-1.5">Total Earnings</p>
+                    <p class="text-slate-500 text-[11px] uppercase font-bold mb-1.5">Total Balance</p>
                     <span id="balText" class="text-5xl font-black text-sky-400 tracking-tighter">0.0000</span>
-                    <button id="withdrawBtn" class="btn-app bg-green-600 text-white mt-5 hidden active:scale-95" onclick="requestWithdrawal()">🚀 Withdraw 500 TOFFEE</button>
+                    <button id="withdrawBtn" class="btn-app bg-green-600 text-white mt-5 hidden" onclick="requestWithdrawal()">🚀 Withdraw 500 TOFFEE</button>
                 </div>
 
-                <div class="bg-slate-800/30 p-6 rounded-3xl border border-amber-500/20 relative">
+                <div class="bg-slate-800/30 p-6 rounded-3xl border border-amber-500/20">
                     <div class="flex justify-between items-center mb-4">
                         <span class="text-amber-400 font-bold text-sm italic">Staking (15% APY)</span>
                         <span id="stakedAmt" class="text-white font-mono text-[10px]">0 Staked</span>
                     </div>
                     <div class="bg-black/40 p-3 rounded-xl mb-4 text-center">
-                        <p class="text-[9px] text-slate-500 uppercase font-bold">Reward Rate: 15%</p>
+                        <p class="text-[9px] text-slate-500 uppercase font-bold">Rewards Earned</p>
                         <span id="rewardAmt" class="text-xl font-bold text-green-400">0.000000</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2">
@@ -187,15 +175,15 @@
                     </div>
                 </div>
 
-                <input type="text" id="codeInput" placeholder="TYPE MAGIC CODE" class="w-full h-18 bg-black rounded-xl text-center font-bold tracking-widest text-white border-2 border-slate-800 focus:border-sky-500 outline-none transition-all uppercase">
-                <button id="claimBtn" class="btn-app bg-sky-500 text-slate-950 hover:bg-sky-400 shadow-xl shadow-sky-500/20 active:scale-95" onclick="processClaim()">💰 Claim 10 Tokens</button>
+                <input type="text" id="codeInput" placeholder="TYPE MAGIC CODE" class="w-full h-18 bg-black rounded-xl text-center font-bold tracking-widest text-white border-2 border-slate-800 focus:border-sky-500 outline-none uppercase">
+                <button id="claimBtn" class="btn-app bg-sky-500 text-slate-950 shadow-xl shadow-sky-500/20 active:scale-95" onclick="processClaim()">💰 Claim 10 Tokens</button>
             </div>
             
-            <div id="adminPanel" style="display:none;" class="mt-9 p-7 border-2 border-dashed border-red-500/50 rounded-3xl bg-black/50 text-center">
+            <div id="adminPanel" style="display:none;" class="mt-9 p-7 border-2 border-dashed border-red-500/50 rounded-3xl bg-black/50 text-center text-white">
                 <h3 class="text-red-500 font-bold mb-4 text-xs italic tracking-widest">OWNER DASHBOARD</h3>
-                <textarea id="newCodesInput" placeholder="Codes: C01, C02..." class="w-full bg-slate-800 text-white rounded-xl p-3 mb-3 text-xs font-mono outline-none"></textarea>
-                <button onclick="uploadCodes()" class="btn-app bg-red-600 text-white text-xs">Upload Codes</button>
-                <div id="reqList" class="text-[10px] mt-4 space-y-2 text-white"></div>
+                <textarea id="newCodesInput" placeholder="Codes: C01, C02..." class="w-full bg-slate-800 rounded-xl p-3 mb-3 text-xs font-mono outline-none"></textarea>
+                <button onclick="uploadCodes()" class="btn-app bg-red-600 text-white text-xs py-3">Upload Codes</button>
+                <div id="reqList" class="text-[10px] mt-4 space-y-2"></div>
             </div>
         </div>
     </div>
@@ -207,8 +195,8 @@
         const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
         let userWallet = ""; let userBalance = 0; let stakeInterval;
 
-        function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').style.display = 'block'; window.scrollTo(0,0); }
-        function showLanding() { document.getElementById('landingPage').classList.remove('section-hidden'); document.getElementById('rewardsApp').style.display = 'none'; }
+        function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').classList.add('section-visible'); window.scrollTo(0,0); }
+        function showLanding() { document.getElementById('landingPage').classList.remove('section-hidden'); document.getElementById('rewardsApp').classList.remove('section-visible'); }
 
         async function connectWallet() {
             if (window.ethereum) {
@@ -238,6 +226,9 @@
                 const days = (new Date() - new Date(data.last_stake_date)) / 86400000;
                 const reward = (data.staked_amount * 0.15 / 365) * days;
                 document.getElementById('rewardAmt').innerText = reward.toFixed(6);
+            } else {
+                document.getElementById('stakedAmt').innerText = "0 Staked";
+                document.getElementById('rewardAmt').innerText = "0.000000";
             }
         }
 
@@ -247,24 +238,27 @@
             const newStaked = (cur ? parseFloat(cur.staked_amount) : 0) + 100;
             await db.from('user_balances').update({ pending_balance: userBalance - 100 }).eq('wallet_address', userWallet);
             await db.from('staking_data').upsert({ wallet_address: userWallet, staked_amount: newStaked, last_stake_date: new Date().toISOString() });
-            alert("100 TOFFEE Staked!"); refreshData(); loadStakingData();
+            alert("100 TOFFEE Staked!"); await refreshData(); await loadStakingData();
         }
 
         async function claimStakingRewards() {
             const reward = parseFloat(document.getElementById('rewardAmt').innerText);
             if(reward <= 0) return alert("No rewards yet!");
-            const { error } = await db.from('user_balances').update({ pending_balance: userBalance + reward }).eq('wallet_address', userWallet);
+            const { data: fresh } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).single();
+            const newTotal = parseFloat(fresh.pending_balance) + reward;
+            await db.from('user_balances').update({ pending_balance: newTotal }).eq('wallet_address', userWallet);
             await db.from('staking_data').update({ last_stake_date: new Date().toISOString() }).eq('wallet_address', userWallet);
-            if(!error) { alert("Claimed!"); refreshData(); loadStakingData(); }
+            alert("Claimed!"); await refreshData(); await loadStakingData();
         }
 
         async function unstakeTokens() {
             const { data } = await db.from('staking_data').select('*').eq('wallet_address', userWallet).maybeSingle();
-            if (!data || parseFloat(data.staked_amount) <= 0) return;
+            if (!data || parseFloat(data.staked_amount) <= 0) return alert("Nothing to unstake!");
             const reward = parseFloat(document.getElementById('rewardAmt').innerText);
-            await db.from('user_balances').update({ pending_balance: userBalance + parseFloat(data.staked_amount) + reward }).eq('wallet_address', userWallet);
+            const totalBack = parseFloat(data.staked_amount) + reward;
+            await db.from('user_balances').update({ pending_balance: userBalance + totalBack }).eq('wallet_address', userWallet);
             await db.from('staking_data').update({ staked_amount: 0, last_stake_date: new Date().toISOString() }).eq('wallet_address', userWallet);
-            alert("Unstaked Successfully!"); refreshData(); loadStakingData();
+            alert("Unstaked Successfully!"); await refreshData(); await loadStakingData();
         }
 
         async function processClaim() {
@@ -274,7 +268,7 @@
             if (v) {
                 await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 });
                 await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-                confetti(); refreshData(); document.getElementById('codeInput').value = "";
+                confetti(); await refreshData(); document.getElementById('codeInput').value = "";
             } else { alert("Invalid Code!"); }
         }
 
@@ -282,16 +276,13 @@
             navigator.clipboard.writeText("0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88");
             const btn = document.getElementById('copyBtn');
             btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-            btn.closest('.glass-card').classList.add('pulse-atomic');
-            setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy Contract'; btn.closest('.glass-card').classList.remove('pulse-atomic'); }, 2000);
+            setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy Contract'; }, 2000);
         }
 
-        // Admin Helpers
         async function uploadCodes() {
             const input = document.getElementById("newCodesInput").value;
             const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase() }));
-            await db.from('valid_codes').insert(codes);
-            alert("Uploaded!");
+            await db.from('valid_codes').insert(codes); alert("Uploaded!");
         }
 
         async function loadAdminRequests() {
@@ -311,6 +302,12 @@
             await db.from('user_balances').update({ pending_balance: u.pending_balance - 500 }).eq('wallet_address', addr);
             await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
             alert("Approved!"); loadAdminRequests(); refreshData();
+        }
+
+        async function requestWithdrawal() {
+            if(userBalance < 500) return;
+            await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
+            alert("Request sent!"); refreshData();
         }
     </script>
 </body>
