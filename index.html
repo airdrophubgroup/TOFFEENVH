@@ -15,70 +15,55 @@
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; position: relative; }
         html { scroll-behavior: smooth; }
 
-        /* --- 🍬 2026 BACKGROUND TOFFEE SHOWER ANIMATION (Optimized) --- */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 200%; /* Higher for smooth scroll */
-            z-index: -1;
-            /* Using FontAwesome Candy Cane as a Faded Toffee Icon Pattern */
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj48cGF0aCBmaWxsPSJyZ2JhKDU2LCAxODksIDI0OCwgMC4wNikiIGQ9Ik00MDAgMzJDNDI2LjUgMzIgNDQ4IDUzLjU5IDQ0OCA4MFYxOTJDMzguNSAzMTIuNSAyMjcuNSAzMjkgMTcyIDMxMkMxMTYuNSAyOTUgNzQuNyAyMzguOCAzMiAyMTBDMy40MDEgMTgyLjQgLTcuMzQyIDExMy40IDEzLjIgNDkuODFDMTguNTEgMzQuMTMgNDMuNjUgLTggNjMuNDYgLTE0LjQ5Qzc1LjQ5IC0xOS45NSA5My4wMiAtMTguNCAxMDQuMiAtNi41MzVMMTQwIDE2LjY3QzE1Ni4yIDM5LjY0IDIxMi45IDM5LjY0IDIyOSAxNi42N0wyNjQuOCAtNi41MzVDMjc2IC0xOC40IDI5My41IC0xOS45NSAzMDUuNSAtMTQuNDlDMzI1LjQgLTguMzAyIDM1MC41IDMzLjg3IDM1NS44IDQ5LjU5QzM3Ny4zIDExMy40IDM2NC45IDE4Mi40IDMzNSA5NkMyOTIuNCAxODkuNyAyNDkuOSAyOTUuNSA0MDAgMTkyVjgwaC0xNkg0MDZ2LTQ4ek0yMzggNTY4QzIzNSA2MjMuMSAyMDEuNyA2ODcuMyAxNTguOCA3MjBDMTI3LjcgNzQyLjIgMTA0IDE4MC45IDc1IDI1NUMzNi45NyAyNDAuNyAyOS4zNSAyMzEuMyAyNSAyMjBDMTkuNTggMjA1LjggNDguMjcgMTUyLjEgODAgMTA4VjgwaC0xNkg4MHY5NkM4MCAxNjguMyA5NS45IDE4NC4zIDExNi4yIDE4NC4zQzExOS44IDE4NC4zIDEyMy44IDE4NC4xIDEyNy43IDE4My45TDEzMy45IDE4My44TDE0NS44IDE4My44QzE4NS44IDE4My44IDIyNC41IDE1Ni40IDIzNSAxMzYuOEMyNDUuNSAxMTcuMiAyNTAgOTkuMjQgMjUwIDgwVjE0MEgyNjZ2LTk2QzI2NiA4OC4zNyAyNTcuNCA4MCAyNDYgODBIMjM4djE0MHogTTQwMSA1NThDNDA2LjUgNjEzLjEgMzgyLjEgNjg3LjMgMzM5LjUgNzIwQzMwNy45IDc0Mi4yIDI4My44IDE4MC45IDI1NSAyNTVDMjE2Ljk3IDI0MC43IDIwOS4zNSAyMzEuMyAyMDUgMjIwQzE5OS41OCAyMDUuOCA5OS4xOCA0MDQgNzA1Qy01Ni43NSAtMjIzLjcgLTEwMC45IDE3NS41IC03OC41NCA5Ni4xQy03NC44NyA3OS4xMyAtNTAuMjIgLTggLTMwLjEyIC0xNC40OUMtMTkuNzQgLTE5Ljk1IDEuMzI2IC0xOC40IDEyLjIxIC02LjUzNUw1My4wNyAxNi42N0M2OS43NCAzOS42NCAxMTcuNCAzOS42NCAxMzMuNyAxNi42N0wxNzQuNSAtNi41MzVDMTg1LjQgLTE4LjQgMjAyLjQgLTE5Ljk1IDIxNS40IC0xNC40OUMyMzUuMSAtOC4zMDIgMjU5LjQgMzMuODcgMjY0LjcgNDkuNTlDMjg4LjUgMTEzLjQgMjczLjggMTgyLjQgMjQwIDk2QzE5Ni4xIDE4OS43IDE1MS44IDI5NS41IDQwMCAxOTJWODBILTExNkgyNjZ2LTE0MEgyOTR2LTQwSDMwNXY0MEgzMjB2LTQwSDM2NXY0MEg0MDZ2LTQ4ek0xNjEgMjk3QzE3Mi41IDI3MS44IDIyNi41IDI3NS41IDI1OSAzMDVDMjcxLjIgMzMxLjkgMjU4LjUgMzg5LjMgMjE1IDQwMkMxNzEuNSA0MTQuNyAxMjguOCAzNzkuMyAxMTYgMzQ5QzEwMy4yIDMxOC43IDEyMi4zIDI5Mi41IDE2MSAyOTd6TTczLjUgNTQyQzgyLjQgNTUxLjg5IDU0IDIwNS44IDE4NCAzMTVDMjQ3LjMgMzg1LjEgMjMzLjYgNDgxLjcgMTY5IDQ5NUMxMDQuNCA1MDguMyAxNCA0MjUuMyAtNyAyODhDLTguNjMgMjUxLjEgMTAuODMgMjM0LjIgMjkuNCAyMjF6TTE3MS41IDE3OEMxNTkuOCAxODkuMyAxMzUuMyAxODQuNSAxMjQuNSA0NDRDNzkuMDkgNDE5LjUgMzAuOTEgMzA3LjEgMzIuNjkgMjE0QzM1LjAxIDE4MC4yIDgzLjIxIDExMC44IDExNCA4MHYxNjhIMTcySDE3MS41ejI4Ni45IC0yNDVDMjc2LjkgLTE1OS45IDI0My45IC0xMTUgMjA3IDExNUMxNzAuMSAxMTUgMTM3LjEgOTIuODkgMTI3LjEgMzVDMTE3LjEgLTQyLjg5IDE1MC4xIC05NSAxODcgLTk1QzIyMy45IC05NSAyNTYuOSAtNDIuODkgMjY2LjkgMzV6Ii8+PC9zdmc+');
-            background-size: 160px; /* Toffee pattern size */
-            opacity: 1; /* Already handled in SVG color */
-            pointer-events: none;
-            will-change: transform;
-            /* Scroll Speed (Parallax-like) */
-            animation: backgroundToffeeMelt 200s linear infinite;
+        /* --- 🍬 DYNAMIC FLOATING CANDY PARTICLES --- */
+        .candy-particle { position: fixed; color: rgba(56, 189, 248, 0.12); pointer-events: none; z-index: -1; animation: floatParticle 15s linear infinite; }
+        @keyframes floatParticle {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
         }
 
-        @keyframes backgroundToffeeMelt {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-50%); } /* Slower scrolling */
-        }
+        /* --- ✨ GLOW & MODERN ANIMATIONS --- */
+        .glow-text { text-shadow: 0 0 20px rgba(56, 189, 248, 0.5); animation: textPulse 3s ease-in-out infinite alternate; }
+        @keyframes textPulse { from { opacity: 0.8; } to { opacity: 1; text-shadow: 0 0 30px rgba(56, 189, 248, 0.8); } }
 
-        /* --- 2026 GLASSMORPHISM & ATOMIC EFFECTS --- */
-        #rewardsApp { display: none; padding: 15px; animation: fadeIn 0.3s ease-in; }
-        .app-container { max-width: 450px; margin: 20px auto; background: var(--card); padding: 25px; border-radius: 28px; border: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(15px); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7); }
-        
-        input#codeInput { width: 100%; height: 70px; background: #01040a; color: #ffffff; border: 3px solid #1e293b; border-radius: 18px; text-align: center; text-transform: uppercase; outline: none; transition: 0.3s; font-weight: bold; }
-        input#codeInput:focus { border-color: var(--primary); box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); }
+        .glass-card { background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .glass-card:hover { transform: translateY(-10px); border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
 
-        .btn-app { width: 100%; padding: 18px; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s transform, 0.2s box-shadow; border: none; font-size: 15px; text-transform: uppercase; tracking-wider; }
-        .btn-app:active { transform: scale(0.97); }
-
-        .section-visible { display: block !important; }
-        .section-hidden { display: none !important; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Glass Cards on Landing Page */
-        .glass-card { background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.15); transition: 0.3s border; }
-        .glass-card:hover { border-color: rgba(56, 189, 248, 0.5); }
+        /* --- APP TRANSITIONS --- */
+        #landingPage, #rewardsApp { transition: opacity 0.5s ease, transform 0.5s ease; }
+        .section-hidden { display: none !important; opacity: 0; }
+        .section-visible { display: block !important; animation: fadeIn 0.5s forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Atomic Copy Pulse */
         @keyframes pulseSuccess { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); } 100% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } }
         .pulse-atomic { animation: pulseSuccess 0.5s ease-out; }
 
+        .btn-shimmer { position: relative; overflow: hidden; }
+        .btn-shimmer::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); transition: 0.6s; }
+        .btn-shimmer:hover::after { left: 140%; }
     </style>
 </head>
 <body>
 
     <div id="landingPage">
         <nav class="bg-slate-950/70 backdrop-blur-xl border-b border-sky-900/40 sticky top-0 z-50">
-            <div class="max-w-6xl mx-auto px-4 h-18 flex justify-between items-center">
+            <div class="max-w-6xl mx-auto px-4 h-20 flex justify-between items-center">
                 <div class="flex items-center space-x-2.5">
                     <i class="fas fa-candy-cane text-3xl text-sky-400"></i>
                     <span class="text-2xl font-black text-white uppercase tracking-tighter">Toffeenvh</span>
                 </div>
-                <button onclick="showApp()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 px-7 py-3 rounded-full font-bold transition transform hover:scale-105 active:scale-95 shadow-xl shadow-sky-500/20 text-sm">Launch Celo App</button>
+                <button onclick="showApp()" class="btn-shimmer bg-sky-500 hover:bg-sky-400 text-slate-950 px-7 py-3 rounded-full font-bold transition transform active:scale-95 shadow-xl shadow-sky-500/20 text-sm">Launch Celo App</button>
             </div>
         </nav>
 
         <header class="py-28 text-center px-4">
-            <h1 class="text-6xl md:text-8xl font-black mb-8 tracking-tighter bg-gradient-to-r from-sky-400 via-blue-500 to-purple-600 bg-clip-text text-transparent italic">Sweet Crypto Rewards</h1>
+            <h1 class="text-6xl md:text-8xl font-black mb-8 tracking-tighter bg-gradient-to-r from-sky-400 via-blue-500 to-purple-600 bg-clip-text text-transparent italic glow-text">Sweet Crypto Rewards</h1>
             <p class="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-14 leading-relaxed font-medium">Claim your <b class="text-sky-400">$TOFFEE</b> tokens on the <b class="text-amber-400">Celo Network</b>. Fast, secure, and decentralized rewards for the Nihal Vihar community.</p>
             <div class="flex justify-center">
-                <button onclick="showApp()" class="bg-sky-500 text-slate-950 px-12 py-5 rounded-2xl font-extrabold text-xl hover:bg-sky-400 transition shadow-2xl shadow-sky-500/30 transform hover:-translate-y-1 active:translate-y-0">💰 Claim 10 TOFFEE</button>
+                <button onclick="showApp()" class="btn-shimmer bg-sky-500 text-slate-950 px-12 py-5 rounded-2xl font-extrabold text-xl hover:bg-sky-400 transition shadow-2xl shadow-sky-500/30 transform hover:-translate-y-2 active:translate-y-0">💰 Claim 10 TOFFEE</button>
             </div>
         </header>
 
@@ -134,8 +119,8 @@
                     <div class="h-1.5 w-28 bg-sky-500 mx-auto rounded-full shadow-lg shadow-sky-500/20"></div>
                 </div>
                 
-                <div class="grid gap-7">
-                    <div class="glass-card p-9 rounded-3xl border-l-sky-500 border-l-8 transform hover:-translate-y-1 transition shadow-xl">
+                <div class="grid gap-7 mt-12">
+                    <div class="glass-card p-9 rounded-3xl border-l-sky-500 border-l-8">
                         <div class="flex items-center justify-between mb-2">
                             <h3 class="text-2xl font-black text-sky-400">Q1 2026</h3>
                             <span class="px-3 py-1.5 bg-sky-500/10 text-sky-400 text-xs font-extrabold rounded-full border border-sky-500/20">LIVE / ACTIVE</span>
@@ -144,22 +129,22 @@
                         <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Nihal Vihar area ke stores mein Toffeenvh की distribution और website का beta version launch. Pehla crypto toffee movement.</p>
                     </div>
 
-                    <div class="glass-card p-9 rounded-3xl border-l-blue-500 border-l-8 transform hover:-translate-y-1 transition shadow-xl">
+                    <div class="glass-card p-9 rounded-3xl border-l-blue-500 border-l-8">
                         <h3 class="text-2xl font-black text-blue-400 mb-2">Q2 2026</h3>
                         <h4 class="text-white font-semibold text-lg">Smart Contract Audits & $TOFFEE Deployment</h4>
-                        <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Celo network par official $TOFFEE custom smart contract deployment और global standard security audit completion. Smart-contract safety ensures user trust.</p>
+                        <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Celo network par official $TOFFEE custom smart contract deployment और global standard security audit completion.</p>
                     </div>
 
-                    <div class="glass-card p-9 rounded-3xl border-l-purple-500 border-l-8 transform hover:-translate-y-1 transition shadow-xl">
+                    <div class="glass-card p-9 rounded-3xl border-l-purple-500 border-l-8">
                         <h3 class="text-2xl font-black text-purple-400 mb-2">Q3 2026</h3>
                         <h4 class="text-white font-semibold text-lg">Ecosystem Growth & Advanced Referral System</h4>
                         <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Naye toffee flavors, rewards optimization aur advanced referral mechanics rollout. Community earn together.</p>
                     </div>
 
-                    <div class="glass-card p-9 rounded-3xl border-l-amber-500 border-l-8 transform hover:-translate-y-1 transition shadow-xl">
+                    <div class="glass-card p-9 rounded-3xl border-l-amber-500 border-l-8">
                         <h3 class="text-2xl font-black text-amber-400 mb-2">Q4 2027</h3>
                         <h4 class="text-white font-semibold text-lg">DEX Liquidity, Worldcoin/Uniswap Listing</h4>
-                        <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Decentralized exchanges (jaise Uniswap/Worldcoin platform) par listing, DEX liquidity pool activation aur global expansion.</p>
+                        <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Decentralized exchanges par listing, DEX liquidity pool activation aur global expansion.</p>
                     </div>
                 </div>
             </div>
@@ -167,18 +152,9 @@
 
         <footer class="py-14 text-center text-slate-600 border-t border-slate-800/60 bg-slate-950">
             <div class="flex justify-center space-x-12 mb-9">
-                <a href="https://t.me/ToffeenVh" target="_blank" class="text-sky-500 hover:text-sky-400 transition-all transform hover:scale-125 text-center active:scale-95">
-                    <i class="fab fa-telegram text-4xl"></i>
-                    <span class="block text-[11px] mt-1.5 font-bold tracking-wider">Telegram</span>
-                </a>
-                <a href="https://x.com/ToffeenVh" target="_blank" class="text-sky-500 hover:text-sky-400 transition-all transform hover:scale-125 text-center active:scale-95">
-                    <i class="fab fa-twitter text-4xl"></i>
-                    <span class="block text-[11px] mt-1.5 font-bold tracking-wider">Twitter (X)</span>
-                </a>
-                <a href="https://www.youtube.com/@ToffeeTeam" target="_blank" class="text-red-600 hover:text-red-500 transition-all transform hover:scale-125 text-center active:scale-95">
-                    <i class="fab fa-youtube text-4xl"></i>
-                    <span class="block text-[11px] mt-1.5 font-bold tracking-wider">YouTube</span>
-                </a>
+                <a href="https://t.me/ToffeenVh" target="_blank" class="text-sky-500 hover:text-sky-400 transition-all transform hover:scale-125"><i class="fab fa-telegram text-4xl"></i><span class="block text-[11px] mt-1.5 font-bold">Telegram</span></a>
+                <a href="https://x.com/ToffeenVh" target="_blank" class="text-sky-500 hover:text-sky-400 transition-all transform hover:scale-125"><i class="fab fa-twitter text-4xl"></i><span class="block text-[11px] mt-1.5 font-bold">Twitter (X)</span></a>
+                <a href="https://www.youtube.com/@ToffeeTeam" target="_blank" class="text-red-600 hover:text-red-500 transition-all transform hover:scale-125"><i class="fab fa-youtube text-4xl"></i><span class="block text-[11px] mt-1.5 font-bold">YouTube</span></a>
             </div>
             <div class="px-5">
                 <p class="text-sm font-black text-slate-500 uppercase tracking-wide">© 2026-2027 Toffeenvh Project</p>
@@ -187,99 +163,98 @@
         </footer>
     </div>
 
-    <div id="rewardsApp">
-        <div class="flex justify-between items-center max-w-lg mx-auto mb-8 px-4">
-            <button onclick="showLanding()" class="text-sky-400 font-extrabold bg-sky-500/10 px-6 py-2.5 rounded-xl hover:bg-sky-500/20 transition active:scale-95 shadow-lg shadow-sky-500/10 text-sm">
-                <i class="fas fa-arrow-left mr-2"></i> Home
-            </button>
+    <div id="rewardsApp" class="section-hidden">
+        <div class="flex justify-between items-center max-w-lg mx-auto mt-10 mb-8 px-4">
+            <button onclick="showLanding()" class="text-sky-400 font-extrabold bg-sky-500/10 px-6 py-2.5 rounded-xl hover:bg-sky-500/20 transition active:scale-95 text-sm"><i class="fas fa-arrow-left mr-2"></i> Home</button>
             <span class="text-[11px] text-slate-500 font-mono tracking-widest uppercase font-bold">Celo Mainnet</span>
         </div>
 
-        <div class="app-container relative">
-            <i class="fas fa-candy-cane text-sky-400 opacity-5 text-9xl absolute top-10 right-10 pointer-events-none"></i>
-            
+        <div class="max-w-[450px] mx-auto bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[40px] border border-sky-500/20 shadow-2xl relative">
+            <i class="fas fa-candy-cane text-sky-400 opacity-5 text-9xl absolute right-10 top-10 pointer-events-none"></i>
             <h1 class="text-3xl font-black text-center text-sky-400 tracking-tighter">🍬 TOFFEENVH</h1>
             <p class="text-[10px] text-amber-500 font-bold text-center mb-9 uppercase tracking-widest italic">Nihal Vihar Digital Rewards</p>
 
-            <button id="walletBtn" class="btn-app btn-wallet shadow-lg shadow-amber-500/20 active:scale-95" onclick="connectWallet()">
-                <i class="fas fa-wallet mr-2.5"></i> CONNECT METAMASK
-            </button>
+            <button id="walletBtn" class="btn-shimmer w-full bg-amber-500 text-slate-950 py-5 rounded-2xl font-black shadow-xl shadow-amber-500/20" onclick="connectWallet()"><i class="fas fa-wallet mr-2"></i> CONNECT METAMASK</button>
 
             <div id="userUI" style="display:none;" class="mt-7">
-                <div class="bg-black/80 p-9 rounded-3xl border border-sky-500/30 text-center mb-6 shadow-inner relative overflow-hidden">
+                <div class="bg-black/80 p-9 rounded-3xl border border-sky-500/30 text-center mb-6 shadow-inner">
                     <p class="text-slate-500 text-[11px] uppercase font-bold mb-1.5 tracking-wider">Total Earnings</p>
-                    <span id="balText" class="text-5xl font-black text-sky-400 tracking-tighter">0 TOFFEE</span>
-                    <button id="withdrawBtn" class="btn-app bg-green-600 text-white mt-5 hidden active:scale-95 shadow-xl shadow-green-500/20" onclick="requestWithdrawal()">🚀 Withdraw 500 TOFFEE</button>
+                    <span id="balText" class="text-5xl font-black text-sky-400 tracking-tighter glow-text">0 TOFFEE</span>
+                    <button id="withdrawBtn" class="w-full bg-green-600 text-white mt-5 py-4 rounded-xl hidden font-bold" onclick="requestWithdrawal()">🚀 Withdraw 500 TOFFEE</button>
                 </div>
-                <div class="input-wrapper">
-                    <input type="text" id="codeInput" placeholder="TYPE MAGIC CODE" spellcheck="false" autocomplete="off" class="tracking-widest">
-                </div>
-                <button id="claimBtn" class="btn-app bg-sky-500 text-slate-950 hover:bg-sky-400 shadow-xl shadow-sky-500/20 active:scale-95" onclick="processClaim()">💰 Claim 10 Tokens</button>
+                <input type="text" id="codeInput" placeholder="TYPE MAGIC CODE" class="w-full h-16 bg-black text-white border-2 border-slate-800 rounded-xl text-center font-bold tracking-widest mb-4 focus:border-sky-500 outline-none">
+                <button id="claimBtn" class="btn-shimmer w-full bg-sky-500 text-slate-950 py-5 rounded-2xl font-black" onclick="processClaim()">💰 Claim 10 Tokens</button>
             </div>
-            
+
             <div id="adminPanel" style="display:none;" class="mt-9 p-7 border-2 border-dashed border-red-500/50 rounded-3xl bg-black/50">
-                <h3 class="text-red-500 font-bold mb-4 text-sm flex items-center justify-center italic tracking-wider"><i class="fas fa-user-shield mr-2"></i> OWNER DASHBOARD v2.0</h3>
-                <textarea id="newCodesInput" placeholder="Codes: C01, C02..." class="w-full bg-slate-800 text-white rounded-xl p-3 mb-3 text-sm border-none outline-none focus:ring-1 ring-red-500 font-mono"></textarea>
-                <button onclick="uploadCodes()" class="btn-app bg-red-600 hover:bg-red-500 text-white text-sm">⬆️ Upload Codes to DB</button>
+                <h3 class="text-red-500 font-bold mb-4 text-sm flex items-center justify-center italic"><i class="fas fa-user-shield mr-2"></i> OWNER DASHBOARD v2.0</h3>
+                <textarea id="newCodesInput" placeholder="Codes: C01, C02..." class="w-full bg-slate-800 text-white rounded-xl p-3 mb-3 text-sm border-none outline-none font-mono"></textarea>
+                <button onclick="uploadCodes()" class="w-full bg-red-600 py-3 rounded-xl text-white font-bold text-sm">⬆️ Upload Codes</button>
                 <div id="reqList" class="text-[10px] mt-4 space-y-2.5"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- PAGE TOGGLE LOGIC ---
-        function showApp() { 
-            document.getElementById('landingPage').classList.add('section-hidden'); 
-            document.getElementById('rewardsApp').classList.add('section-visible'); 
-            window.scrollTo(0,0); 
+        // --- ANIMATIONS ---
+        function createParticles() {
+            for (let i = 0; i < 15; i++) {
+                const p = document.createElement('i');
+                p.className = 'fas fa-candy-cane candy-particle';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDuration = (Math.random() * 8 + 7) + 's';
+                p.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                document.body.appendChild(p);
+            }
         }
-        function showLanding() { 
-            document.getElementById('landingPage').classList.remove('section-hidden'); 
-            document.getElementById('rewardsApp').classList.remove('section-visible'); 
+        createParticles();
+
+        function showApp() {
+            document.getElementById('landingPage').classList.add('section-hidden');
+            document.getElementById('rewardsApp').classList.add('section-visible');
+            window.scrollTo(0,0);
         }
-
-        // --- ATOMIC COPY FUNCTION ---
-        function copyAddressAtomic() {
-            const addr = document.getElementById('contractAddr').innerText;
-            const btn = document.getElementById('copyBtn');
-            const card = btn.closest('.glass-card'); // To apply pulse to card
-
-            navigator.clipboard.writeText(addr).then(() => {
-                btn.innerHTML = '<i class="fas fa-check"></i> Atomic Address Copied!';
-                btn.classList.replace('bg-slate-800/80', 'bg-green-600');
-                btn.classList.replace('text-sky-400', 'text-white');
-                card.classList.add('pulse-atomic'); // Apply Atomic Wave pulse
-
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fas fa-copy"></i> Copy Contract';
-                    btn.classList.replace('bg-green-600', 'bg-slate-800/80');
-                    btn.classList.replace('text-white', 'text-sky-400');
-                    card.classList.remove('pulse-atomic');
-                }, 2000);
-            }).catch(err => alert("Copy Failed!"));
+        function showLanding() {
+            document.getElementById('landingPage').classList.remove('section-hidden');
+            document.getElementById('rewardsApp').classList.remove('section-visible');
         }
 
-        // --- SUPABASE CONFIGURATION (Do NOT change these unless needed) ---
+        // --- SUPABASE & LOGIC ---
         const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
         const db = supabase.createClient(SB_URL, SB_KEY);
         const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
-        
-        let userWallet = ""; 
-        let userBalance = 0;
+        let userWallet = ""; let userBalance = 0;
 
-        // --- WALLET & REWARDS LOGIC ---
         async function connectWallet() {
             if (window.ethereum) {
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    userWallet = accounts[0].toLowerCase();
-                    document.getElementById("walletBtn").innerText = `ID: ${userWallet.substring(0,6)}...${userWallet.substring(38)}`;
-                    document.getElementById("userUI").style.display = "block";
-                    if (userWallet === ADMIN_WALLET.toLowerCase()) document.getElementById("adminPanel").style.display = "block";
-                    refreshData();
-                } catch(e) { alert("Metamask connection rejected."); }
-            } else { alert("Open this website inside MetaMask Browser!"); }
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                userWallet = accounts[0].toLowerCase();
+                document.getElementById("walletBtn").innerText = `ID: ${userWallet.substring(0,6)}...`;
+                document.getElementById("userUI").style.display = "block";
+                if (userWallet === ADMIN_WALLET.toLowerCase()) {
+                    document.getElementById("adminPanel").style.display = "block";
+                    loadAdminRequests();
+                }
+                refreshData();
+            } else { alert("Open inside MetaMask!"); }
+        }
+
+        async function processClaim() {
+            const btn = document.getElementById("claimBtn");
+            const codeInput = document.getElementById('codeInput');
+            const code = codeInput.value.trim().toUpperCase();
+            if(!code || btn.disabled) return;
+            btn.disabled = true; btn.innerText = "VALIDATING...";
+            const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
+            if (valid) {
+                await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 });
+                await db.from('valid_codes').update({ is_used: true }).eq('code', code);
+                confetti({ particleCount: 150, spread: 70, colors: ['#38bdf8', '#fbbf24', '#ffffff'] });
+                alert("10 TOFFEE Added!"); refreshData(); codeInput.value = "";
+            } else { alert("Invalid Code!"); }
+            btn.disabled = false; btn.innerText = "💰 Claim 10 Tokens";
         }
 
         async function refreshData() {
@@ -287,71 +262,43 @@
             const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
             userBalance = data ? data.pending_balance : 0;
             document.getElementById("balText").innerText = `${userBalance} TOFFEE`;
-            const wBtn = document.getElementById("withdrawBtn");
-            if(userBalance >= 500) { wBtn.classList.remove('hidden'); } else { wBtn.classList.add('hidden'); }
+            if(userBalance >= 500) document.getElementById("withdrawBtn").classList.remove('hidden');
         }
 
-        async function processClaim() {
-            const btn = document.getElementById("claimBtn");
-            const codeInput = document.getElementById('codeInput');
-            const code = codeInput.value.trim().toUpperCase();
-            
-            if(!code || btn.disabled) return;
-            
-            btn.disabled = true; 
-            btn.innerText = "⌛ VALIDATING CODE...";
-            try {
-                const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-                
-                if (valid) {
-                    await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 });
-                    await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-                    
-                    // Confetti explosion using custom Celo Colors
-                    confetti({ particleCount: 200, spread: 80, origin: { y: 0.8 }, colors: ['#38bdf8', '#fbbf24', '#ffffff', '#10b981'] });
-                    
-                    alert("Sweet! 10 TOFFEE Tokens added to your dashboard balance."); 
-                    refreshData();
-                    codeInput.value = "";
-                } else { alert("Invalid or already used Magic Code!"); }
-            } catch (e) { alert("Network error. Please try again."); }
-            btn.disabled = false; btn.innerText = "💰 Claim 10 Tokens";
+        function copyAddressAtomic() {
+            const addr = document.getElementById('contractAddr').innerText;
+            navigator.clipboard.writeText(addr);
+            const btn = document.getElementById('copyBtn');
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            btn.closest('.glass-card').classList.add('pulse-atomic');
+            setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy Contract'; btn.closest('.glass-card').classList.remove('pulse-atomic'); }, 2000);
         }
 
         async function requestWithdrawal() {
-            if(userBalance < 500) return;
-            const { error } = await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
-            if(!error) alert("Withdrawal request sent! Mark paid within 24 hours."); refreshData();
+            await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
+            alert("Request Sent!"); refreshData();
         }
 
-        // --- ADMIN PANEL FUNCTIONS ---
         async function uploadCodes() {
             const input = document.getElementById("newCodesInput").value;
             const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false })).filter(c => c.code !== "");
-            const { error } = await db.from('valid_codes').insert(codes); 
-            if(!error) { alert("✅ New Codes uploaded to Database!"); document.getElementById("newCodesInput").value = ""; }
+            await db.from('valid_codes').insert(codes);
+            alert("Codes Uploaded!"); document.getElementById("newCodesInput").value = "";
         }
 
         async function loadAdminRequests() {
             const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
             let h = "";
-            reqs?.forEach(r => {
-                h += `<div class="flex justify-between items-center bg-black/80 p-3.5 rounded-2xl border border-red-500/20 shadow-inner">
-                        <span class="text-sky-300 font-mono text-[11px]">${r.wallet_address.substring(0,12)}...</span>
-                        <button onclick="approveWithdrawal(${r.id}, '${r.wallet_address}')" class="bg-green-600 px-3 py-1.5 rounded-lg text-white font-black active:scale-95 text-[10px]">APPROVE PAID</button>
-                      </div>`;
-            });
-            document.getElementById("reqList").innerHTML = h || "<p class='text-slate-500 italic text-center'>No pending payout requests.</p>";
+            reqs?.forEach(r => { h += `<div class='bg-black p-2 mb-2'>${r.wallet_address.substring(0,10)}... <button onclick="approveWithdrawal(${r.id}, '${r.wallet_address}')" class='bg-green-600 px-2'>PAID</button></div>`; });
+            document.getElementById("reqList").innerHTML = h || "No requests.";
         }
 
         async function approveWithdrawal(id, address) {
-            if(!confirm("Are you sure you have paid 500 TOFFEE on Celo Mainnet? This will deduct balance from userdashboard.")) return;
             const { data: user } = await db.from('user_balances').select('pending_balance').eq('wallet_address', address).single();
             await db.from('user_balances').update({ pending_balance: user.pending_balance - 500 }).eq('wallet_address', address);
             await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
-            alert("Payment marked completed!"); loadAdminRequests(); refreshData();
+            alert("Approved!"); loadAdminRequests(); refreshData();
         }
-
     </script>
 </body>
 </html>
