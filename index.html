@@ -31,19 +31,17 @@
         .glass-card { background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .glass-card:hover { transform: translateY(-10px); border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
 
-        /* --- APP TRANSITIONS --- */
         #landingPage, #rewardsApp { transition: opacity 0.5s ease, transform 0.5s ease; }
         .section-hidden { display: none !important; opacity: 0; }
         .section-visible { display: block !important; animation: fadeIn 0.5s forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Atomic Copy Pulse */
-        @keyframes pulseSuccess { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); } 100% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } }
-        .pulse-atomic { animation: pulseSuccess 0.5s ease-out; }
-
         .btn-shimmer { position: relative; overflow: hidden; }
         .btn-shimmer::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); transition: 0.6s; }
         .btn-shimmer:hover::after { left: 140%; }
+        
+        @keyframes pulseSuccess { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); } 100% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } }
+        .pulse-atomic { animation: pulseSuccess 0.5s ease-out; }
     </style>
 </head>
 <body>
@@ -73,7 +71,6 @@
                     <h2 class="text-4xl font-extrabold text-white mb-2 tracking-tight">Tokenomics & 2026 Setup</h2>
                     <p class="text-slate-400 text-md italic font-medium">Essential details for $TOFFEE holders on Celo</p>
                 </div>
-
                 <div class="grid md:grid-cols-2 gap-10">
                     <div class="glass-card p-10 rounded-3xl shadow-2xl">
                         <h3 class="text-sky-400 font-extrabold mb-7 flex items-center text-2xl tracking-tight"><i class="fas fa-atom mr-3 text-3xl"></i> Contract Atomic Details</h3>
@@ -97,7 +94,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="glass-card p-10 rounded-3xl shadow-2xl">
                         <h3 class="text-amber-500 font-extrabold mb-7 flex items-center text-2xl tracking-tight"><i class="fas fa-wallet mr-3 text-3xl"></i> MetaMask 2026 Guide</h3>
                         <ol class="text-sm text-slate-300 space-y-5 list-decimal ml-5 leading-relaxed font-medium">
@@ -113,38 +109,25 @@
         </section>
 
         <section id="roadmap" class="py-28 bg-slate-950/40">
-            <div class="max-w-4xl mx-auto px-5">
-                <div class="text-center mb-18">
-                    <h2 class="text-5xl font-black text-white mb-4 italic tracking-tighter">Project Roadmap</h2>
-                    <div class="h-1.5 w-28 bg-sky-500 mx-auto rounded-full shadow-lg shadow-sky-500/20"></div>
-                </div>
-                
-                <div class="grid gap-7 mt-12">
-                    <div class="glass-card p-9 rounded-3xl border-l-sky-500 border-l-8">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-2xl font-black text-sky-400">Q1 2026</h3>
-                            <span class="px-3 py-1.5 bg-sky-500/10 text-sky-400 text-xs font-extrabold rounded-full border border-sky-500/20">LIVE / ACTIVE</span>
-                        </div>
-                        <h4 class="text-white font-semibold text-lg">Launch & Local Store Tie-ups in Nihal Vihar</h4>
-                        <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Nihal Vihar area ke stores mein Toffeenvh की distribution और website का beta version launch. Pehla crypto toffee movement.</p>
+            <div class="max-w-4xl mx-auto px-5 text-center">
+                <h2 class="text-5xl font-black text-white mb-4 italic tracking-tighter">Project Roadmap</h2>
+                <div class="h-1.5 w-28 bg-sky-500 mx-auto rounded-full shadow-lg shadow-sky-500/20 mb-12"></div>
+                <div class="grid gap-7 text-left">
+                    <div class="glass-card p-8 rounded-3xl border-l-sky-500 border-l-8">
+                        <h3 class="text-2xl font-black text-sky-400 mb-1">Q1 2026 - LIVE</h3>
+                        <p class="text-slate-400 text-sm">Nihal Vihar stores distribution & website beta launch.</p>
                     </div>
-
-                    <div class="glass-card p-9 rounded-3xl border-l-blue-500 border-l-8">
-                        <h3 class="text-2xl font-black text-blue-400 mb-2">Q2 2026</h3>
-                        <h4 class="text-white font-semibold text-lg">Smart Contract Audits & $TOFFEE Deployment</h4>
-                        <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Celo network par official $TOFFEE custom smart contract deployment और global standard security audit completion.</p>
+                    <div class="glass-card p-8 rounded-3xl border-l-blue-500 border-l-8">
+                        <h3 class="text-2xl font-black text-blue-400 mb-1">Q2 2026 - PREP</h3>
+                        <p class="text-slate-400 text-sm">Smart Contract Audits & $TOFFEE Deployment.</p>
                     </div>
-
-                    <div class="glass-card p-9 rounded-3xl border-l-purple-500 border-l-8">
-                        <h3 class="text-2xl font-black text-purple-400 mb-2">Q3 2026</h3>
-                        <h4 class="text-white font-semibold text-lg">Ecosystem Growth & Advanced Referral System</h4>
-                        <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Naye toffee flavors, rewards optimization aur advanced referral mechanics rollout. Community earn together.</p>
+                    <div class="glass-card p-8 rounded-3xl border-l-purple-500 border-l-8">
+                        <h3 class="text-2xl font-black text-purple-400 mb-1">Q3 2026 - GROWTH</h3>
+                        <p class="text-slate-400 text-sm">Advanced Referral System & Ecosystem expansion.</p>
                     </div>
-
-                    <div class="glass-card p-9 rounded-3xl border-l-amber-500 border-l-8">
-                        <h3 class="text-2xl font-black text-amber-400 mb-2">Q4 2027</h3>
-                        <h4 class="text-white font-semibold text-lg">DEX Liquidity, Worldcoin/Uniswap Listing</h4>
-                        <p class="text-slate-400 text-sm mt-2.5 font-medium leading-relaxed">Decentralized exchanges par listing, DEX liquidity pool activation aur global expansion.</p>
+                    <div class="glass-card p-8 rounded-3xl border-l-amber-500 border-l-8">
+                        <h3 class="text-2xl font-black text-amber-400 mb-1">Q4 2027 - DEX</h3>
+                        <p class="text-slate-400 text-sm">Uniswap/Worldcoin listing & DEX Liquidity pools.</p>
                     </div>
                 </div>
             </div>
@@ -156,39 +139,54 @@
                 <a href="https://x.com/ToffeenVh" target="_blank" class="text-sky-500 hover:text-sky-400 transition-all transform hover:scale-125"><i class="fab fa-twitter text-4xl"></i><span class="block text-[11px] mt-1.5 font-bold">Twitter (X)</span></a>
                 <a href="https://www.youtube.com/@ToffeeTeam" target="_blank" class="text-red-600 hover:text-red-500 transition-all transform hover:scale-125"><i class="fab fa-youtube text-4xl"></i><span class="block text-[11px] mt-1.5 font-bold">YouTube</span></a>
             </div>
-            <div class="px-5">
-                <p class="text-sm font-black text-slate-500 uppercase tracking-wide">© 2026-2027 Toffeenvh Project</p>
-                <p class="text-[12px] mt-1.5 italic font-medium">Nihal Vihar Digital Revolution | Powered by Celo Network</p>
-            </div>
+            <p class="text-sm font-black text-slate-500 uppercase tracking-wide">© 2026-2027 Toffeenvh Project</p>
         </footer>
     </div>
 
-    <div id="rewardsApp" class="section-hidden">
-        <div class="flex justify-between items-center max-w-lg mx-auto mt-10 mb-8 px-4">
+    <div id="rewardsApp" class="section-hidden py-10">
+        <div class="flex justify-between items-center max-w-lg mx-auto mb-8 px-4">
             <button onclick="showLanding()" class="text-sky-400 font-extrabold bg-sky-500/10 px-6 py-2.5 rounded-xl hover:bg-sky-500/20 transition active:scale-95 text-sm"><i class="fas fa-arrow-left mr-2"></i> Home</button>
             <span class="text-[11px] text-slate-500 font-mono tracking-widest uppercase font-bold">Celo Mainnet</span>
         </div>
 
-        <div class="max-w-[450px] mx-auto bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[40px] border border-sky-500/20 shadow-2xl relative">
-            <i class="fas fa-candy-cane text-sky-400 opacity-5 text-9xl absolute right-10 top-10 pointer-events-none"></i>
-            <h1 class="text-3xl font-black text-center text-sky-400 tracking-tighter">🍬 TOFFEENVH</h1>
-            <p class="text-[10px] text-amber-500 font-bold text-center mb-9 uppercase tracking-widest italic">Nihal Vihar Digital Rewards</p>
+        <div class="max-w-[450px] mx-auto bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[40px] border border-sky-500/20 shadow-2xl relative mb-10">
+            <h1 class="text-3xl font-black text-center text-sky-400 tracking-tighter mb-1">🍬 TOFFEENVH</h1>
+            <p class="text-[10px] text-amber-500 font-bold text-center mb-8 uppercase tracking-widest italic">Nihal Vihar Digital Rewards</p>
 
-            <button id="walletBtn" class="btn-shimmer w-full bg-amber-500 text-slate-950 py-5 rounded-2xl font-black shadow-xl shadow-amber-500/20" onclick="connectWallet()"><i class="fas fa-wallet mr-2"></i> CONNECT METAMASK</button>
+            <button id="walletBtn" class="btn-shimmer w-full bg-amber-500 text-slate-950 py-5 rounded-2xl font-black shadow-xl" onclick="connectWallet()"><i class="fas fa-wallet mr-2"></i> CONNECT METAMASK</button>
 
             <div id="userUI" style="display:none;" class="mt-7">
-                <div class="bg-black/80 p-9 rounded-3xl border border-sky-500/30 text-center mb-6 shadow-inner">
-                    <p class="text-slate-500 text-[11px] uppercase font-bold mb-1.5 tracking-wider">Total Earnings</p>
-                    <span id="balText" class="text-5xl font-black text-sky-400 tracking-tighter glow-text">0 TOFFEE</span>
-                    <button id="withdrawBtn" class="w-full bg-green-600 text-white mt-5 py-4 rounded-xl hidden font-bold" onclick="requestWithdrawal()">🚀 Withdraw 500 TOFFEE</button>
+                <div class="bg-black/60 p-8 rounded-3xl border border-sky-500/30 text-center mb-6">
+                    <p class="text-slate-500 text-[11px] uppercase font-bold mb-1.5">Total Earnings</p>
+                    <span id="balText" class="text-5xl font-black text-sky-400 glow-text">0 TOFFEE</span>
+                    <button id="withdrawBtn" class="w-full bg-green-600 text-white mt-5 py-4 rounded-xl hidden font-bold animate-bounce" onclick="requestWithdrawal()">🚀 Withdraw 500 TOFFEE</button>
                 </div>
-                <input type="text" id="codeInput" placeholder="TYPE MAGIC CODE" class="w-full h-16 bg-black text-white border-2 border-slate-800 rounded-xl text-center font-bold tracking-widest mb-4 focus:border-sky-500 outline-none">
+
+                <div class="glass-card p-6 rounded-3xl mt-6 border-amber-500/30 relative overflow-hidden mb-6">
+                    <div class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[9px] px-3 py-1 font-black rounded-bl-xl uppercase">Early Bird Phase</div>
+                    <h3 class="text-amber-400 font-bold text-lg mb-2 flex items-center"><i class="fas fa-vault mr-2"></i> TOFFEE Staking</h3>
+                    <div class="bg-black/40 p-3 rounded-xl mb-4 border border-white/5">
+                        <p class="text-slate-500 text-[9px] uppercase font-bold">Current Reward Rate</p>
+                        <span id="currentAPYDisplay" class="text-2xl font-black text-white">15% APY</span>
+                        <p class="text-[8px] text-red-400 mt-1 italic font-medium">*Drops by 0.1% every 30 days. Stake now!</p>
+                    </div>
+                    <div class="flex justify-between text-xs mb-4">
+                        <span>Staked: <b id="stakedAmt" class="text-sky-400">0</b></span>
+                        <span>Earned: <b id="rewardAmt" class="text-green-400">0.0000</b></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="stakeTokens()" class="bg-amber-500 text-slate-950 py-3 rounded-xl font-bold text-xs hover:bg-amber-400 active:scale-95">STAKE 100</button>
+                        <button onclick="claimStakingRewards()" class="border border-amber-500 text-amber-500 py-3 rounded-xl font-bold text-xs active:scale-95">CLAIM REWARD</button>
+                    </div>
+                </div>
+
+                <input type="text" id="codeInput" placeholder="ENTER MAGIC CODE" class="w-full h-16 bg-black text-white border-2 border-slate-800 rounded-xl text-center font-bold tracking-widest mb-4 focus:border-sky-500 outline-none">
                 <button id="claimBtn" class="btn-shimmer w-full bg-sky-500 text-slate-950 py-5 rounded-2xl font-black" onclick="processClaim()">💰 Claim 10 Tokens</button>
             </div>
 
             <div id="adminPanel" style="display:none;" class="mt-9 p-7 border-2 border-dashed border-red-500/50 rounded-3xl bg-black/50">
                 <h3 class="text-red-500 font-bold mb-4 text-sm flex items-center justify-center italic"><i class="fas fa-user-shield mr-2"></i> OWNER DASHBOARD v2.0</h3>
-                <textarea id="newCodesInput" placeholder="Codes: C01, C02..." class="w-full bg-slate-800 text-white rounded-xl p-3 mb-3 text-sm border-none outline-none font-mono"></textarea>
+                <textarea id="newCodesInput" placeholder="Codes: C01, C02..." class="w-full bg-slate-800 text-white rounded-xl p-3 mb-3 text-sm font-mono outline-none"></textarea>
                 <button onclick="uploadCodes()" class="w-full bg-red-600 py-3 rounded-xl text-white font-bold text-sm">⬆️ Upload Codes</button>
                 <div id="reqList" class="text-[10px] mt-4 space-y-2.5"></div>
             </div>
@@ -204,28 +202,21 @@
                 p.style.left = Math.random() * 100 + 'vw';
                 p.style.animationDuration = (Math.random() * 8 + 7) + 's';
                 p.style.fontSize = (Math.random() * 15 + 10) + 'px';
-                p.style.animationDelay = (Math.random() * 5) + 's';
                 document.body.appendChild(p);
             }
         }
         createParticles();
 
-        function showApp() {
-            document.getElementById('landingPage').classList.add('section-hidden');
-            document.getElementById('rewardsApp').classList.add('section-visible');
-            window.scrollTo(0,0);
-        }
-        function showLanding() {
-            document.getElementById('landingPage').classList.remove('section-hidden');
-            document.getElementById('rewardsApp').classList.remove('section-visible');
-        }
+        function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').classList.add('section-visible'); window.scrollTo(0,0); }
+        function showLanding() { document.getElementById('landingPage').classList.remove('section-hidden'); document.getElementById('rewardsApp').classList.remove('section-visible'); }
 
-        // --- SUPABASE & LOGIC ---
+        // --- SUPABASE SETUP ---
         const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
         const db = supabase.createClient(SB_URL, SB_KEY);
         const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
         let userWallet = ""; let userBalance = 0;
+        const BASE_APY = 15; const DEPLOY_DATE = new Date("2026-03-01");
 
         async function connectWallet() {
             if (window.ethereum) {
@@ -233,28 +224,10 @@
                 userWallet = accounts[0].toLowerCase();
                 document.getElementById("walletBtn").innerText = `ID: ${userWallet.substring(0,6)}...`;
                 document.getElementById("userUI").style.display = "block";
-                if (userWallet === ADMIN_WALLET.toLowerCase()) {
-                    document.getElementById("adminPanel").style.display = "block";
-                    loadAdminRequests();
-                }
-                refreshData();
+                if (userWallet === ADMIN_WALLET.toLowerCase()) document.getElementById("adminPanel").style.display = "block";
+                refreshData(); loadStakingData();
+                setInterval(loadStakingData, 10000); // Live reward update every 10s
             } else { alert("Open inside MetaMask!"); }
-        }
-
-        async function processClaim() {
-            const btn = document.getElementById("claimBtn");
-            const codeInput = document.getElementById('codeInput');
-            const code = codeInput.value.trim().toUpperCase();
-            if(!code || btn.disabled) return;
-            btn.disabled = true; btn.innerText = "VALIDATING...";
-            const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-            if (valid) {
-                await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 });
-                await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-                confetti({ particleCount: 150, spread: 70, colors: ['#38bdf8', '#fbbf24', '#ffffff'] });
-                alert("10 TOFFEE Added!"); refreshData(); codeInput.value = "";
-            } else { alert("Invalid Code!"); }
-            btn.disabled = false; btn.innerText = "💰 Claim 10 Tokens";
         }
 
         async function refreshData() {
@@ -265,6 +238,56 @@
             if(userBalance >= 500) document.getElementById("withdrawBtn").classList.remove('hidden');
         }
 
+        // --- STAKING LOGIC ---
+        async function calculateCurrentAPY() {
+            const now = new Date();
+            const diffMonths = Math.floor(Math.abs(now - DEPLOY_DATE) / (1000 * 60 * 60 * 24 * 30));
+            return Math.max(BASE_APY - (diffMonths * 0.1), 2).toFixed(2);
+        }
+
+        async function stakeTokens() {
+            if (userBalance < 100) return alert("Min 100 TOFFEE required!");
+            const apy = await calculateCurrentAPY();
+            const { data: cur } = await db.from('staking_data').select('staked_amount').eq('wallet_address', userWallet).maybeSingle();
+            const newStaked = (cur ? cur.staked_amount : 0) + 100;
+            await db.from('user_balances').update({ pending_balance: userBalance - 100 }).eq('wallet_address', userWallet);
+            await db.from('staking_data').upsert({ wallet_address: userWallet, staked_amount: newStaked, last_stake_date: new Date() });
+            confetti({ particleCount: 100, colors: ['#f59e0b'] }); refreshData(); loadStakingData();
+        }
+
+        async function loadStakingData() {
+            if(!userWallet) return;
+            const apy = await calculateCurrentAPY();
+            document.getElementById('currentAPYDisplay').innerText = `${apy}% APY`;
+            const { data } = await db.from('staking_data').select('*').eq('wallet_address', userWallet).maybeSingle();
+            if (data) {
+                document.getElementById('stakedAmt').innerText = data.staked_amount;
+                const days = (new Date() - new Date(data.last_stake_date)) / (1000 * 60 * 60 * 24);
+                const rewards = (data.staked_amount * (apy / 100) / 365) * days;
+                document.getElementById('rewardAmt').innerText = rewards.toFixed(4);
+            }
+        }
+
+        async function claimStakingRewards() {
+            const reward = parseFloat(document.getElementById('rewardAmt').innerText);
+            if(reward <= 0) return;
+            await db.from('user_balances').update({ pending_balance: userBalance + reward }).eq('wallet_address', userWallet);
+            await db.from('staking_data').update({ last_stake_date: new Date() }).eq('wallet_address', userWallet);
+            alert(`Claimed ${reward.toFixed(2)} TOFFEE!`); refreshData(); loadStakingData();
+        }
+
+        // --- UTILS ---
+        async function processClaim() {
+            const code = document.getElementById('codeInput').value.trim().toUpperCase();
+            if(!code) return;
+            const { data: valid } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
+            if (valid) {
+                await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 });
+                await db.from('valid_codes').update({ is_used: true }).eq('code', code);
+                confetti({ particleCount: 150 }); refreshData(); document.getElementById('codeInput').value = "";
+            } else { alert("Invalid Code!"); }
+        }
+
         function copyAddressAtomic() {
             const addr = document.getElementById('contractAddr').innerText;
             navigator.clipboard.writeText(addr);
@@ -272,32 +295,6 @@
             btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
             btn.closest('.glass-card').classList.add('pulse-atomic');
             setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy Contract'; btn.closest('.glass-card').classList.remove('pulse-atomic'); }, 2000);
-        }
-
-        async function requestWithdrawal() {
-            await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
-            alert("Request Sent!"); refreshData();
-        }
-
-        async function uploadCodes() {
-            const input = document.getElementById("newCodesInput").value;
-            const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase(), is_used: false })).filter(c => c.code !== "");
-            await db.from('valid_codes').insert(codes);
-            alert("Codes Uploaded!"); document.getElementById("newCodesInput").value = "";
-        }
-
-        async function loadAdminRequests() {
-            const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
-            let h = "";
-            reqs?.forEach(r => { h += `<div class='bg-black p-2 mb-2'>${r.wallet_address.substring(0,10)}... <button onclick="approveWithdrawal(${r.id}, '${r.wallet_address}')" class='bg-green-600 px-2'>PAID</button></div>`; });
-            document.getElementById("reqList").innerHTML = h || "No requests.";
-        }
-
-        async function approveWithdrawal(id, address) {
-            const { data: user } = await db.from('user_balances').select('pending_balance').eq('wallet_address', address).single();
-            await db.from('user_balances').update({ pending_balance: user.pending_balance - 500 }).eq('wallet_address', address);
-            await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
-            alert("Approved!"); loadAdminRequests(); refreshData();
         }
     </script>
 </body>
