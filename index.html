@@ -15,33 +15,70 @@
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; position: relative; }
         html { scroll-behavior: smooth; }
 
-        /* --- 🍬 DYNAMIC FLOATING CANDY PARTICLES --- */
-        .candy-particle { position: fixed; color: rgba(56, 189, 248, 0.12); pointer-events: none; z-index: -1; animation: floatParticle 15s linear infinite; }
+        /* --- 🍬 DYNAMIC FLOATING CANDY PARTICLES (ANIMATION) --- */
+        .candy-particle {
+            position: fixed;
+            color: rgba(56, 189, 248, 0.15);
+            pointer-events: none;
+            z-index: -1;
+            animation: floatParticle 12s linear infinite;
+        }
+
         @keyframes floatParticle {
             0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.5; }
-            90% { opacity: 0.5; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
             100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
         }
 
         /* --- ✨ GLOW & MODERN ANIMATIONS --- */
-        .glow-text { text-shadow: 0 0 20px rgba(56, 189, 248, 0.5); animation: textPulse 3s ease-in-out infinite alternate; }
-        @keyframes textPulse { from { opacity: 0.8; } to { opacity: 1; text-shadow: 0 0 30px rgba(56, 189, 248, 0.8); } }
+        .glow-text {
+            text-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+            animation: textPulse 3s ease-in-out infinite alternate;
+        }
 
-        .glass-card { background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .glass-card:hover { transform: translateY(-10px); border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        @keyframes textPulse {
+            from { opacity: 0.7; transform: scale(1); }
+            to { opacity: 1; transform: scale(1.02); text-shadow: 0 0 40px rgba(56, 189, 248, 0.8); }
+        }
 
+        .glass-card { 
+            background: rgba(17, 24, 39, 0.35); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(56, 189, 248, 0.15); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .glass-card:hover { 
+            transform: translateY(-12px) scale(1.02); 
+            border-color: rgba(56, 189, 248, 0.5); 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        /* --- APP TRANSITIONS --- */
         #landingPage, #rewardsApp { transition: opacity 0.5s ease, transform 0.5s ease; }
-        .section-hidden { display: none !important; opacity: 0; }
-        .section-visible { display: block !important; animation: fadeIn 0.5s forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section-hidden { display: none !important; opacity: 0; transform: scale(0.95); }
+        .section-visible { display: block !important; animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
 
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Shimmer Button Effect */
         .btn-shimmer { position: relative; overflow: hidden; }
-        .btn-shimmer::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); transition: 0.6s; }
+        .btn-shimmer::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -60%; width: 20%; height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(30deg);
+            transition: 0.6s;
+        }
         .btn-shimmer:hover::after { left: 140%; }
-        
-        @keyframes pulseSuccess { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); } 100% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } }
-        .pulse-atomic { animation: pulseSuccess 0.5s ease-out; }
+
+        @keyframes pulseAtomic { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); } 100% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); } }
+        .pulse-atomic { animation: pulseAtomic 0.6s ease-out; }
+
     </style>
 </head>
 <body>
@@ -50,58 +87,47 @@
         <nav class="bg-slate-950/70 backdrop-blur-xl border-b border-sky-900/40 sticky top-0 z-50">
             <div class="max-w-6xl mx-auto px-4 h-20 flex justify-between items-center">
                 <div class="flex items-center space-x-2.5">
-                    <i class="fas fa-candy-cane text-3xl text-sky-400"></i>
+                    <i class="fas fa-candy-cane text-3xl text-sky-400 animate-bounce"></i>
                     <span class="text-2xl font-black text-white uppercase tracking-tighter">Toffeenvh</span>
                 </div>
-                <button onclick="showApp()" class="btn-shimmer bg-sky-500 hover:bg-sky-400 text-slate-950 px-7 py-3 rounded-full font-bold transition transform active:scale-95 shadow-xl shadow-sky-500/20 text-sm">Launch Celo App</button>
+                <button onclick="showApp()" class="btn-shimmer bg-sky-500 hover:bg-sky-400 text-slate-950 px-7 py-3 rounded-full font-bold transition transform active:scale-95 shadow-xl text-sm">Launch Celo App</button>
             </div>
         </nav>
 
-        <header class="py-28 text-center px-4">
+        <header class="py-32 text-center px-4">
             <h1 class="text-6xl md:text-8xl font-black mb-8 tracking-tighter bg-gradient-to-r from-sky-400 via-blue-500 to-purple-600 bg-clip-text text-transparent italic glow-text">Sweet Crypto Rewards</h1>
             <p class="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-14 leading-relaxed font-medium">Claim your <b class="text-sky-400">$TOFFEE</b> tokens on the <b class="text-amber-400">Celo Network</b>. Fast, secure, and decentralized rewards for the Nihal Vihar community.</p>
             <div class="flex justify-center">
-                <button onclick="showApp()" class="btn-shimmer bg-sky-500 text-slate-950 px-12 py-5 rounded-2xl font-extrabold text-xl hover:bg-sky-400 transition shadow-2xl shadow-sky-500/30 transform hover:-translate-y-2 active:translate-y-0">💰 Claim 10 TOFFEE</button>
+                <button onclick="showApp()" class="btn-shimmer bg-sky-500 text-slate-950 px-12 py-5 rounded-2xl font-extrabold text-xl hover:bg-sky-400 transition shadow-2xl transform hover:-translate-y-2 active:translate-y-0">💰 Claim 10 TOFFEE</button>
             </div>
         </header>
 
-        <section id="tokenInfo" class="py-20 bg-slate-950/20 backdrop-blur-sm">
+        <section class="py-20 bg-slate-950/20 backdrop-blur-sm">
             <div class="max-w-5xl mx-auto px-5">
-                <div class="text-center mb-14">
-                    <h2 class="text-4xl font-extrabold text-white mb-2 tracking-tight">Tokenomics & 2026 Setup</h2>
-                    <p class="text-slate-400 text-md italic font-medium">Essential details for $TOFFEE holders on Celo</p>
-                </div>
                 <div class="grid md:grid-cols-2 gap-10">
                     <div class="glass-card p-10 rounded-3xl shadow-2xl">
                         <h3 class="text-sky-400 font-extrabold mb-7 flex items-center text-2xl tracking-tight"><i class="fas fa-atom mr-3 text-3xl"></i> Contract Atomic Details</h3>
-                        <div class="space-y-7">
+                        <div class="space-y-6">
                             <div>
                                 <p class="text-slate-500 uppercase text-[11px] font-black tracking-widest mb-1.5">Blockchain Network</p>
                                 <p class="text-white font-mono bg-black/60 p-3 rounded-lg border border-slate-700/60 font-bold">CELO Mainnet (Layer-1)</p>
                             </div>
                             <div>
                                 <p class="text-slate-500 uppercase text-[11px] font-black tracking-widest mb-1.5">Custom Contract Address</p>
-                                <div class="relative">
-                                    <p id="contractAddr" class="text-sky-300 font-mono break-all bg-black p-4 rounded-xl border border-sky-900 text-[13px] font-medium leading-relaxed">0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88</p>
-                                    <button onclick="copyAddressAtomic()" id="copyBtn" class="mt-4 w-full bg-slate-800/80 hover:bg-sky-600 text-sky-400 hover:text-white py-3 rounded-xl text-xs font-black transition-all border border-sky-900 flex items-center justify-center gap-2.5 tracking-wider active:scale-95">
-                                        <i class="fas fa-copy"></i> Copy Contract
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="flex justify-between gap-5 pt-2">
-                                <div class="flex-1 bg-black/50 p-3 rounded-xl border border-slate-700/60 text-center"><p class="text-slate-500 text-[11px] font-bold tracking-wider">SYMBOL</p><p class="text-white text-lg font-black italic tracking-tight">TOFFEE</p></div>
-                                <div class="flex-1 bg-black/50 p-3 rounded-xl border border-slate-700/60 text-center"><p class="text-slate-500 text-[11px] font-bold tracking-wider">DECIMALS</p><p class="text-white text-lg font-black italic tracking-tight">18</p></div>
+                                <p id="contractAddr" class="text-sky-300 font-mono break-all bg-black p-4 rounded-xl border border-sky-900 text-[13px]">0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88</p>
+                                <button onclick="copyAddressAtomic()" id="copyBtn" class="mt-4 w-full bg-slate-800/80 hover:bg-sky-600 text-sky-400 hover:text-white py-3 rounded-xl font-black transition-all flex items-center justify-center gap-2 tracking-wider">
+                                    <i class="fas fa-copy"></i> Copy Contract
+                                </button>
                             </div>
                         </div>
                     </div>
                     <div class="glass-card p-10 rounded-3xl shadow-2xl">
                         <h3 class="text-amber-500 font-extrabold mb-7 flex items-center text-2xl tracking-tight"><i class="fas fa-wallet mr-3 text-3xl"></i> MetaMask 2026 Guide</h3>
-                        <ol class="text-sm text-slate-300 space-y-5 list-decimal ml-5 leading-relaxed font-medium">
-                            <li>Open <b class="text-white">MetaMask Mobile</b> & switch to <span class="text-amber-400 font-bold">Celo Mainnet</span>.</li>
-                            <li>Navigate to <b class="text-white">'Assets'</b> and tap <b class="text-white">'Import Tokens'</b> at the bottom.</li>
-                            <li>Paste the <b class="text-sky-400">Atomic Contract Address</b> (from left card).</li>
-                            <li>Token Symbol (<b class="text-white">TOFFEE</b>) & Decimals will auto-fill.</li>
-                            <li>Tap <b class="text-sky-500">'Add Custom Token'</b> & then <b class="text-sky-500">'Import'</b>.</li>
+                        <ol class="text-sm text-slate-300 space-y-4 list-decimal ml-5 leading-relaxed font-medium">
+                            <li>Switch MetaMask to <b class="text-amber-400">Celo Mainnet</b>.</li>
+                            <li>Navigate to <b class="text-white">'Assets'</b> and tap <b class="text-white">'Import Tokens'</b>.</li>
+                            <li>Paste the <b class="text-sky-400">Atomic Contract Address</b>.</li>
+                            <li>Token Symbol (<b class="text-white">TOFFEE</b>) & Decimals (<b class="text-white">18</b>).</li>
                         </ol>
                     </div>
                 </div>
@@ -109,108 +135,102 @@
         </section>
 
         <section id="roadmap" class="py-28 bg-slate-950/40">
-            <div class="max-w-4xl mx-auto px-5 text-center">
-                <h2 class="text-5xl font-black text-white mb-4 italic tracking-tighter">Project Roadmap</h2>
-                <div class="h-1.5 w-28 bg-sky-500 mx-auto rounded-full shadow-lg shadow-sky-500/20 mb-12"></div>
-                <div class="grid gap-7 text-left">
+            <div class="max-w-4xl mx-auto px-5">
+                <div class="text-center mb-16">
+                    <h2 class="text-5xl font-black text-white italic tracking-tighter">Project Roadmap</h2>
+                    <div class="h-1.5 w-28 bg-sky-500 mx-auto rounded-full mt-4 shadow-lg shadow-sky-500/20"></div>
+                </div>
+                <div class="grid gap-7">
                     <div class="glass-card p-8 rounded-3xl border-l-sky-500 border-l-8">
-                        <h3 class="text-2xl font-black text-sky-400 mb-1">Q1 2026 - LIVE</h3>
-                        <p class="text-slate-400 text-sm">Nihal Vihar stores distribution & website beta launch.</p>
+                        <h3 class="text-2xl font-black text-sky-400">Q1 2026 - LIVE</h3>
+                        <p class="text-slate-400 text-sm mt-2">Nihal Vihar Store Launch & Staking Activation. First crypto toffee movement.</p>
                     </div>
                     <div class="glass-card p-8 rounded-3xl border-l-blue-500 border-l-8">
-                        <h3 class="text-2xl font-black text-blue-400 mb-1">Q2 2026 - PREP</h3>
-                        <p class="text-slate-400 text-sm">Smart Contract Audits & $TOFFEE Deployment.</p>
+                        <h3 class="text-2xl font-black text-blue-400">Q2 2026</h3>
+                        <p class="text-slate-400 text-sm mt-2">Smart Contract Audits & $TOFFEE Deployment. Global security audit completion.</p>
                     </div>
                     <div class="glass-card p-8 rounded-3xl border-l-purple-500 border-l-8">
-                        <h3 class="text-2xl font-black text-purple-400 mb-1">Q3 2026 - GROWTH</h3>
-                        <p class="text-slate-400 text-sm">Advanced Referral System & Ecosystem expansion.</p>
+                        <h3 class="text-2xl font-black text-purple-400">Q3 2026</h3>
+                        <p class="text-slate-400 text-sm mt-2">Advanced Referral System & Ecosystem growth. Community earn together.</p>
                     </div>
                     <div class="glass-card p-8 rounded-3xl border-l-amber-500 border-l-8">
-                        <h3 class="text-2xl font-black text-amber-400 mb-1">Q4 2027 - DEX</h3>
-                        <p class="text-slate-400 text-sm">Uniswap/Worldcoin listing & DEX Liquidity pools.</p>
+                        <h3 class="text-2xl font-black text-amber-400">Q4 2027</h3>
+                        <p class="text-slate-400 text-sm mt-2">DEX Liquidity & Uniswap Listing. DEX liquidity pool activation.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <footer class="py-14 text-center text-slate-600 border-t border-slate-800/60 bg-slate-950">
+        <footer class="py-14 text-center bg-slate-950 border-t border-slate-800/60">
             <div class="flex justify-center space-x-12 mb-9">
-                <a href="https://t.me/ToffeenVh" target="_blank" class="text-sky-500 hover:text-sky-400 transition-all transform hover:scale-125"><i class="fab fa-telegram text-4xl"></i><span class="block text-[11px] mt-1.5 font-bold">Telegram</span></a>
-                <a href="https://x.com/ToffeenVh" target="_blank" class="text-sky-500 hover:text-sky-400 transition-all transform hover:scale-125"><i class="fab fa-twitter text-4xl"></i><span class="block text-[11px] mt-1.5 font-bold">Twitter (X)</span></a>
-                <a href="https://www.youtube.com/@ToffeeTeam" target="_blank" class="text-red-600 hover:text-red-500 transition-all transform hover:scale-125"><i class="fab fa-youtube text-4xl"></i><span class="block text-[11px] mt-1.5 font-bold">YouTube</span></a>
+                <a href="https://t.me/ToffeenVh" target="_blank" class="text-sky-500 hover:scale-125 transition transform"><i class="fab fa-telegram text-4xl"></i><span class="block text-[10px] mt-1 font-bold">Telegram</span></a>
+                <a href="https://x.com/ToffeenVh" target="_blank" class="text-sky-500 hover:scale-125 transition transform"><i class="fab fa-twitter text-4xl"></i><span class="block text-[10px] mt-1 font-bold">Twitter</span></a>
+                <a href="https://www.youtube.com/@ToffeeTeam" target="_blank" class="text-red-600 hover:scale-125 transition transform"><i class="fab fa-youtube text-4xl"></i><span class="block text-[10px] mt-1 font-bold">YouTube</span></a>
             </div>
             <p class="text-sm font-black text-slate-500 uppercase tracking-wide">© 2026-2027 Toffeenvh Project</p>
         </footer>
     </div>
 
     <div id="rewardsApp" class="section-hidden py-10">
-        <div class="flex justify-between items-center max-w-lg mx-auto mb-8 px-4">
-            <button onclick="showLanding()" class="text-sky-400 font-extrabold bg-sky-500/10 px-6 py-2.5 rounded-xl hover:bg-sky-500/20 transition active:scale-95 text-sm"><i class="fas fa-arrow-left mr-2"></i> Home</button>
+        <div class="max-w-lg mx-auto flex justify-between px-4 mb-8">
+            <button onclick="showLanding()" class="text-sky-400 font-extrabold bg-sky-500/10 px-6 py-2.5 rounded-xl hover:bg-sky-500/20 text-sm transition active:scale-90"><i class="fas fa-arrow-left mr-2"></i> Home</button>
             <span class="text-[11px] text-slate-500 font-mono tracking-widest uppercase font-bold">Celo Mainnet</span>
         </div>
 
-        <div class="max-w-[450px] mx-auto bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[40px] border border-sky-500/20 shadow-2xl relative mb-10">
-            <h1 class="text-3xl font-black text-center text-sky-400 tracking-tighter mb-1">🍬 TOFFEENVH</h1>
+        <div class="max-w-[450px] mx-auto bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[40px] border border-sky-500/20 shadow-2xl relative overflow-hidden">
+            <i class="fas fa-candy-cane text-sky-400 opacity-5 text-9xl absolute -right-10 -top-10 pointer-events-none"></i>
+            <h1 class="text-3xl font-black text-center text-sky-400 tracking-tighter">🍬 TOFFEENVH</h1>
             <p class="text-[10px] text-amber-500 font-bold text-center mb-8 uppercase tracking-widest italic">Nihal Vihar Digital Rewards</p>
 
-            <button id="walletBtn" class="btn-shimmer w-full bg-amber-500 text-slate-950 py-5 rounded-2xl font-black shadow-xl" onclick="connectWallet()"><i class="fas fa-wallet mr-2"></i> CONNECT METAMASK</button>
+            <button id="walletBtn" class="btn-shimmer w-full bg-amber-500 text-slate-950 py-5 rounded-2xl font-black shadow-xl shadow-amber-500/20 mb-6 transition active:scale-95" onclick="connectWallet()"><i class="fas fa-wallet mr-2"></i> CONNECT METAMASK</button>
 
-            <div id="userUI" style="display:none;" class="mt-7">
-                <div class="bg-black/60 p-8 rounded-3xl border border-sky-500/30 text-center mb-6">
-                    <p class="text-slate-500 text-[11px] uppercase font-bold mb-1.5">Total Earnings</p>
+            <div id="userUI" style="display:none;" class="space-y-6">
+                <div class="bg-black/60 p-8 rounded-3xl border border-sky-500/30 text-center shadow-inner">
+                    <p class="text-slate-500 text-[11px] uppercase font-bold mb-1">Main Balance</p>
                     <span id="balText" class="text-5xl font-black text-sky-400 glow-text">0 TOFFEE</span>
-                    <button id="withdrawBtn" class="w-full bg-green-600 text-white mt-5 py-4 rounded-xl hidden font-bold animate-bounce" onclick="requestWithdrawal()">🚀 Withdraw 500 TOFFEE</button>
+                    <button id="withdrawBtn" class="w-full bg-green-600 text-white mt-5 py-4 rounded-xl hidden font-bold animate-pulse shadow-lg shadow-green-500/20" onclick="requestWithdrawal()">🚀 Withdraw 500 TOFFEE</button>
                 </div>
 
-                <div class="glass-card p-6 rounded-3xl mt-6 border-amber-500/30 relative overflow-hidden mb-6">
-                    <div class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[9px] px-3 py-1 font-black rounded-bl-xl uppercase">Early Bird Phase</div>
-                    <h3 class="text-amber-400 font-bold text-lg mb-2 flex items-center"><i class="fas fa-vault mr-2"></i> TOFFEE Staking</h3>
-                    <div class="bg-black/40 p-3 rounded-xl mb-4 border border-white/5">
-                        <p class="text-slate-500 text-[9px] uppercase font-bold">Current Reward Rate</p>
+                <div class="glass-card p-6 rounded-3xl border-amber-500/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[9px] px-3 py-1 font-black rounded-bl-xl uppercase">Early Bird</div>
+                    <h3 class="text-amber-400 font-bold text-lg mb-3 flex items-center"><i class="fas fa-vault mr-2"></i> Staking Dashboard</h3>
+                    <div class="bg-black/40 p-4 rounded-xl mb-4 text-center border border-white/5">
+                        <p class="text-slate-500 text-[9px] uppercase font-bold tracking-widest">Rate</p>
                         <span id="currentAPYDisplay" class="text-2xl font-black text-white">15% APY</span>
-                        <p class="text-[8px] text-red-400 mt-1 italic font-medium">*Drops by 0.1% every 30 days. Stake now!</p>
                     </div>
                     <div class="flex justify-between text-xs mb-4">
-                        <span>Staked: <b id="stakedAmt" class="text-sky-400">0</b></span>
-                        <span>Earned: <b id="rewardAmt" class="text-green-400">0.0000</b></span>
+                        <div class="text-center">
+                            <p class="text-slate-500 text-[10px] mb-1">Staked</p>
+                            <b id="stakedAmt" class="text-sky-400 text-lg">0</b>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-slate-500 text-[10px] mb-1">Earned Rewards</p>
+                            <b id="rewardAmt" class="text-green-400 text-lg">0.0000</b>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="stakeTokens()" class="bg-amber-500 text-slate-950 py-3 rounded-xl font-bold text-xs hover:bg-amber-400 active:scale-95">STAKE 100</button>
-                        <button onclick="claimStakingRewards()" class="border border-amber-500 text-amber-500 py-3 rounded-xl font-bold text-xs active:scale-95">CLAIM REWARD</button>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="stakeTokens()" class="bg-amber-500 text-slate-950 py-3 rounded-xl font-bold text-[10px] transition active:scale-90">STAKE 100</button>
+                        <button onclick="claimStakingRewards()" class="border border-amber-500 text-amber-500 py-3 rounded-xl font-bold text-[10px] transition active:scale-90">CLAIM</button>
+                        <button onclick="unstakeTokens()" class="bg-red-600 text-white py-3 rounded-xl font-bold text-[10px] transition active:scale-90">UNSTAKE</button>
                     </div>
                 </div>
 
-                <input type="text" id="codeInput" placeholder="ENTER MAGIC CODE" class="w-full h-16 bg-black text-white border-2 border-slate-800 rounded-xl text-center font-bold tracking-widest mb-4 focus:border-sky-500 outline-none">
-                <button id="claimBtn" class="btn-shimmer w-full bg-sky-500 text-slate-950 py-5 rounded-2xl font-black" onclick="processClaim()">💰 Claim 10 Tokens</button>
+                <div class="relative">
+                    <input type="text" id="codeInput" placeholder="ENTER MAGIC CODE" class="w-full h-16 bg-black text-white border-2 border-slate-800 rounded-xl text-center font-bold tracking-widest focus:border-sky-500 outline-none transition-all">
+                </div>
+                <button id="claimBtn" class="btn-shimmer w-full bg-sky-500 text-slate-950 py-5 rounded-2xl font-black transition active:scale-95 shadow-xl shadow-sky-500/20" onclick="processClaim()">💰 Claim 10 Tokens</button>
             </div>
 
             <div id="adminPanel" style="display:none;" class="mt-9 p-7 border-2 border-dashed border-red-500/50 rounded-3xl bg-black/50">
-                <h3 class="text-red-500 font-bold mb-4 text-sm flex items-center justify-center italic"><i class="fas fa-user-shield mr-2"></i> OWNER DASHBOARD v2.0</h3>
+                <h3 class="text-red-500 font-bold mb-4 text-xs italic text-center uppercase tracking-widest"><i class="fas fa-user-shield mr-2"></i> Owner Dashboard</h3>
                 <textarea id="newCodesInput" placeholder="Codes: C01, C02..." class="w-full bg-slate-800 text-white rounded-xl p-3 mb-3 text-sm font-mono outline-none"></textarea>
-                <button onclick="uploadCodes()" class="w-full bg-red-600 py-3 rounded-xl text-white font-bold text-sm">⬆️ Upload Codes</button>
-                <div id="reqList" class="text-[10px] mt-4 space-y-2.5"></div>
+                <button onclick="uploadCodes()" class="w-full bg-red-600 py-3 rounded-xl text-white font-bold text-sm mb-4">Upload Codes</button>
+                <div id="reqList" class="text-[10px] space-y-2"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- ANIMATIONS ---
-        function createParticles() {
-            for (let i = 0; i < 15; i++) {
-                const p = document.createElement('i');
-                p.className = 'fas fa-candy-cane candy-particle';
-                p.style.left = Math.random() * 100 + 'vw';
-                p.style.animationDuration = (Math.random() * 8 + 7) + 's';
-                p.style.fontSize = (Math.random() * 15 + 10) + 'px';
-                document.body.appendChild(p);
-            }
-        }
-        createParticles();
-
-        function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').classList.add('section-visible'); window.scrollTo(0,0); }
-        function showLanding() { document.getElementById('landingPage').classList.remove('section-hidden'); document.getElementById('rewardsApp').classList.remove('section-visible'); }
-
-        // --- SUPABASE SETUP ---
         const SB_URL = 'https://xshsfgyfbbnommuhvwat.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
         const db = supabase.createClient(SB_URL, SB_KEY);
@@ -218,23 +238,51 @@
         let userWallet = ""; let userBalance = 0;
         const BASE_APY = 15; const DEPLOY_DATE = new Date("2026-03-01");
 
+        // --- ANIMATIONS & UI ---
+        function createParticles() {
+            for (let i = 0; i < 18; i++) {
+                const p = document.createElement('i');
+                p.className = 'fas fa-candy-cane candy-particle';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDuration = (Math.random() * 10 + 8) + 's';
+                p.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                document.body.appendChild(p);
+            }
+        }
+        createParticles();
+
+        function showApp() { 
+            document.getElementById('landingPage').classList.add('section-hidden'); 
+            document.getElementById('rewardsApp').classList.add('section-visible'); 
+            window.scrollTo({top:0, behavior:'smooth'}); 
+        }
+        function showLanding() { 
+            document.getElementById('landingPage').classList.remove('section-hidden'); 
+            document.getElementById('rewardsApp').classList.remove('section-visible'); 
+        }
+
+        // --- CORE CONNECTIVITY ---
         async function connectWallet() {
             if (window.ethereum) {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 userWallet = accounts[0].toLowerCase();
-                document.getElementById("walletBtn").innerText = `ID: ${userWallet.substring(0,6)}...`;
+                document.getElementById("walletBtn").innerText = `ID: ${userWallet.substring(0,6)}...${userWallet.substring(38)}`;
                 document.getElementById("userUI").style.display = "block";
-                if (userWallet === ADMIN_WALLET.toLowerCase()) document.getElementById("adminPanel").style.display = "block";
+                if (userWallet === ADMIN_WALLET.toLowerCase()) {
+                    document.getElementById("adminPanel").style.display = "block";
+                    loadAdminRequests();
+                }
                 refreshData(); loadStakingData();
-                setInterval(loadStakingData, 10000); // Live reward update every 10s
-            } else { alert("Open inside MetaMask!"); }
+                setInterval(loadStakingData, 10000);
+            } else { alert("Use MetaMask Browser!"); }
         }
 
         async function refreshData() {
             if(!userWallet) return;
             const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
             userBalance = data ? data.pending_balance : 0;
-            document.getElementById("balText").innerText = `${userBalance} TOFFEE`;
+            document.getElementById("balText").innerText = `${userBalance.toFixed(2)} TOFFEE`;
             if(userBalance >= 500) document.getElementById("withdrawBtn").classList.remove('hidden');
         }
 
@@ -246,13 +294,13 @@
         }
 
         async function stakeTokens() {
-            if (userBalance < 100) return alert("Min 100 TOFFEE required!");
-            const apy = await calculateCurrentAPY();
+            if (userBalance < 100) return alert("Need 100 TOFFEE!");
             const { data: cur } = await db.from('staking_data').select('staked_amount').eq('wallet_address', userWallet).maybeSingle();
             const newStaked = (cur ? cur.staked_amount : 0) + 100;
             await db.from('user_balances').update({ pending_balance: userBalance - 100 }).eq('wallet_address', userWallet);
-            await db.from('staking_data').upsert({ wallet_address: userWallet, staked_amount: newStaked, last_stake_date: new Date() });
-            confetti({ particleCount: 100, colors: ['#f59e0b'] }); refreshData(); loadStakingData();
+            await db.from('staking_data').upsert({ wallet_address: userWallet, staked_amount: newStaked, last_stake_date: new Date().toISOString() });
+            confetti({ particleCount: 100, colors: ['#f59e0b'] }); 
+            refreshData(); loadStakingData();
         }
 
         async function loadStakingData() {
@@ -260,20 +308,36 @@
             const apy = await calculateCurrentAPY();
             document.getElementById('currentAPYDisplay').innerText = `${apy}% APY`;
             const { data } = await db.from('staking_data').select('*').eq('wallet_address', userWallet).maybeSingle();
-            if (data) {
+            if (data && data.staked_amount > 0) {
                 document.getElementById('stakedAmt').innerText = data.staked_amount;
-                const days = (new Date() - new Date(data.last_stake_date)) / (1000 * 60 * 60 * 24);
-                const rewards = (data.staked_amount * (apy / 100) / 365) * days;
+                const diff = (new Date() - new Date(data.last_stake_date)) / (1000 * 60 * 60 * 24);
+                const rewards = (data.staked_amount * (apy / 100) / 365) * diff;
                 document.getElementById('rewardAmt').innerText = rewards.toFixed(4);
+            } else {
+                document.getElementById('stakedAmt').innerText = "0";
+                document.getElementById('rewardAmt').innerText = "0.0000";
             }
         }
 
         async function claimStakingRewards() {
             const reward = parseFloat(document.getElementById('rewardAmt').innerText);
-            if(reward <= 0) return;
+            if(reward <= 0) return alert("No rewards!");
             await db.from('user_balances').update({ pending_balance: userBalance + reward }).eq('wallet_address', userWallet);
-            await db.from('staking_data').update({ last_stake_date: new Date() }).eq('wallet_address', userWallet);
-            alert(`Claimed ${reward.toFixed(2)} TOFFEE!`); refreshData(); loadStakingData();
+            await db.from('staking_data').update({ last_stake_date: new Date().toISOString() }).eq('wallet_address', userWallet);
+            alert(`Claimed ${reward.toFixed(4)} TOFFEE!`); 
+            refreshData(); loadStakingData();
+        }
+
+        async function unstakeTokens() {
+            const { data: sData } = await db.from('staking_data').select('*').eq('wallet_address', userWallet).maybeSingle();
+            if (!sData || sData.staked_amount <= 0) return alert("Nothing to unstake!");
+            if (!confirm("Are you sure?")) return;
+            const apy = await calculateCurrentAPY();
+            const diff = (new Date() - new Date(sData.last_stake_date)) / (1000 * 60 * 60 * 24);
+            const reward = (sData.staked_amount * (apy / 100) / 365) * diff;
+            await db.from('user_balances').update({ pending_balance: userBalance + sData.staked_amount + reward }).eq('wallet_address', userWallet);
+            await db.from('staking_data').update({ staked_amount: 0, last_stake_date: new Date().toISOString() }).eq('wallet_address', userWallet);
+            alert("Success! Unstaked."); refreshData(); loadStakingData();
         }
 
         // --- UTILS ---
@@ -284,7 +348,8 @@
             if (valid) {
                 await db.from('user_balances').upsert({ wallet_address: userWallet, pending_balance: userBalance + 10 });
                 await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-                confetti({ particleCount: 150 }); refreshData(); document.getElementById('codeInput').value = "";
+                confetti({ particleCount: 150, spread: 70 }); 
+                refreshData(); document.getElementById('codeInput').value = "";
             } else { alert("Invalid Code!"); }
         }
 
@@ -294,7 +359,43 @@
             const btn = document.getElementById('copyBtn');
             btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
             btn.closest('.glass-card').classList.add('pulse-atomic');
-            setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy Contract'; btn.closest('.glass-card').classList.remove('pulse-atomic'); }, 2000);
+            setTimeout(() => { 
+                btn.innerHTML = '<i class="fas fa-copy"></i> Copy Contract'; 
+                btn.closest('.glass-card').classList.remove('pulse-atomic'); 
+            }, 2000);
+        }
+
+        async function requestWithdrawal() {
+            if(userBalance < 500) return;
+            await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
+            alert("Request sent!"); refreshData();
+        }
+
+        // --- ADMIN HELPERS ---
+        async function uploadCodes() {
+            const input = document.getElementById("newCodesInput").value;
+            const codes = input.split(',').map(c => ({ code: c.trim().toUpperCase() })).filter(c => c.code !== "");
+            await db.from('valid_codes').insert(codes);
+            alert("Uploaded!"); document.getElementById("newCodesInput").value = "";
+        }
+
+        async function loadAdminRequests() {
+            const { data: reqs } = await db.from('withdrawals').select('*').eq('status', 'pending');
+            let h = "";
+            reqs?.forEach(r => {
+                h += `<div class="flex justify-between items-center bg-black/60 p-3 rounded-xl border border-red-500/20">
+                        <span class="text-white">${r.wallet_address.substring(0,10)}...</span>
+                        <button onclick="approveWithdrawal(${r.id}, '${r.wallet_address}')" class="bg-green-600 px-3 py-1 rounded text-white text-[10px] font-bold">PAID</button>
+                      </div>`;
+            });
+            document.getElementById("reqList").innerHTML = h || "<p class='text-slate-500'>No requests.</p>";
+        }
+
+        async function approveWithdrawal(id, address) {
+            const { data: user } = await db.from('user_balances').select('pending_balance').eq('wallet_address', address).single();
+            await db.from('user_balances').update({ pending_balance: user.pending_balance - 500 }).eq('wallet_address', address);
+            await db.from('withdrawals').update({ status: 'completed' }).eq('id', id);
+            alert("Approved!"); loadAdminRequests(); refreshData();
         }
     </script>
 </body>
