@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>TOFFEENVH - Full Ecosystem 2026</title>
+    <title>TOFFEENVH - Full Ultimate 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -19,7 +19,6 @@
         }
         html { scroll-behavior: smooth; }
 
-        /* --- ✨ PREMIUM INTERACTIVITY --- */
         .glass-card { 
             background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px);
             border: 1px solid rgba(56, 189, 248, 0.15); 
@@ -33,23 +32,19 @@
         #rewardsApp { display: none; padding: 15px; animation: fadeIn 0.4s ease-out; }
         .app-container { max-width: 450px; margin: 15px auto; background: var(--card); padding: 25px; border-radius: 30px; border: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(20px); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8); }
         
-        input { width: 100%; height: 70px; background: #000; color: #fff; border: 3px solid #1e293b; border-radius: 20px; text-align: center; text-transform: uppercase; outline: none; font-weight: bold; transition: 0.3s; }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); }
-
+        input { width: 100%; height: 70px; background: #000; color: #fff; border: 3px solid #1e293b; border-radius: 20px; text-align: center; text-transform: uppercase; outline: none; font-weight: bold; }
         .btn-app { width: 100%; padding: 18px; border-radius: 18px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; transition: 0.2s; }
-        .btn-app:active { transform: scale(0.95); }
 
-        /* --- 🎡 WHEEL STYLE --- */
-        #wheel-container { position: relative; width: 230px; height: 230px; margin: 20px auto; display: none; }
+        #wheel-container { position: relative; width: 220px; height: 220px; margin: 20px auto; display: none; }
         #wheel { width: 100%; height: 100%; border-radius: 50%; border: 6px solid #1e293b; background: conic-gradient(#38bdf8 0deg 90deg, #1e293b 90deg 180deg, #38bdf8 180deg 270deg, #1e293b 270deg 360deg); transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
-        #wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #fbbf24; z-index: 10; }
+        #wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #fbbf24; z-index: 10; }
 
-        /* --- 🟢 WHATSAPP & TICKER --- */
-        .whatsapp-float { position: fixed; bottom: 25px; right: 25px; background: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3); z-index: 1000; transition: 0.3s; }
-        .ticker-wrap { background: rgba(0,0,0,0.6); overflow: hidden; white-space: nowrap; padding: 12px 0; border-radius: 15px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 11px; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .whatsapp-float { position: fixed; bottom: 25px; right: 25px; background: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3); z-index: 1000; }
+        .ticker-wrap { background: rgba(0,0,0,0.6); overflow: hidden; white-space: nowrap; padding: 12px 0; border-radius: 15px; margin-bottom: 20px; }
+        .ticker-move { display: inline-block; animation: ticker 30s linear infinite; font-size: 11px; color: var(--primary); font-weight: 800; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
+        .product-icon { font-size: 3rem; margin-bottom: 1rem; color: #fbbf24; }
         .section-hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         blockquote { border-left: 5px solid var(--primary); padding-left: 1.5rem; }
@@ -57,17 +52,12 @@
 </head>
 <body>
 
-    <a href="https://wa.me/917827255850" class="whatsapp-float hover:scale-110 active:scale-90" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+    <a href="https://wa.me/917827255850" class="whatsapp-float hover:scale-110 active:scale-90" target="_blank"><i class="fab fa-whatsapp"></i></a>
 
     <div id="landingPage">
         <nav class="bg-slate-950/70 backdrop-blur-xl border-b border-sky-900/40 sticky top-0 z-50 h-20 flex items-center px-4">
             <div class="max-w-6xl mx-auto w-full flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-candy-cane text-3xl text-sky-400"></i>
-                    <span class="text-2xl font-black text-white uppercase tracking-tighter">Toffeenvh</span>
-                </div>
+                <div class="flex items-center space-x-3"><i class="fas fa-candy-cane text-3xl text-sky-400"></i><span class="text-2xl font-black text-white uppercase tracking-tighter">Toffeenvh</span></div>
                 <button onclick="showApp()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 px-8 py-2.5 rounded-full font-bold shadow-lg transition transform hover:scale-105 active:scale-95 text-sm uppercase">Launch App</button>
             </div>
         </nav>
@@ -82,19 +72,23 @@
             <h2 class="text-5xl font-black text-white mb-20 italic tracking-tighter uppercase underline decoration-sky-500">Project Roadmap</h2>
             <div class="max-w-4xl mx-auto grid gap-10 text-left">
                 <div class="glass-card p-10 rounded-[40px] border-l-sky-500 border-l-[12px]">
-                    <h3 class="text-3xl font-black text-sky-400 uppercase mb-2">Q1 2026 - Launch</h3>
+                    <h3 class="text-3xl font-black text-sky-400 uppercase mb-2">Q1 2026 - Store Launch</h3>
+                    <p class="text-slate-300 font-bold mb-4">Phase 1: Local Distribution</p>
                     <p class="text-slate-400 leading-relaxed">Nihal Vihar authorized stores distribution live. Website portal, unique username registration, aur daily check-in activation.</p>
                 </div>
                 <div class="glass-card p-10 rounded-[40px] border-l-blue-500 border-l-[12px]">
                     <h3 class="text-3xl font-black text-blue-400 uppercase mb-2">Q2 2026 - Smart Audit</h3>
-                    <p class="text-slate-400 leading-relaxed">Blockchain contract security audits. Team expansion aur extra NFT candy reward flavors ecosystem mein integrate honge.</p>
+                    <p class="text-slate-300 font-bold mb-4">Phase 2: Security & Expansion</p>
+                    <p class="text-slate-400 leading-relaxed">Blockchain contract security audits. Team expansion aur extra "Candy Flavors" NFT rewards ka integration.</p>
                 </div>
                 <div class="glass-card p-10 rounded-[40px] border-l-purple-500 border-l-[12px]">
                     <h3 class="text-3xl font-black text-purple-400 uppercase mb-2">Q3 2026 - Growth</h3>
-                    <p class="text-slate-400 leading-relaxed">Advanced Referral System launch. Nihal Vihar community ke liye monthly networking events aur special token utilities activation.</p>
+                    <p class="text-slate-300 font-bold mb-4">Phase 3: Community Ecosystem</p>
+                    <p class="text-slate-400 leading-relaxed">Advanced Referral System launch. Nihal Vihar ke top holders ke liye exclusive monthly events aur token utilities activation.</p>
                 </div>
                 <div class="glass-card p-10 rounded-[40px] border-l-amber-500 border-l-[12px]">
                     <h3 class="text-3xl font-black text-amber-400 uppercase mb-2">Q4 2027 - DEX Listing</h3>
+                    <p class="text-slate-300 font-bold mb-4">Phase 4: Global Trading</p>
                     <p class="text-slate-400 leading-relaxed">Uniswap aur Worldcoin integration. Global Celo community ke liye DEX listing aur high liquidity pools deployment.</p>
                 </div>
             </div>
@@ -102,21 +96,34 @@
 
         <section class="py-24 max-w-5xl mx-auto px-5">
             <div class="mb-24 text-left">
-                <blockquote class="text-4xl font-medium text-slate-300 italic mb-6">
-                    "The future of Nihal Vihar is decentralized. Sweet rewards for a sweet community."
-                </blockquote>
-                <p class="text-sky-500 font-black ml-12 text-2xl">— TOFFEENVH Founders</p>
+                <blockquote class="text-4xl font-medium text-slate-300 italic mb-6 leading-tight">"The future of Nihal Vihar is decentralized. Sweet rewards for a sweet community."</blockquote>
+                <p class="text-sky-500 font-black ml-12 text-2xl">— TOFFEENVH FOUNDERS</p>
             </div>
             <h2 class="text-4xl font-black mb-16 text-white text-center uppercase tracking-widest underline decoration-sky-500">Frequently Asked Questions</h2>
             <div class="grid gap-8 text-left">
                 <div class="glass-card p-10 rounded-[35px]">
                     <p class="text-sky-400 font-black text-xl mb-3">1. Magic Code kaise milega?</p>
-                    <p class="text-slate-400 leading-relaxed">Apne authorized store se Toffeenvh packet purchase karein. Wrapper ke andar magic code sticker milega.</p>
+                    <p class="text-slate-400 leading-relaxed">Authorized store se Toffeenvh packet purchase karein. Wrapper ke andar magic code sticker milega.</p>
                 </div>
                 <div class="glass-card p-10 rounded-[35px]">
                     <p class="text-sky-400 font-black text-xl mb-3">2. Withdrawal kitne par milega?</p>
                     <p class="text-slate-400 leading-relaxed">Aapke wallet mein <b class="text-white">500 TOFFEE</b> hone par aap withdraw request kar sakte hain.</p>
                 </div>
+                <div class="glass-card p-10 rounded-[35px]">
+                    <p class="text-sky-400 font-black text-xl mb-3">3. Lucky Spin kaise unlock karein?</p>
+                    <p class="text-slate-400 leading-relaxed">Din mein 1 bhi code claim karne par Lucky Spin unlock hota hai jahan 1-25 tokens milte hain.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 bg-slate-950/20 px-5 text-center">
+            <h2 class="text-4xl font-black text-white mb-4 uppercase tracking-tighter italic">Rewards Store</h2>
+            <p class="text-amber-500 font-black mb-16 uppercase tracking-[5px] text-sm">COMING SOON: Exchange Coins for Products</p>
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-gift product-icon"></i><p class="text-white font-bold uppercase text-xs tracking-widest">Gift Box</p><span class="text-amber-500 text-[9px] mt-2 font-black uppercase italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-headphones product-icon"></i><p class="text-white font-bold uppercase text-xs tracking-widest">Neckband</p><span class="text-amber-500 text-[9px] mt-2 font-black uppercase italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-mobile-alt product-icon"></i><p class="text-white font-bold uppercase text-xs tracking-widest">Smartphone</p><span class="text-amber-500 text-[9px] mt-2 font-black uppercase italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-clock product-icon"></i><p class="text-white font-bold uppercase text-xs tracking-widest">Smart Watch</p><span class="text-amber-500 text-[9px] mt-2 font-black uppercase italic">Coming Soon</span></div>
             </div>
         </section>
 
@@ -131,86 +138,24 @@
     </div>
 
     <div id="rewardsApp">
-        <div class="max-w-lg mx-auto flex justify-between px-4 mb-8 mt-10">
+        <div class="max-w-lg mx-auto flex justify-between px-4 mb-10 mt-10">
             <button onclick="showLanding()" class="text-sky-400 font-black bg-sky-500/10 px-8 py-3 rounded-2xl text-sm transition"><i class="fas fa-arrow-left mr-2"></i> HOME</button>
-            <span class="text-[11px] text-slate-500 font-mono font-bold uppercase">Celo Mainnet</span>
+            <span class="text-[11px] text-slate-500 font-mono font-bold">CELO MAINNET</span>
         </div>
-
         <div class="app-container">
             <h1 class="text-4xl font-black text-center text-sky-400 tracking-tighter uppercase mb-1">Rewards</h1>
             <p id="displayUsername" class="text-center text-amber-500 font-bold text-[12px] mb-8 uppercase italic tracking-widest">Connect Wallet</p>
-
-            <div class="ticker-wrap">
-                <div id="ticker" class="ticker-move">
-                    Connect MetaMask or Any Wallet to Start Earning Rewards... 🍭 🍭 🍭
-                </div>
-            </div>
-
+            <div class="ticker-wrap"><div id="ticker" class="ticker-move">Connect MetaMask or Any Wallet to Start Earning Rewards... 🍭 🍭 🍭</div></div>
             <button id="walletBtn" class="btn-app w-full bg-amber-500 text-slate-950 py-5 rounded-2xl font-black shadow-lg mb-8 active:scale-95 transition" onclick="connectWallet()">CONNECT WALLET</button>
-
-            <div id="regUI" style="display:none;" class="bg-black/80 p-8 rounded-[40px] border border-sky-400 mb-8 text-center shadow-2xl">
-                <h3 class="text-white font-black text-sm mb-6 uppercase tracking-widest">Set Your Username</h3>
-                <input type="text" id="usernameInput" placeholder="User_123" maxlength="15" class="h-16 mb-6 text-sm font-black">
-                <button onclick="registerUser()" class="btn-app bg-sky-500 text-slate-950 py-4 rounded-2xl font-black">Register Profile</button>
-            </div>
-
+            <div id="regUI" style="display:none;" class="bg-black/80 p-8 rounded-[40px] border border-sky-400 mb-8 text-center shadow-2xl"><h3 class="text-white font-black text-sm mb-6 uppercase tracking-widest">Set Your Username</h3><input type="text" id="usernameInput" placeholder="User_123" maxlength="15" class="h-16 mb-6 text-sm font-black"><button onclick="registerUser()" class="btn-app bg-sky-500 text-slate-950 py-4 rounded-2xl font-black">Register Profile</button></div>
             <div id="userUI" style="display:none;" class="space-y-8">
-                <div class="bg-black/60 p-10 rounded-[40px] border border-sky-500/30 text-center shadow-inner">
-                    <p class="text-slate-500 text-[12px] uppercase font-black mb-2">Earnings</p>
-                    <span id="balText" class="text-6xl font-black text-white">0.0000</span>
-                    <div class="mt-8 flex gap-3">
-                        <button onclick="openSpinWheel()" class="flex-1 bg-amber-500 text-[11px] py-3 rounded-xl font-black text-slate-950 active:scale-95 transition">🎡 LUCKY SPIN</button>
-                        <button id="withdrawBtn" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-black text-[11px] hidden active:scale-95 transition" onclick="requestWithdrawal()">🚀 Withdraw</button>
-                    </div>
-                </div>
-
-                <div id="wheel-container" class="glass-card p-8 rounded-[45px] text-center shadow-2xl">
-                    <div id="wheel-pointer"></div>
-                    <div id="wheel"></div>
-                    <button id="spinBtn" class="btn-app bg-sky-500 text-slate-950 mt-10 py-4 rounded-2xl font-black shadow-xl" onclick="spinNow()">SPIN NOW!</button>
-                    <button onclick="closeSpin()" class="text-[10px] text-slate-500 mt-4 block w-full uppercase font-black">Back</button>
-                </div>
-
-                <div id="stakingPanel" class="glass-card p-8 rounded-[40px] border-amber-500/30 shadow-xl">
-                    <div class="flex justify-between items-center mb-6 text-xs font-black uppercase">
-                        <span class="text-amber-400 italic">Vault (15% APY)</span>
-                        <span id="stakedAmt" class="text-white font-mono">0 Staked</span>
-                    </div>
-                    <div class="bg-black/40 p-5 rounded-2xl mb-6 text-center border border-white/5">
-                        <p class="text-[10px] text-slate-500 uppercase font-black mb-1">Rewards</p>
-                        <span id="rewardAmt" class="text-3xl font-black text-green-400">0.000000</span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button onclick="stakeTokens()" class="bg-amber-500 py-4 rounded-xl font-black text-[10px] text-slate-950 active:scale-95">STAKE</button>
-                        <button onclick="claimStakingRewards()" class="bg-slate-700 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">CLAIM</button>
-                        <button onclick="unstakeTokens()" class="bg-red-600 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">UNSTAKE</button>
-                    </div>
-                </div>
-
-                <div id="lowerStats" class="grid grid-cols-2 gap-5">
-                    <div class="bg-black/40 p-5 rounded-3xl border border-white/5">
-                        <h3 class="text-[10px] font-black text-sky-400 uppercase italic mb-3">🏆 Rank 3</h3>
-                        <div id="leaderList" class="text-[9px] space-y-2 font-mono text-slate-400 leading-tight">Loading...</div>
-                    </div>
-                    <div class="bg-black/40 p-5 rounded-3xl border border-white/5 text-center">
-                        <h3 class="text-[10px] font-black text-purple-400 uppercase mb-3 italic">Referral</h3>
-                        <button onclick="copyReferral()" class="text-[10px] font-black text-purple-400 border border-purple-500/30 px-4 py-2 rounded-xl active:scale-90 transition">COPY ID</button>
-                    </div>
-                </div>
-
-                <input type="text" id="codeInput" placeholder="ENTER MAGIC CODE">
-                <button onclick="processClaim()" class="btn-app w-full bg-sky-500 text-slate-950 py-6 rounded-2xl font-black shadow-xl active:scale-95 transition">💰 Claim 10 TOFFEE Tokens</button>
+                <div class="bg-black/60 p-10 rounded-[40px] border border-sky-500/30 text-center shadow-inner"><p class="text-slate-500 text-[12px] uppercase font-black mb-2">Earnings</p><span id="balText" class="text-6xl font-black text-white">0.0000</span><div class="mt-8 flex gap-3"><button onclick="openSpinWheel()" class="flex-1 bg-amber-500 text-[11px] py-3 rounded-xl font-black text-slate-950 active:scale-95">🎡 LUCKY SPIN</button><button id="withdrawBtn" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-black text-[11px] hidden active:scale-95" onclick="requestWithdrawal()">🚀 Withdraw</button></div></div>
+                <div id="wheel-container" class="glass-card p-8 rounded-[45px] text-center shadow-2xl"><div id="wheel-pointer"></div><div id="wheel"></div><button id="spinBtn" class="btn-app bg-sky-500 text-slate-950 mt-10 py-4 rounded-2xl font-black shadow-xl" onclick="spinNow()">SPIN NOW!</button><button onclick="closeSpin()" class="text-[10px] text-slate-500 mt-4 block w-full uppercase font-black">Back</button></div>
+                <div id="stakingPanel" class="glass-card p-8 rounded-[40px] border-amber-500/30 shadow-xl"><div class="flex justify-between items-center mb-6 text-xs font-black uppercase"><span class="text-amber-400 italic">Vault (15% APY)</span><span id="stakedAmt" class="text-white font-mono">0 Staked</span></div><div class="bg-black/40 p-5 rounded-2xl mb-6 text-center"><p class="text-[10px] text-slate-500 uppercase font-black mb-1">Rewards</p><span id="rewardAmt" class="text-3xl font-black text-green-400">0.000000</span></div><div class="grid grid-cols-3 gap-3"><button onclick="stakeTokens()" class="bg-amber-500 py-4 rounded-xl font-black text-[10px] text-slate-950 active:scale-95">STAKE</button><button onclick="claimStakingRewards()" class="bg-slate-700 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">CLAIM</button><button onclick="unstakeTokens()" class="bg-red-600 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">UNSTAKE</button></div></div>
+                <div id="lowerStats" class="grid grid-cols-2 gap-5"><div class="bg-black/40 p-5 rounded-3xl border border-white/5"><h3 class="text-[10px] font-black text-sky-400 uppercase italic mb-3">🏆 Top Holders</h3><div id="leaderList" class="text-[9px] space-y-2 font-mono text-slate-400 leading-tight">Loading...</div></div><div class="bg-black/40 p-5 rounded-3xl border border-white/5 text-center"><h3 class="text-[10px] font-black text-purple-400 uppercase mb-3 italic">Referral</h3><button onclick="copyReferral()" class="text-[10px] font-black text-purple-400 border border-purple-500/30 px-4 py-2 rounded-xl active:scale-90 transition">COPY ID</button></div></div>
+                <input type="text" id="codeInput" placeholder="ENTER MAGIC CODE"><button onclick="processClaim()" class="btn-app w-full bg-sky-500 text-slate-950 py-6 rounded-2xl font-black shadow-xl active:scale-95 transition">💰 Claim 10 TOFFEE</button>
             </div>
-
-            <div id="adminPanel" style="display:none;" class="mt-12 p-8 border-2 border-dashed border-red-500/40 rounded-[40px] bg-black/60 text-center">
-                <h3 class="text-red-500 font-black mb-6 text-xs uppercase tracking-[3px]">Admin</h3>
-                <textarea id="newCodesInput" placeholder="Codes..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea>
-                <button onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8">Upload Codes</button>
-                <div class="border-t border-slate-700 pt-8">
-                    <button id="payoutBtn" onclick="payAllWithdrawals()" class="btn-app bg-green-600 text-white text-[11px] py-4 mb-6 hover:bg-green-500">⚡ Send Batch Payout (MetaMask)</button>
-                    <div id="reqList" class="text-[10px] mt-4 space-y-3 text-white text-left max-h-48 overflow-y-auto font-mono"></div>
-                </div>
-            </div>
+            <div id="adminPanel" style="display:none;" class="mt-12 p-8 border-2 border-dashed border-red-500/40 rounded-[40px] bg-black/60 text-center"><h3 class="text-red-500 font-black mb-6 text-xs uppercase tracking-[3px]">Admin</h3><textarea id="newCodesInput" placeholder="Codes: C01, C02..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea><button onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8">Upload Codes</button><div class="border-t border-slate-700 pt-8"><button id="payoutBtn" onclick="payAllWithdrawals()" class="btn-app bg-green-600 text-white text-[11px] py-4 mb-6 hover:bg-green-500">⚡ Batch Payout (MetaMask)</button><div id="reqList" class="text-[10px] mt-4 space-y-3 text-white text-left max-h-48 overflow-y-auto font-mono"></div></div></div>
         </div>
     </div>
 
@@ -237,6 +182,7 @@
                     document.getElementById("displayUsername").innerText = `@${currentUsername}`;
                     document.getElementById("userUI").style.display = "block";
                     document.getElementById("regUI").style.display = "none";
+                    updateTicker();
                 } else {
                     document.getElementById("regUI").style.display = "block";
                     document.getElementById("userUI").style.display = "none";
@@ -251,8 +197,8 @@
         async function registerUser() {
             const username = document.getElementById("usernameInput").value.trim().toUpperCase().replace(/\s+/g, '_');
             if (username.length < 3) return alert("Min 3 chars!");
-            const { error } = await db.from('user_balances').upsert({ wallet_address: userWallet, username: username, pending_balance: 0 });
-            if(!error) location.reload();
+            await db.from('user_balances').upsert({ wallet_address: userWallet, username: username, pending_balance: 0 });
+            location.reload();
         }
 
         async function refreshData() {
@@ -265,7 +211,7 @@
 
         async function openSpinWheel() {
             const { data: user } = await db.from('user_balances').select('last_code_claim_date, last_spin_date').eq('wallet_address', userWallet).single();
-            if (!user.last_code_claim_date || (new Date() - new Date(user.last_code_claim_date)) > 86400000) return alert("Lucky Spin Locked! Pehle aaj ek code claim karein.");
+            if (!user.last_code_claim_date || (new Date() - new Date(user.last_code_claim_date)) > 86400000) return alert("Spin Lock! Aaj ek code claim karein.");
             if (user.last_spin_date && (new Date() - new Date(user.last_spin_date)) < 86400000) return alert("Aaj ka Spin use ho gaya!");
             document.getElementById('wheel-container').style.display = 'block';
             document.getElementById('stakingPanel').style.display = 'none';
@@ -280,7 +226,7 @@
             document.getElementById('wheel').style.transform = `rotate(${deg}deg)`;
             setTimeout(async () => {
                 const reward = Math.floor(Math.random() * 25) + 1;
-                confetti(); alert(`Mubarak! Jeete ${reward} TOFFEE! 🎡`);
+                confetti(); alert(`Jeete ${reward} TOFFEE! 🎡`);
                 await db.from('user_balances').update({ pending_balance: userBalance + reward, last_spin_date: new Date().toISOString() }).eq('wallet_address', userWallet);
                 await refreshData(); closeSpin(); spinBtn.disabled = false;
             }, 4000);
@@ -294,7 +240,7 @@
                 await db.from('user_balances').update({ pending_balance: userBalance + 10, last_code_claim_date: new Date().toISOString() }).eq('wallet_address', userWallet);
                 await db.from('valid_codes').update({ is_used: true }).eq('code', code);
                 confetti(); await refreshData(); document.getElementById('codeInput').value = "";
-                alert("Code Claimed! Spin Unlocked.");
+                alert("Claimed! Spin Unlocked.");
             } else alert("Invalid Code!");
         }
 
@@ -302,6 +248,11 @@
             const { data } = await db.from('user_balances').select('username, pending_balance').order('pending_balance', { ascending: false }).limit(3);
             let h = ""; data?.forEach((r, i) => { h += `<div class='flex justify-between border-b border-white/5 py-1'><span>#${i+1} @${r.username}</span><b>${parseFloat(r.pending_balance).toFixed(0)}</b></div>`; });
             document.getElementById("leaderList").innerHTML = h || "No data.";
+        }
+
+        function updateTicker() {
+            const msgs = ["Rahul_NV jeete 15 TOFFEE!", "Lucky_NV unlocked Spin!", "Support: +917827255850", "Connect MetaMask or Any Wallet..."];
+            document.getElementById('ticker').innerText = msgs.join(" | ");
         }
 
         async function payAllWithdrawals() {
@@ -317,7 +268,7 @@
                     await db.from('user_balances').update({ pending_balance: 0 }).eq('wallet_address', req.wallet_address);
                     await db.from('withdrawals').update({ status: 'completed' }).eq('id', req.id);
                 }
-                alert("Success!"); loadAdminRequests();
+                alert("Batch Successful!"); loadAdminRequests();
             } catch (err) { alert("Tx Failed!"); }
         }
 
@@ -369,13 +320,13 @@
         }
 
         async function requestWithdrawal() {
-            if(userBalance < 500) return alert("Min 500!");
+            if(userBalance < 500) return;
             await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
-            alert("Sent! Admin payout soon."); refreshData();
+            alert("Sent!"); refreshData();
         }
 
-        function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("ID Copied!"); }
         function copyAddressAtomic() { navigator.clipboard.writeText("0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88"); alert("Copied!"); }
+        function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("ID Copied!"); }
     </script>
 </body>
 </html>
