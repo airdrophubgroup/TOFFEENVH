@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>TOFFEENVH - Full Ultimate 2026</title>
+    <title>TOFFEENVH - Full Ultimate Edition 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -12,18 +12,10 @@
 
     <style>
         :root { --primary: #38bdf8; --bg: #030712; --card: rgba(30, 41, 59, 0.4); --text: #f8fafc; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: radial-gradient(circle at top, #0f172a 0%, #030712 100%);
-            color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; position: relative;
-        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: radial-gradient(circle at top, #0f172a 0%, #030712 100%); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; position: relative; }
         html { scroll-behavior: smooth; }
 
-        .glass-card { 
-            background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px);
-            border: 1px solid rgba(56, 189, 248, 0.15); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
+        .glass-card { background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .glass-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 10px 40px rgba(56, 189, 248, 0.15); }
 
         .social-link { transition: all 0.3s ease; color: #94a3b8; }
@@ -37,14 +29,14 @@
 
         #wheel-container { position: relative; width: 220px; height: 220px; margin: 20px auto; display: none; }
         #wheel { width: 100%; height: 100%; border-radius: 50%; border: 6px solid #1e293b; background: conic-gradient(#38bdf8 0deg 90deg, #1e293b 90deg 180deg, #38bdf8 180deg 270deg, #1e293b 270deg 360deg); transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
-        #wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #fbbf24; z-index: 10; }
+        #wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); border-top: 30px solid #fbbf24; border-left: 15px solid transparent; border-right: 15px solid transparent; z-index: 10; }
 
         .whatsapp-float { position: fixed; bottom: 25px; right: 25px; background: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3); z-index: 1000; }
         .ticker-wrap { background: rgba(0,0,0,0.6); overflow: hidden; white-space: nowrap; padding: 12px 0; border-radius: 15px; margin-bottom: 20px; }
         .ticker-move { display: inline-block; animation: ticker 30s linear infinite; font-size: 11px; color: var(--primary); font-weight: 800; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        .product-icon { font-size: 3rem; margin-bottom: 1rem; color: #fbbf24; }
+        .task-card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
         .section-hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         blockquote { border-left: 5px solid var(--primary); padding-left: 1.5rem; }
@@ -58,7 +50,7 @@
         <nav class="bg-slate-950/70 backdrop-blur-xl border-b border-sky-900/40 sticky top-0 z-50 h-20 flex items-center px-4">
             <div class="max-w-6xl mx-auto w-full flex justify-between items-center">
                 <div class="flex items-center space-x-3"><i class="fas fa-candy-cane text-3xl text-sky-400"></i><span class="text-2xl font-black text-white uppercase tracking-tighter">Toffeenvh</span></div>
-                <button onclick="showApp()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 px-8 py-2.5 rounded-full font-bold shadow-lg transition transform hover:scale-105 active:scale-95 text-sm uppercase">Launch App</button>
+                <button onclick="showApp()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 px-8 py-2.5 rounded-full font-bold shadow-lg uppercase text-xs">Launch App</button>
             </div>
         </nav>
 
@@ -103,15 +95,11 @@
             <div class="grid gap-8 text-left">
                 <div class="glass-card p-10 rounded-[35px]">
                     <p class="text-sky-400 font-black text-xl mb-3">1. Magic Code kaise milega?</p>
-                    <p class="text-slate-400 leading-relaxed">Authorized store se Toffeenvh packet purchase karein. Wrapper ke andar magic code sticker milega.</p>
+                    <p class="text-slate-400 leading-relaxed">Apne authorized store se Toffeenvh packet purchase karein. Wrapper ke andar magic code sticker milega.</p>
                 </div>
                 <div class="glass-card p-10 rounded-[35px]">
                     <p class="text-sky-400 font-black text-xl mb-3">2. Withdrawal kitne par milega?</p>
-                    <p class="text-slate-400 leading-relaxed">Aapke wallet mein <b class="text-white">500 TOFFEE</b> hone par aap withdraw request kar sakte hain.</p>
-                </div>
-                <div class="glass-card p-10 rounded-[35px]">
-                    <p class="text-sky-400 font-black text-xl mb-3">3. Lucky Spin kaise unlock karein?</p>
-                    <p class="text-slate-400 leading-relaxed">Din mein 1 bhi code claim karne par Lucky Spin unlock hota hai jahan 1-25 tokens milte hain.</p>
+                    <p class="text-slate-400 leading-relaxed">Jab aapka dashboard balance <b class="text-white">500 TOFFEE</b> tokens cross kar lega, tab aap withdraw request bhej sakte hain.</p>
                 </div>
             </div>
         </section>
@@ -120,10 +108,10 @@
             <h2 class="text-4xl font-black text-white mb-4 uppercase tracking-tighter italic">Rewards Store</h2>
             <p class="text-amber-500 font-black mb-16 uppercase tracking-[5px] text-sm">COMING SOON: Exchange Coins for Products</p>
             <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-gift product-icon"></i><p class="text-white font-bold uppercase text-xs tracking-widest">Gift Box</p><span class="text-amber-500 text-[9px] mt-2 font-black uppercase italic">Coming Soon</span></div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-headphones product-icon"></i><p class="text-white font-bold uppercase text-xs tracking-widest">Neckband</p><span class="text-amber-500 text-[9px] mt-2 font-black uppercase italic">Coming Soon</span></div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-mobile-alt product-icon"></i><p class="text-white font-bold uppercase text-xs tracking-widest">Smartphone</p><span class="text-amber-500 text-[9px] mt-2 font-black uppercase italic">Coming Soon</span></div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-clock product-icon"></i><p class="text-white font-bold uppercase text-xs tracking-widest">Smart Watch</p><span class="text-amber-500 text-[9px] mt-2 font-black uppercase italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-gift text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase tracking-widest">Gift Box</p><span class="text-amber-500 text-[10px] mt-2 uppercase font-black italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-headphones text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase tracking-widest">Neckband</p><span class="text-amber-500 text-[10px] mt-2 uppercase font-black italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-mobile-alt text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase tracking-widest">Smartphone</p><span class="text-amber-500 text-[10px] mt-2 uppercase font-black italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-clock text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase tracking-widest">Smart Watch</p><span class="text-amber-500 text-[10px] mt-2 uppercase font-black italic">Coming Soon</span></div>
             </div>
         </section>
 
@@ -140,22 +128,72 @@
     <div id="rewardsApp">
         <div class="max-w-lg mx-auto flex justify-between px-4 mb-10 mt-10">
             <button onclick="showLanding()" class="text-sky-400 font-black bg-sky-500/10 px-8 py-3 rounded-2xl text-sm transition"><i class="fas fa-arrow-left mr-2"></i> HOME</button>
-            <span class="text-[11px] text-slate-500 font-mono font-bold">CELO MAINNET</span>
+            <span class="text-[11px] text-slate-500 font-mono font-bold uppercase tracking-widest">Celo Network</span>
         </div>
+
         <div class="app-container">
-            <h1 class="text-4xl font-black text-center text-sky-400 tracking-tighter uppercase mb-1">Rewards</h1>
-            <p id="displayUsername" class="text-center text-amber-500 font-bold text-[12px] mb-8 uppercase italic tracking-widest">Connect Wallet</p>
+            <p id="displayUsername" class="text-center text-amber-500 font-bold text-[12px] mb-4 uppercase italic tracking-widest">Connect Wallet</p>
             <div class="ticker-wrap"><div id="ticker" class="ticker-move">Connect MetaMask or Any Wallet to Start Earning Rewards... 🍭 🍭 🍭</div></div>
+
             <button id="walletBtn" class="btn-app w-full bg-amber-500 text-slate-950 py-5 rounded-2xl font-black shadow-lg mb-8 active:scale-95 transition" onclick="connectWallet()">CONNECT WALLET</button>
-            <div id="regUI" style="display:none;" class="bg-black/80 p-8 rounded-[40px] border border-sky-400 mb-8 text-center shadow-2xl"><h3 class="text-white font-black text-sm mb-6 uppercase tracking-widest">Set Your Username</h3><input type="text" id="usernameInput" placeholder="User_123" maxlength="15" class="h-16 mb-6 text-sm font-black"><button onclick="registerUser()" class="btn-app bg-sky-500 text-slate-950 py-4 rounded-2xl font-black">Register Profile</button></div>
+
             <div id="userUI" style="display:none;" class="space-y-8">
-                <div class="bg-black/60 p-10 rounded-[40px] border border-sky-500/30 text-center shadow-inner"><p class="text-slate-500 text-[12px] uppercase font-black mb-2">Earnings</p><span id="balText" class="text-6xl font-black text-white">0.0000</span><div class="mt-8 flex gap-3"><button onclick="openSpinWheel()" class="flex-1 bg-amber-500 text-[11px] py-3 rounded-xl font-black text-slate-950 active:scale-95">🎡 LUCKY SPIN</button><button id="withdrawBtn" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-black text-[11px] hidden active:scale-95" onclick="requestWithdrawal()">🚀 Withdraw</button></div></div>
-                <div id="wheel-container" class="glass-card p-8 rounded-[45px] text-center shadow-2xl"><div id="wheel-pointer"></div><div id="wheel"></div><button id="spinBtn" class="btn-app bg-sky-500 text-slate-950 mt-10 py-4 rounded-2xl font-black shadow-xl" onclick="spinNow()">SPIN NOW!</button><button onclick="closeSpin()" class="text-[10px] text-slate-500 mt-4 block w-full uppercase font-black">Back</button></div>
-                <div id="stakingPanel" class="glass-card p-8 rounded-[40px] border-amber-500/30 shadow-xl"><div class="flex justify-between items-center mb-6 text-xs font-black uppercase"><span class="text-amber-400 italic">Vault (15% APY)</span><span id="stakedAmt" class="text-white font-mono">0 Staked</span></div><div class="bg-black/40 p-5 rounded-2xl mb-6 text-center"><p class="text-[10px] text-slate-500 uppercase font-black mb-1">Rewards</p><span id="rewardAmt" class="text-3xl font-black text-green-400">0.000000</span></div><div class="grid grid-cols-3 gap-3"><button onclick="stakeTokens()" class="bg-amber-500 py-4 rounded-xl font-black text-[10px] text-slate-950 active:scale-95">STAKE</button><button onclick="claimStakingRewards()" class="bg-slate-700 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">CLAIM</button><button onclick="unstakeTokens()" class="bg-red-600 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">UNSTAKE</button></div></div>
-                <div id="lowerStats" class="grid grid-cols-2 gap-5"><div class="bg-black/40 p-5 rounded-3xl border border-white/5"><h3 class="text-[10px] font-black text-sky-400 uppercase italic mb-3">🏆 Top Holders</h3><div id="leaderList" class="text-[9px] space-y-2 font-mono text-slate-400 leading-tight">Loading...</div></div><div class="bg-black/40 p-5 rounded-3xl border border-white/5 text-center"><h3 class="text-[10px] font-black text-purple-400 uppercase mb-3 italic">Referral</h3><button onclick="copyReferral()" class="text-[10px] font-black text-purple-400 border border-purple-500/30 px-4 py-2 rounded-xl active:scale-90 transition">COPY ID</button></div></div>
-                <input type="text" id="codeInput" placeholder="ENTER MAGIC CODE"><button onclick="processClaim()" class="btn-app w-full bg-sky-500 text-slate-950 py-6 rounded-2xl font-black shadow-xl active:scale-95 transition">💰 Claim 10 TOFFEE</button>
+                <div class="bg-black/60 p-10 rounded-[40px] border border-sky-500/30 text-center shadow-inner">
+                    <p class="text-slate-500 text-[12px] uppercase font-black mb-2">Main Earnings</p>
+                    <span id="balText" class="text-6xl font-black text-white">0.0000</span>
+                    <div class="mt-8 flex gap-3">
+                        <button onclick="openSpinWheel()" class="flex-1 bg-amber-500 text-[11px] py-3 rounded-xl font-black text-slate-950 active:scale-95 transition">🎡 LUCKY SPIN</button>
+                        <button id="withdrawBtn" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-black text-[11px] hidden active:scale-95 transition" onclick="requestWithdrawal()">🚀 Withdraw</button>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-[30px] border-sky-500/20">
+                    <h3 class="text-[10px] font-black text-sky-400 mb-4 uppercase italic tracking-widest text-center">Social Tasks (+5 Tokens Each)</h3>
+                    
+                    <div class="task-card" id="task-yt">
+                        <div class="flex items-center"><i class="fab fa-youtube text-red-600 mr-3 text-xl"></i><span class="text-[10px] font-black uppercase">YouTube</span></div>
+                        <button onclick="startTask('yt', 'https://www.youtube.com/@ToffeeTeam')" class="bg-sky-500 text-slate-950 text-[10px] px-5 py-2 rounded-xl font-black" id="yt-btn">GO</button>
+                    </div>
+
+                    <div class="task-card" id="task-tg">
+                        <div class="flex items-center"><i class="fab fa-telegram text-sky-400 mr-3 text-xl"></i><span class="text-[10px] font-black uppercase">Telegram</span></div>
+                        <button onclick="startTask('tg', 'https://t.me/ToffeenVh')" class="bg-sky-500 text-slate-950 text-[10px] px-5 py-2 rounded-xl font-black" id="tg-btn">GO</button>
+                    </div>
+
+                    <div class="task-card" id="task-tw">
+                        <div class="flex items-center"><i class="fab fa-twitter text-sky-400 mr-3 text-xl"></i><span class="text-[10px] font-black uppercase">Twitter</span></div>
+                        <button onclick="startTask('tw', 'https://x.com/ToffeenVh')" class="bg-sky-500 text-slate-950 text-[10px] px-5 py-2 rounded-xl font-black" id="tw-btn">GO</button>
+                    </div>
+                </div>
+
+                <div id="wheel-container" class="glass-card p-8 rounded-[45px] text-center shadow-2xl">
+                    <div id="wheel-pointer"></div><div id="wheel"></div>
+                    <button id="spinBtn" class="btn-app bg-sky-500 text-slate-950 mt-10 py-4 rounded-2xl font-black shadow-xl" onclick="spinNow()">SPIN NOW!</button>
+                    <button onclick="closeSpin()" class="text-[10px] text-slate-500 mt-4 block w-full uppercase font-black">Back</button>
+                </div>
+
+                <div id="stakingPanel" class="glass-card p-8 rounded-[40px] border-amber-500/30 shadow-xl">
+                    <div class="flex justify-between items-center mb-6 text-xs font-black uppercase"><span class="text-amber-400 italic">Vault (15% APY)</span><span id="stakedAmt" class="text-white font-mono">0 Staked</span></div>
+                    <div class="bg-black/40 p-5 rounded-2xl mb-6 text-center"><p class="text-[10px] text-slate-500 uppercase font-black mb-1">Rewards</p><span id="rewardAmt" class="text-3xl font-black text-green-400">0.000000</span></div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="stakeTokens()" class="bg-amber-500 py-4 rounded-xl font-black text-[10px] text-slate-950 active:scale-95">STAKE</button>
+                        <button onclick="claimStakingRewards()" class="bg-slate-700 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">CLAIM</button>
+                        <button onclick="unstakeTokens()" class="bg-red-600 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">UNSTAKE</button>
+                    </div>
+                </div>
+
+                <div id="lowerStats" class="grid grid-cols-2 gap-5">
+                    <div class="bg-black/40 p-5 rounded-3xl border border-white/5"><h3 class="text-[10px] font-black text-sky-400 uppercase italic mb-3">🏆 Top 3</h3><div id="leaderList" class="text-[9px] space-y-2 font-mono text-slate-400 leading-tight">Loading...</div></div>
+                    <div class="bg-black/40 p-5 rounded-3xl border border-white/5 text-center"><h3 class="text-[10px] font-black text-purple-400 uppercase mb-3">Referral</h3><button onclick="copyReferral()" class="text-[10px] font-black text-purple-400 border border-purple-500/30 px-4 py-2 rounded-xl active:scale-90 transition">COPY ID</button></div>
+                </div>
+
+                <input type="text" id="codeInput" placeholder="ENTER MAGIC CODE">
+                <button onclick="processClaim()" class="btn-app w-full bg-sky-500 text-slate-950 py-6 rounded-2xl font-black shadow-xl active:scale-95 transition">💰 Claim 10 Tokens</button>
             </div>
-            <div id="adminPanel" style="display:none;" class="mt-12 p-8 border-2 border-dashed border-red-500/40 rounded-[40px] bg-black/60 text-center"><h3 class="text-red-500 font-black mb-6 text-xs uppercase tracking-[3px]">Admin</h3><textarea id="newCodesInput" placeholder="Codes: C01, C02..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea><button onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8">Upload Codes</button><div class="border-t border-slate-700 pt-8"><button id="payoutBtn" onclick="payAllWithdrawals()" class="btn-app bg-green-600 text-white text-[11px] py-4 mb-6 hover:bg-green-500">⚡ Batch Payout (MetaMask)</button><div id="reqList" class="text-[10px] mt-4 space-y-3 text-white text-left max-h-48 overflow-y-auto font-mono"></div></div></div>
+
+            <div id="regUI" style="display:none;" class="bg-black/80 p-8 rounded-[40px] border border-sky-400 mb-8 text-center shadow-2xl"><h3 class="text-white font-black text-sm mb-6 uppercase tracking-widest">Register Username</h3><input type="text" id="usernameInput" placeholder="User_123" maxlength="15" class="h-16 mb-6 text-sm font-black"><button onclick="registerUser()" class="btn-app bg-sky-500 text-slate-950 py-4 rounded-2xl font-black">Register Profile</button></div>
+
+            <div id="adminPanel" style="display:none;" class="mt-12 p-8 border-2 border-dashed border-red-500/40 rounded-[40px] bg-black/60 text-center"><textarea id="newCodesInput" placeholder="Codes..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea><button onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8">Upload Codes</button><div class="border-t border-slate-700 pt-8"><button id="payoutBtn" onclick="payAllWithdrawals()" class="btn-app bg-green-600 text-white text-[11px] py-4 mb-6 hover:bg-green-500">⚡ Batch Payout (MetaMask)</button><div id="reqList" class="text-[10px] mt-4 space-y-3 text-white text-left max-h-48 overflow-y-auto font-mono"></div></div></div>
         </div>
     </div>
 
@@ -166,7 +204,7 @@
         const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
         const TOKEN_ADDR = "0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88";
         const ABI = ["function transfer(address to, uint256 amount) public returns (bool)"];
-        let userWallet = ""; let userBalance = 0; let stakeInterval; let currentUsername = "";
+        let userWallet = ""; let userBalance = 0; let currentUsername = ""; let stakeInterval;
 
         function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').style.display = 'block'; window.scrollTo(0,0); }
         function showLanding() { document.getElementById('landingPage').classList.remove('section-hidden'); document.getElementById('rewardsApp').style.display = 'none'; }
@@ -182,23 +220,35 @@
                     document.getElementById("displayUsername").innerText = `@${currentUsername}`;
                     document.getElementById("userUI").style.display = "block";
                     document.getElementById("regUI").style.display = "none";
-                    updateTicker();
+                    if(data.yt_claimed) document.getElementById('yt-btn').innerText = "DONE";
+                    if(data.tg_claimed) document.getElementById('tg-btn').innerText = "DONE";
+                    if(data.tw_claimed) document.getElementById('tw-btn').innerText = "DONE";
                 } else {
                     document.getElementById("regUI").style.display = "block";
                     document.getElementById("userUI").style.display = "none";
                 }
                 if (userWallet === ADMIN_WALLET.toLowerCase()) { document.getElementById("adminPanel").style.display = "block"; loadAdminRequests(); }
-                await refreshData();
-                loadLeaderboard();
+                await refreshData(); loadLeaderboard();
                 if(!stakeInterval) stakeInterval = setInterval(loadStakingData, 10000);
             }
         }
 
-        async function registerUser() {
-            const username = document.getElementById("usernameInput").value.trim().toUpperCase().replace(/\s+/g, '_');
-            if (username.length < 3) return alert("Min 3 chars!");
-            await db.from('user_balances').upsert({ wallet_address: userWallet, username: username, pending_balance: 0 });
-            location.reload();
+        // --- 📱 SOCIAL TASKS LOGIC ---
+        function startTask(type, link) {
+            const btn = document.getElementById(`${type}-btn`);
+            if(btn.innerText === "DONE") return;
+            window.open(link, '_blank');
+            let timeLeft = 15; btn.disabled = true;
+            const timer = setInterval(() => {
+                btn.innerText = `WAIT ${timeLeft}s`; timeLeft--;
+                if(timeLeft < 0) { clearInterval(timer); btn.innerText = "VERIFY"; btn.disabled = false; btn.onclick = () => claimTask(type); }
+            }, 1000);
+        }
+
+        async function claimTask(type) {
+            const field = type === 'yt' ? 'yt_claimed' : type === 'tg' ? 'tg_claimed' : 'tw_claimed';
+            const { error } = await db.from('user_balances').update({ pending_balance: userBalance + 5, [field]: true }).eq('wallet_address', userWallet);
+            if(!error) { confetti(); alert("5 TOFFEE Added! Verifying..."); document.getElementById(`${type}-btn`).innerText = "DONE"; await refreshData(); }
         }
 
         async function refreshData() {
@@ -211,11 +261,9 @@
 
         async function openSpinWheel() {
             const { data: user } = await db.from('user_balances').select('last_code_claim_date, last_spin_date').eq('wallet_address', userWallet).single();
-            if (!user.last_code_claim_date || (new Date() - new Date(user.last_code_claim_date)) > 86400000) return alert("Spin Lock! Aaj ek code claim karein.");
-            if (user.last_spin_date && (new Date() - new Date(user.last_spin_date)) < 86400000) return alert("Aaj ka Spin use ho gaya!");
-            document.getElementById('wheel-container').style.display = 'block';
-            document.getElementById('stakingPanel').style.display = 'none';
-            document.getElementById('lowerStats').style.display = 'none';
+            if (!user.last_code_claim_date || (new Date() - new Date(user.last_code_claim_date)) > 86400000) return alert("Spin Locked! Aaj ek code claim karein.");
+            if (user.last_spin_date && (new Date() - new Date(user.last_spin_date)) < 86400000) return alert("Used today!");
+            document.getElementById('wheel-container').style.display = 'block'; document.getElementById('stakingPanel').style.display = 'none'; document.getElementById('lowerStats').style.display = 'none';
         }
 
         function closeSpin() { document.getElementById('wheel-container').style.display = 'none'; document.getElementById('stakingPanel').style.display = 'block'; document.getElementById('lowerStats').style.display = 'grid'; }
@@ -244,15 +292,17 @@
             } else alert("Invalid Code!");
         }
 
+        async function registerUser() {
+            const username = document.getElementById("usernameInput").value.trim().toUpperCase().replace(/\s+/g, '_');
+            if (username.length < 3) return alert("Min 3 letters!");
+            await db.from('user_balances').upsert({ wallet_address: userWallet, username: username, pending_balance: 0 });
+            location.reload();
+        }
+
         async function loadLeaderboard() {
             const { data } = await db.from('user_balances').select('username, pending_balance').order('pending_balance', { ascending: false }).limit(3);
             let h = ""; data?.forEach((r, i) => { h += `<div class='flex justify-between border-b border-white/5 py-1'><span>#${i+1} @${r.username}</span><b>${parseFloat(r.pending_balance).toFixed(0)}</b></div>`; });
             document.getElementById("leaderList").innerHTML = h || "No data.";
-        }
-
-        function updateTicker() {
-            const msgs = ["Rahul_NV jeete 15 TOFFEE!", "Lucky_NV unlocked Spin!", "Support: +917827255850", "Connect MetaMask or Any Wallet..."];
-            document.getElementById('ticker').innerText = msgs.join(" | ");
         }
 
         async function payAllWithdrawals() {
@@ -268,7 +318,7 @@
                     await db.from('user_balances').update({ pending_balance: 0 }).eq('wallet_address', req.wallet_address);
                     await db.from('withdrawals').update({ status: 'completed' }).eq('id', req.id);
                 }
-                alert("Batch Successful!"); loadAdminRequests();
+                alert("Success!"); loadAdminRequests();
             } catch (err) { alert("Tx Failed!"); }
         }
 
@@ -290,24 +340,6 @@
             alert("100 Staked!"); refreshData();
         }
 
-        async function claimStakingRewards() {
-            const reward = parseFloat(document.getElementById('rewardAmt').innerText);
-            if(reward <= 0.000001) return;
-            const { data: fresh } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).single();
-            await db.from('user_balances').update({ pending_balance: parseFloat(fresh.pending_balance) + reward }).eq('wallet_address', userWallet);
-            await db.from('staking_data').update({ last_stake_date: new Date().toISOString() }).eq('wallet_address', userWallet);
-            alert("Claimed!"); refreshData();
-        }
-
-        async function unstakeTokens() {
-            const { data: sd } = await db.from('staking_data').select('*').eq('wallet_address', userWallet).maybeSingle();
-            if (!sd || sd.staked_amount <= 0) return;
-            const reward = parseFloat(document.getElementById('rewardAmt').innerText);
-            await db.from('user_balances').update({ pending_balance: userBalance + parseFloat(sd.staked_amount) + reward }).eq('wallet_address', userWallet);
-            await db.from('staking_data').update({ staked_amount: 0, last_stake_date: new Date().toISOString() }).eq('wallet_address', userWallet);
-            alert("Unstaked!"); refreshData();
-        }
-
         async function uploadCodes() {
             const codes = document.getElementById("newCodesInput").value.split(',').map(c => ({ code: c.trim().toUpperCase() }));
             await db.from('valid_codes').insert(codes); alert("Uploaded!");
@@ -325,8 +357,8 @@
             alert("Sent!"); refreshData();
         }
 
-        function copyAddressAtomic() { navigator.clipboard.writeText("0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88"); alert("Copied!"); }
         function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("ID Copied!"); }
+        function copyAddressAtomic() { navigator.clipboard.writeText("0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88"); alert("Copied!"); }
     </script>
 </body>
 </html>
