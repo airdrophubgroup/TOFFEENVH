@@ -218,7 +218,6 @@
 
         async function connectWallet() {
             if (window.ethereum) {
-                // Quiet Network Check
                 const chainId = await window.ethereum.request({ method: 'eth_chainId' });
                 if (chainId !== CELO_CHAIN_ID) {
                     try { await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CELO_CHAIN_ID }] }); } catch (e) {}
@@ -253,7 +252,6 @@
             } else { alert("Please use a Web3 Browser like MetaMask!"); }
         }
 
-        // Original Social Task Logic Fixed
         function startTask(type, link) {
             const btn = document.getElementById(`${type}-btn`);
             if(btn.innerText === "DONE" || btn.innerText === "REVIEW") return;
@@ -288,20 +286,34 @@
             };
         }
 
+        // Updated Secure Claim Logic (RPC)
         async function processClaim() {
             const code = document.getElementById('codeInput').value.trim().toUpperCase();
-            if(!code) return;
+            if(!code) return alert("Enter Magic Code!");
+            
             const btn = document.getElementById('claimBtn');
             const oldText = btn.innerText;
             btn.innerText = "VERIFYING..."; btn.disabled = true;
             
-            const { data: v } = await db.from('valid_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
-            if (v) {
-                await db.from('user_balances').update({ pending_balance: userBalance + 10, last_code_claim_date: new Date().toISOString() }).eq('wallet_address', userWallet);
-                await db.from('valid_codes').update({ is_used: true }).eq('code', code);
-                confetti(); await refreshData(); document.getElementById('codeInput').value = "";
-                alert("10 TOFFEE Claimed!");
-            } else alert("Invalid Code!");
+            try {
+                const { data, error } = await db.rpc('claim_toffee_code', { 
+                    user_wallet: userWallet, 
+                    input_code: code 
+                });
+
+                if (error) throw error;
+
+                if (data === 'SUCCESS') {
+                    confetti(); 
+                    await refreshData(); 
+                    document.getElementById('codeInput').value = "";
+                    alert("10 TOFFEE Claimed Successfully!");
+                } else {
+                    alert("Invalid or Already Used Code!");
+                }
+            } catch (err) {
+                alert("Error claiming code. Make sure SQL Function is installed.");
+            }
             
             btn.innerText = oldText; btn.disabled = false;
         }
@@ -315,7 +327,6 @@
             location.reload();
         }
 
-        // --- All Original Functions kept same below ---
         async function refreshData() {
             if(!userWallet) return;
             const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
@@ -338,6 +349,8 @@
             document.getElementById('wheel').style.transform = `rotate(${deg}deg)`;
             setTimeout(async () => {
                 const reward = Math.floor(Math.random() * 25) + 1; confetti();
+                // Admin-only update check will block direct frontend balance updates for spin too if RLS is tight. 
+                // Suggestion: Create another RPC for spin for total security.
                 await db.from('user_balances').update({ pending_balance: userBalance + reward, last_spin_date: new Date().toISOString() }).eq('wallet_address', userWallet);
                 await refreshData(); closeSpin(); spinBtn.disabled = false;
                 alert(`You won ${reward} TOFFEE!`);
