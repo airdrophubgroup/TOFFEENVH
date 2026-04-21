@@ -171,9 +171,15 @@
 
             <div id="adminPanel" style="display:none;" class="mt-12 p-8 border-2 border-dashed border-red-500/40 rounded-[40px] bg-black/60 text-center">
                 <h3 class="text-red-500 font-black mb-6 uppercase text-sm">ADMIN PORTAL</h3>
+                
+                <div class="mb-8 text-left">
+                    <p class="text-[10px] text-white uppercase mb-2 text-center">Pending Withdrawals</p>
+                    <div id="pendingWithdrawList" class="max-h-40 overflow-y-auto space-y-2"></div>
+                </div>
+
                 <textarea id="newCodesInput" placeholder="Codes (comma separated)..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea>
                 <button id="uploadBtn" onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8 uppercase text-[10px]">Upload Codes</button>
-                <button id="payoutBtn" onclick="payAllWithdrawals()" class="btn-app bg-green-600 text-white text-[11px] py-4 mb-8">⚡ Batch Payout</button>
+                <button id="payoutBtn" onclick="payAllWithdrawals()" class="btn-app bg-green-600 text-white text-[11px] py-4 mb-8 italic">⚡ Mark All Payout Done</button>
             </div>
         </div>
     </div>
@@ -212,10 +218,33 @@
                     document.getElementById("regUI").style.display = "block";
                     document.getElementById("userUI").style.display = "none";
                 }
-                if (userWallet === ADMIN_WALLET.toLowerCase()) { document.getElementById("adminPanel").style.display = "block"; }
+                
+                // Load Admin Panel specifically
+                if (userWallet === ADMIN_WALLET.toLowerCase()) { 
+                    document.getElementById("adminPanel").style.display = "block";
+                    loadAdminDashboard(); 
+                }
+                
                 await refreshData(); loadLeaderboard();
                 if(!stakeInterval) stakeInterval = setInterval(loadStakingData, 30000); 
             } else { alert("Please use a Web3 Browser like MetaMask!"); }
+        }
+
+        async function loadAdminDashboard() {
+            const { data: list, error } = await db.from('withdrawals').select('*').eq('status', 'pending');
+            const listDiv = document.getElementById('pendingWithdrawList');
+            if (list && list.length > 0) {
+                let html = "";
+                list.forEach(item => {
+                    html += `<div class="bg-black/40 p-2 rounded-lg border border-white/10 text-[9px] flex justify-between">
+                        <span>${item.wallet_address.substring(0,10)}...</span>
+                        <span class="text-green-400 font-bold">${item.amount}</span>
+                    </div>`;
+                });
+                listDiv.innerHTML = html;
+            } else {
+                listDiv.innerHTML = "<p class='text-slate-500 text-[9px] text-center'>No requests.</p>";
+            }
         }
 
         async function processClaim() {
@@ -293,21 +322,20 @@
             alert("Tokens Staked!"); refreshData();
         }
 
-        // --- FIXED ADMIN & WITHDRAWAL FUNCTIONS (USING SECURE RPC) ---
-
         async function requestWithdrawal() {
             if(userBalance < 500) return alert("Min 500 TOFFEE!");
             const btn = document.getElementById("withdrawBtn");
             btn.disabled = true; btn.innerText = "SENDING...";
 
-            const { error } = await db.from('withdrawals').insert({ 
+            const { data, error } = await db.from('withdrawals').insert({ 
                 wallet_address: userWallet, 
                 amount: 500, 
                 status: 'pending' 
             });
 
             if (error) {
-                alert("Request Error! Try again.");
+                alert("Request Error!");
+                console.error(error);
             } else {
                 alert("Withdrawal Request Sent Successfully!");
                 await refreshData(); 
@@ -324,16 +352,20 @@
             if (codesArray.length === 0) return alert("Enter some codes!");
             btn.disabled = true; btn.innerText = "UPLOADING...";
 
-            const { data, error } = await db.rpc('admin_upload_codes', { 
-                admin_addr: userWallet, 
-                codes_array: codesArray 
-            });
+            try {
+                const { data, error } = await db.rpc('admin_upload_codes', { 
+                    admin_addr: userWallet, 
+                    codes_array: codesArray 
+                });
 
-            if (data === 'SUCCESS') {
-                alert("Codes Uploaded Successfully!");
-                document.getElementById("newCodesInput").value = "";
-            } else {
-                alert("Upload Failed!");
+                if (data === 'SUCCESS') {
+                    alert("Codes Uploaded Successfully!");
+                    document.getElementById("newCodesInput").value = "";
+                } else {
+                    alert("Upload Failed: " + (error ? error.message : data));
+                }
+            } catch (err) {
+                alert("Fatal Upload Error!");
             }
             btn.disabled = false; btn.innerText = "Upload Codes";
         }
@@ -341,19 +373,23 @@
         async function payAllWithdrawals() {
             if (userWallet !== ADMIN_WALLET.toLowerCase()) return alert("Not Admin!");
             const btn = document.getElementById("payoutBtn");
-            if (!confirm("Start Batch Payout?")) return;
+            if (!confirm("Confirm Mark All as Done?")) return;
 
             btn.disabled = true; btn.innerText = "PROCESSING...";
 
-            const { data, error } = await db.rpc('admin_batch_payout', { 
-                admin_addr: userWallet 
-            });
+            try {
+                const { data, error } = await db.rpc('admin_batch_payout', { 
+                    admin_addr: userWallet 
+                });
 
-            if (data === 'SUCCESS') {
-                alert("Batch Payout Done! All pending balances reset.");
-                location.reload();
-            } else {
-                alert("Payout Error!");
+                if (data === 'SUCCESS') {
+                    alert("Batch Complete! All pending marked Done & Balances reset.");
+                    location.reload();
+                } else {
+                    alert("Payout Logic Error!");
+                }
+            } catch (err) {
+                alert("Fatal Payout Error!");
             }
             btn.disabled = false; btn.innerText = "⚡ Batch Payout";
         }
