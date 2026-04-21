@@ -39,8 +39,6 @@
         .section-hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         blockquote { border-left: 5px solid var(--primary); padding-left: 1.5rem; }
-        .task-card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        .proof-img { width: 100%; max-height: 200px; object-fit: contain; margin-top: 10px; border-radius: 10px; border: 1px solid var(--primary); }
     </style>
 </head>
 <body>
@@ -153,25 +151,6 @@
                     </div>
                 </div>
 
-                <div class="glass-card p-6 rounded-[30px] border-sky-500/20">
-                    <h3 class="text-[10px] font-black text-sky-400 mb-4 uppercase italic text-center tracking-widest">Verified Tasks (+5 Each)</h3>
-                    <div class="task-card">
-                        <div class="flex flex-col"><span class="text-[10px] font-black text-white">YouTube</span><span class="text-[8px] text-slate-500 italic">Sub & Screenshot</span></div>
-                        <button onclick="startTask('yt', 'https://www.youtube.com/@ToffeeTeam')" class="bg-sky-500 text-slate-950 text-[10px] px-5 py-2 rounded-xl font-black" id="yt-btn">GO</button>
-                        <input type="file" id="yt-file" style="display:none" onchange="uploadProof('yt')">
-                    </div>
-                    <div class="task-card">
-                        <div class="flex flex-col"><span class="text-[10px] font-black text-white">Telegram</span><span class="text-[8px] text-slate-500 italic">Join & Screenshot</span></div>
-                        <button onclick="startTask('tg', 'https://t.me/ToffeenVh')" class="bg-sky-500 text-slate-950 text-[10px] px-5 py-2 rounded-xl font-black" id="tg-btn">GO</button>
-                        <input type="file" id="tg-file" style="display:none" onchange="uploadProof('tg')">
-                    </div>
-                    <div class="task-card">
-                        <div class="flex flex-col"><span class="text-[10px] font-black text-white">Twitter</span><span class="text-[8px] text-slate-500 italic">Follow & Screenshot</span></div>
-                        <button onclick="startTask('tw', 'https://x.com/ToffeenVh')" class="bg-sky-500 text-slate-950 text-[10px] px-5 py-2 rounded-xl font-black" id="tw-btn">GO</button>
-                        <input type="file" id="tw-file" style="display:none" onchange="uploadProof('tw')">
-                    </div>
-                </div>
-
                 <div id="wheel-container" class="glass-card p-8 rounded-[45px] text-center shadow-2xl border-2 border-sky-500/30"><div id="wheel-pointer"></div><div id="wheel"></div><button id="spinBtn" class="btn-app bg-sky-500 text-slate-950 mt-10 py-4 rounded-2xl font-black shadow-xl" onclick="spinNow()">SPIN NOW!</button><button onclick="closeSpin()" class="text-[10px] text-slate-500 mt-4 block w-full uppercase font-black">Back</button></div>
 
                 <div id="stakingPanel" class="glass-card p-8 rounded-[40px] border-amber-500/30 shadow-xl">
@@ -195,10 +174,6 @@
                 <textarea id="newCodesInput" placeholder="Codes..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea>
                 <button onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8 uppercase text-[10px]">Upload Codes</button>
                 <button onclick="payAllWithdrawals()" class="btn-app bg-green-600 text-white text-[11px] py-4 mb-8">⚡ Batch Payout</button>
-                <div class="border-t border-slate-700 pt-8 text-left">
-                    <p class="text-[10px] text-white uppercase mb-4 text-center">Proof Reviews</p>
-                    <div id="proofReviewList" class="text-[9px] text-white space-y-6 max-h-80 overflow-y-auto font-mono"></div>
-                </div>
             </div>
         </div>
     </div>
@@ -208,9 +183,7 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
         const db = supabase.createClient(SB_URL, SB_KEY);
         const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
-        const TOKEN_ADDR = "0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88";
         const CELO_CHAIN_ID = '0xa4ec';
-        const ABI = ["function transfer(address to, uint256 amount) public returns (bool)"];
         let userWallet = ""; let userBalance = 0; let currentUsername = ""; let stakeInterval;
 
         function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').style.display = 'block'; window.scrollTo(0,0); }
@@ -222,7 +195,6 @@
                 if (chainId !== CELO_CHAIN_ID) {
                     try { await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CELO_CHAIN_ID }] }); } catch (e) {}
                 }
-
                 const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 userWallet = accs[0].toLowerCase();
                 document.getElementById("walletBtn").innerText = `CONNECTED`;
@@ -231,91 +203,34 @@
 
                 const { data } = await db.from('user_balances').select('*').eq('wallet_address', userWallet).maybeSingle();
                 
-                const pendingTask = localStorage.getItem('pending_task_' + userWallet);
-                if(pendingTask) resumeTaskTimer(pendingTask);
-
                 if (data && data.username) {
                     currentUsername = data.username;
                     document.getElementById("displayUsername").innerText = `@${currentUsername}`;
                     document.getElementById("userUI").style.display = "block";
                     document.getElementById("regUI").style.display = "none";
-                    if(data.yt_claimed === 'true') document.getElementById('yt-btn').innerText = "DONE";
-                    if(data.tg_claimed === 'true') document.getElementById('tg-btn').innerText = "DONE";
-                    if(data.tw_claimed === 'true') document.getElementById('tw-btn').innerText = "DONE";
                 } else {
                     document.getElementById("regUI").style.display = "block";
                     document.getElementById("userUI").style.display = "none";
                 }
-                if (userWallet === ADMIN_WALLET.toLowerCase()) { document.getElementById("adminPanel").style.display = "block"; loadProofsForAdmin(); }
+                if (userWallet === ADMIN_WALLET.toLowerCase()) { document.getElementById("adminPanel").style.display = "block"; }
                 await refreshData(); loadLeaderboard();
-                if(!stakeInterval) stakeInterval = setInterval(loadStakingData, 10000);
+                if(!stakeInterval) stakeInterval = setInterval(loadStakingData, 30000); 
             } else { alert("Please use a Web3 Browser like MetaMask!"); }
         }
 
-        function startTask(type, link) {
-            const btn = document.getElementById(`${type}-btn`);
-            if(btn.innerText === "DONE" || btn.innerText === "REVIEW") return;
-            window.open(link, '_blank');
-            localStorage.setItem('pending_task_' + userWallet, type);
-            resumeTaskTimer(type);
-        }
-
-        function resumeTaskTimer(type) {
-            const btn = document.getElementById(`${type}-btn`);
-            let timeLeft = 15; btn.disabled = true;
-            const taskTimer = setInterval(() => {
-                btn.innerText = `WAIT ${timeLeft}s`; timeLeft--;
-                if(timeLeft < 0) {
-                    clearInterval(taskTimer); btn.innerText = "SCREENSHOT"; btn.disabled = false;
-                    localStorage.removeItem('pending_task_' + userWallet);
-                    btn.onclick = () => document.getElementById(`${type}-file`).click();
-                }
-            }, 1000);
-        }
-
-        async function uploadProof(type) {
-            const file = document.getElementById(`${type}-file`).files[0];
-            if(!file) return;
-            const btn = document.getElementById(`${type}-btn`);
-            btn.innerText = "UP...";
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const { error } = await db.from('user_balances').update({ [type + '_claimed']: 'pending', [type + '_proof']: reader.result }).eq('wallet_address', userWallet);
-                if(!error) { alert("Sent for Review!"); btn.innerText = "REVIEW"; }
-            };
-        }
-
-        // Updated Secure Claim Logic (RPC)
         async function processClaim() {
             const code = document.getElementById('codeInput').value.trim().toUpperCase();
             if(!code) return alert("Enter Magic Code!");
-            
             const btn = document.getElementById('claimBtn');
-            const oldText = btn.innerText;
             btn.innerText = "VERIFYING..."; btn.disabled = true;
-            
             try {
-                const { data, error } = await db.rpc('claim_toffee_code', { 
-                    user_wallet: userWallet, 
-                    input_code: code 
-                });
-
-                if (error) throw error;
-
+                const { data, error } = await db.rpc('claim_toffee_code', { user_wallet: userWallet, input_code: code });
                 if (data === 'SUCCESS') {
-                    confetti(); 
-                    await refreshData(); 
-                    document.getElementById('codeInput').value = "";
-                    alert("10 TOFFEE Claimed Successfully!");
-                } else {
-                    alert("Invalid or Already Used Code!");
-                }
-            } catch (err) {
-                alert("Error claiming code. Make sure SQL Function is installed.");
-            }
-            
-            btn.innerText = oldText; btn.disabled = false;
+                    confetti(); await refreshData(); document.getElementById('codeInput').value = "";
+                    alert("10 TOFFEE Claimed!");
+                } else alert("Invalid or Already Used Code!");
+            } catch (err) { alert("Error claiming code."); }
+            btn.innerText = "💰 Claim 10 TOFFEE"; btn.disabled = false;
         }
 
         async function registerUser() {
@@ -349,8 +264,6 @@
             document.getElementById('wheel').style.transform = `rotate(${deg}deg)`;
             setTimeout(async () => {
                 const reward = Math.floor(Math.random() * 25) + 1; confetti();
-                // Admin-only update check will block direct frontend balance updates for spin too if RLS is tight. 
-                // Suggestion: Create another RPC for spin for total security.
                 await db.from('user_balances').update({ pending_balance: userBalance + reward, last_spin_date: new Date().toISOString() }).eq('wallet_address', userWallet);
                 await refreshData(); closeSpin(); spinBtn.disabled = false;
                 alert(`You won ${reward} TOFFEE!`);
@@ -384,42 +297,6 @@
             if(userBalance < 500) return;
             await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
             alert("Withdrawal Requested!"); refreshData();
-        }
-
-        async function loadProofsForAdmin() {
-            const { data } = await db.from('user_balances').select('*');
-            let h = "";
-            data?.forEach(u => {
-                ['yt', 'tg', 'tw'].forEach(t => {
-                    if(u[t + '_claimed'] === 'pending') {
-                        h += `<div class='bg-black p-4 border border-red-500/20 mb-4 rounded-xl'><p>@${u.username} (${t})</p><img src="${u[t+'_proof']}" class="proof-img"><button onclick="approveProof('${u.wallet_address}', '${t}')" class='bg-green-600 w-full py-2 mt-4 rounded-xl font-bold'>Approve</button></div>`;
-                    }
-                });
-            });
-            document.getElementById('proofReviewList').innerHTML = h || "No pending.";
-        }
-
-        async function approveProof(addr, type) {
-            const { data: u } = await db.from('user_balances').select('pending_balance').eq('wallet_address', addr).single();
-            await db.from('user_balances').update({ pending_balance: parseFloat(u.pending_balance) + 5, [type + '_claimed']: 'true' }).eq('wallet_address', addr);
-            alert("Approved!"); loadProofsForAdmin();
-        }
-
-        async function payAllWithdrawals() {
-            const { data: pending } = await db.from('withdrawals').select('*').eq('status', 'pending');
-            if (!pending || pending.length === 0) return alert("None!");
-            try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
-                const contract = new ethers.Contract(TOKEN_ADDR, ABI, signer);
-                for (let req of pending) {
-                    const tx = await contract.transfer(req.wallet_address, ethers.utils.parseUnits("500.0", 18));
-                    await tx.wait();
-                    await db.from('user_balances').update({ pending_balance: 0 }).eq('wallet_address', req.wallet_address);
-                    await db.from('withdrawals').update({ status: 'completed' }).eq('id', req.id);
-                }
-                alert("Done!");
-            } catch (err) { alert("Tx Failed!"); }
         }
 
         async function uploadCodes() {
