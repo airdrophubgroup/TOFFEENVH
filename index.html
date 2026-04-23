@@ -170,16 +170,15 @@
             <div id="regUI" style="display:none;" class="bg-black/80 p-8 rounded-[40px] border border-sky-400 mb-8 text-center shadow-2xl"><h3 class="text-white font-black text-sm mb-6 uppercase tracking-widest">Register Username</h3><input type="text" id="usernameInput" placeholder="User_123" maxlength="15" class="h-16 mb-6 text-sm font-black uppercase"><button id="regBtn" onclick="registerUser()" class="btn-app bg-sky-500 text-slate-950 py-4 rounded-2xl font-black">Register</button></div>
 
             <div id="adminPanel" style="display:none;" class="mt-12 p-8 border-2 border-dashed border-red-500/40 rounded-[40px] bg-black/60 text-center">
-                <h3 class="text-red-500 font-black mb-6 uppercase text-sm">ADMIN PORTAL</h3>
+                <h3 class="text-red-500 font-black mb-6 uppercase text-sm italic underline">Admin Auto-Payout</h3>
                 
                 <div class="mb-8 text-left">
-                    <p class="text-[10px] text-white uppercase mb-2 text-center">Pending Withdrawals</p>
-                    <div id="pendingWithdrawList" class="max-h-40 overflow-y-auto space-y-2"></div>
+                    <p class="text-[10px] text-white uppercase mb-2 text-center">Requests (Click PAY to Send Tokens)</p>
+                    <div id="pendingWithdrawList" class="max-h-56 overflow-y-auto space-y-2"></div>
                 </div>
 
                 <textarea id="newCodesInput" placeholder="Codes (comma separated)..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea>
                 <button id="uploadBtn" onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8 uppercase text-[10px]">Upload Codes</button>
-                <button id="payoutBtn" onclick="payAllWithdrawals()" class="btn-app bg-green-600 text-white text-[11px] py-4 mb-8 italic">⚡ Mark All Payout Done</button>
             </div>
         </div>
     </div>
@@ -189,7 +188,9 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzaHNmZ3lmYmJub21tdWh2d2F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTA4OTYsImV4cCI6MjA4OTU2Njg5Nn0.bv_tP_jH74wzDz99tFBYlcaaZRPqmIkXnYvI_aUbKpo';
         const db = supabase.createClient(SB_URL, SB_KEY);
         const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
+        const TOKEN_ADDR = "0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88";
         const CELO_CHAIN_ID = '0xa4ec';
+        const ABI = ["function transfer(address to, uint256 amount) public returns (bool)"];
         let userWallet = ""; let userBalance = 0; let currentUsername = ""; let stakeInterval;
 
         function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').style.display = 'block'; window.scrollTo(0,0); }
@@ -235,14 +236,48 @@
             if (list && list.length > 0) {
                 let html = "";
                 list.forEach(item => {
-                    html += `<div class="bg-black/40 p-2 rounded-lg border border-white/10 text-[9px] flex justify-between">
-                        <span>${item.wallet_address.substring(0,10)}...</span>
-                        <span class="text-green-400 font-bold">${item.amount}</span>
+                    html += `<div class="bg-black/40 p-3 rounded-xl border border-white/10 text-[10px] flex justify-between items-center">
+                        <div class="flex flex-col text-left">
+                            <span class="text-white font-mono">${item.wallet_address.substring(0,10)}...</span>
+                            <span class="text-amber-400 font-bold">${item.amount} TOFFEE</span>
+                        </div>
+                        <button onclick="executeTokenPayout('${item.id}', '${item.wallet_address}', ${item.amount})" 
+                                class="bg-green-600 text-white px-5 py-2 rounded-lg font-black hover:bg-green-500 active:scale-95 transition">
+                            PAY
+                        </button>
                     </div>`;
                 });
                 listDiv.innerHTML = html;
             } else {
-                listDiv.innerHTML = "<p class='text-slate-500 text-[9px] text-center'>No requests.</p>";
+                listDiv.innerHTML = "<p class='text-slate-500 text-[9px] text-center'>No pending requests.</p>";
+            }
+        }
+
+        async function executeTokenPayout(reqId, userAddr, amount) {
+            if (!confirm(`Send ${amount} TOFFEE to ${userAddr}?`)) return;
+            try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                const contract = new ethers.Contract(TOKEN_ADDR, ABI, signer);
+
+                alert("Please confirm transaction in MetaMask...");
+                const tokensToSend = ethers.utils.parseUnits(amount.toString(), 18);
+                const tx = await contract.transfer(userAddr, tokensToSend);
+                
+                alert("Transaction Sent! Waiting for confirmation...");
+                await tx.wait(); 
+
+                const { data } = await db.rpc('mark_payout_complete', { req_id: reqId, user_addr: userAddr });
+
+                if (data === 'SUCCESS') {
+                    alert("✅ Success! Tokens Sent & DB Updated.");
+                    loadAdminDashboard();
+                    await refreshData();
+                } else {
+                    alert("⚠️ Tokens sent but Database failed to update. Mark manually!");
+                }
+            } catch (err) {
+                alert("❌ Error: " + (err.message || "Transaction Failed"));
             }
         }
 
@@ -325,37 +360,17 @@
             if(userBalance < 500) return alert("Min 500 TOFFEE!");
             const btn = document.getElementById("withdrawBtn");
             btn.disabled = true; btn.innerText = "CHECKING...";
-
             try {
-                // 1. Check for existing pending request to prevent duplicates
-                const { data: existing, error: checkErr } = await db
-                    .from('withdrawals')
-                    .select('*')
-                    .eq('wallet_address', userWallet)
-                    .eq('status', 'pending')
-                    .maybeSingle();
-
+                const { data: existing } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
                 if (existing) {
-                    alert("⚠️ Request already pending! Wait for admin approval.");
-                    btn.disabled = false; btn.innerText = "🚀 Withdraw";
-                    return;
+                    alert("⚠️ Already pending! Please wait.");
+                } else {
+                    btn.innerText = "SENDING...";
+                    await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
+                    alert("✅ Withdrawal Request Sent!");
+                    await refreshData(); 
                 }
-
-                btn.innerText = "SENDING...";
-                const { error: insErr } = await db.from('withdrawals').insert({ 
-                    wallet_address: userWallet, 
-                    amount: 500, 
-                    status: 'pending' 
-                });
-
-                if (insErr) throw insErr;
-
-                alert("✅ Withdrawal Request Sent Successfully!");
-                await refreshData(); 
-            } catch (err) {
-                alert("Request Error! Try again.");
-                console.error(err);
-            }
+            } catch (err) { alert("Error sending request."); }
             btn.disabled = false; btn.innerText = "🚀 Withdraw";
         }
 
@@ -364,50 +379,16 @@
             const btn = document.getElementById("uploadBtn");
             const input = document.getElementById("newCodesInput").value;
             const codesArray = input.split(',').map(c => c.trim().toUpperCase()).filter(c => c !== "");
-
-            if (codesArray.length === 0) return alert("Enter some codes!");
+            if (codesArray.length === 0) return alert("Enter codes!");
             btn.disabled = true; btn.innerText = "UPLOADING...";
-
             try {
-                const { data, error } = await db.rpc('admin_upload_codes', { 
-                    admin_addr: userWallet, 
-                    codes_array: codesArray 
-                });
-
+                const { data } = await db.rpc('admin_upload_codes', { admin_addr: userWallet, codes_array: codesArray });
                 if (data === 'SUCCESS') {
-                    alert("Codes Uploaded Successfully!");
+                    alert("Codes Uploaded!");
                     document.getElementById("newCodesInput").value = "";
-                } else {
-                    alert("Upload Failed!");
-                }
-            } catch (err) {
-                alert("Fatal Upload Error!");
-            }
+                } else alert("Upload Failed.");
+            } catch (err) { alert("Error."); }
             btn.disabled = false; btn.innerText = "Upload Codes";
-        }
-
-        async function payAllWithdrawals() {
-            if (userWallet !== ADMIN_WALLET.toLowerCase()) return alert("Not Admin!");
-            const btn = document.getElementById("payoutBtn");
-            if (!confirm("Confirm Mark All as Done? This will reset user balances to 0.")) return;
-
-            btn.disabled = true; btn.innerText = "PROCESSING...";
-
-            try {
-                const { data, error } = await db.rpc('admin_batch_payout', { 
-                    admin_addr: userWallet 
-                });
-
-                if (data === 'SUCCESS') {
-                    alert("✅ Success! Requests marked Done & Balances reset.");
-                    location.reload();
-                } else {
-                    alert("Payout Logic Error!");
-                }
-            } catch (err) {
-                alert("Fatal Payout Error!");
-            }
-            btn.disabled = false; btn.innerText = "⚡ Batch Payout";
         }
 
         function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("Copied!"); }
