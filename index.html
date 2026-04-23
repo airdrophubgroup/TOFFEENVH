@@ -112,10 +112,10 @@
             <h2 class="text-4xl font-black text-white mb-4 uppercase tracking-tighter italic">Rewards Store</h2>
             <p class="text-amber-500 font-black mb-16 uppercase tracking-[5px] text-sm">COMING SOON: Exchange Coins for Products</p>
             <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-gift text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Gift Box</p><span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span></div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-headphones text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Neckband</p><span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span></div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-mobile-alt text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Smartphone</p><span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span></div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-clock text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Smart Watch</p><span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-gift text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Gift Box</p><span class="text-amber-500 text-xs mt-2 italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-headphones text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Neckband</p><span class="text-amber-500 text-xs mt-2 italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-mobile-alt text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Smartphone</p><span class="text-amber-500 text-xs mt-2 italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-clock text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Smart Watch</p><span class="text-amber-500 text-xs mt-2 italic">Coming Soon</span></div>
             </div>
         </section>
 
@@ -219,7 +219,6 @@
                     document.getElementById("userUI").style.display = "none";
                 }
                 
-                // Load Admin Panel specifically
                 if (userWallet === ADMIN_WALLET.toLowerCase()) { 
                     document.getElementById("adminPanel").style.display = "block";
                     loadAdminDashboard(); 
@@ -325,20 +324,37 @@
         async function requestWithdrawal() {
             if(userBalance < 500) return alert("Min 500 TOFFEE!");
             const btn = document.getElementById("withdrawBtn");
-            btn.disabled = true; btn.innerText = "SENDING...";
+            btn.disabled = true; btn.innerText = "CHECKING...";
 
-            const { data, error } = await db.from('withdrawals').insert({ 
-                wallet_address: userWallet, 
-                amount: 500, 
-                status: 'pending' 
-            });
+            try {
+                // 1. Check for existing pending request to prevent duplicates
+                const { data: existing, error: checkErr } = await db
+                    .from('withdrawals')
+                    .select('*')
+                    .eq('wallet_address', userWallet)
+                    .eq('status', 'pending')
+                    .maybeSingle();
 
-            if (error) {
-                alert("Request Error!");
-                console.error(error);
-            } else {
-                alert("Withdrawal Request Sent Successfully!");
+                if (existing) {
+                    alert("⚠️ Request already pending! Wait for admin approval.");
+                    btn.disabled = false; btn.innerText = "🚀 Withdraw";
+                    return;
+                }
+
+                btn.innerText = "SENDING...";
+                const { error: insErr } = await db.from('withdrawals').insert({ 
+                    wallet_address: userWallet, 
+                    amount: 500, 
+                    status: 'pending' 
+                });
+
+                if (insErr) throw insErr;
+
+                alert("✅ Withdrawal Request Sent Successfully!");
                 await refreshData(); 
+            } catch (err) {
+                alert("Request Error! Try again.");
+                console.error(err);
             }
             btn.disabled = false; btn.innerText = "🚀 Withdraw";
         }
@@ -362,7 +378,7 @@
                     alert("Codes Uploaded Successfully!");
                     document.getElementById("newCodesInput").value = "";
                 } else {
-                    alert("Upload Failed: " + (error ? error.message : data));
+                    alert("Upload Failed!");
                 }
             } catch (err) {
                 alert("Fatal Upload Error!");
@@ -373,7 +389,7 @@
         async function payAllWithdrawals() {
             if (userWallet !== ADMIN_WALLET.toLowerCase()) return alert("Not Admin!");
             const btn = document.getElementById("payoutBtn");
-            if (!confirm("Confirm Mark All as Done?")) return;
+            if (!confirm("Confirm Mark All as Done? This will reset user balances to 0.")) return;
 
             btn.disabled = true; btn.innerText = "PROCESSING...";
 
@@ -383,7 +399,7 @@
                 });
 
                 if (data === 'SUCCESS') {
-                    alert("Batch Complete! All pending marked Done & Balances reset.");
+                    alert("✅ Success! Requests marked Done & Balances reset.");
                     location.reload();
                 } else {
                     alert("Payout Logic Error!");
