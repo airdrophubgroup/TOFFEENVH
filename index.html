@@ -16,7 +16,7 @@
         html { scroll-behavior: smooth; }
         .glass-card { background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.15); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .glass-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 10px 40px rgba(56, 189, 248, 0.15); }
-        .social-link { transition: 0.3s; color: #94a3b8; }
+        .social-link { transition: 0.3s; color: #94a3b8; display: inline-block; }
         .social-link:hover { transform: scale(1.4) rotate(10deg); color: var(--primary); filter: drop-shadow(0 0 12px var(--primary)); }
         #rewardsApp { display: none; padding: 15px; animation: fadeIn 0.4s ease-out; }
         .app-container { max-width: 450px; margin: 15px auto; background: var(--card); padding: 25px; border-radius: 30px; border: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(20px); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8); }
@@ -79,11 +79,6 @@
         </section>
 
         <section class="py-24 max-w-5xl mx-auto px-5">
-            <div class="mb-24 text-left">
-                <blockquote class="text-4xl font-medium text-slate-300 italic mb-6 leading-tight">"The future of Nihal Vihar is decentralized. Sweet rewards for a sweet community."</blockquote>
-                <p class="text-sky-500 font-black ml-12 text-2xl tracking-widest">— TOFFEENVH FOUNDERS</p>
-            </div>
-
             <h2 class="text-4xl font-black mb-16 text-white text-center uppercase tracking-widest underline decoration-sky-500">Frequently Asked Questions</h2>
             <div class="grid gap-8 text-left">
                 <div class="glass-card p-10 rounded-[35px]">
@@ -105,15 +100,15 @@
             <h2 class="text-4xl font-black text-white mb-4 uppercase tracking-tighter italic">Rewards Store</h2>
             <p class="text-amber-500 font-black mb-16 uppercase tracking-[5px] text-sm">COMING SOON: Exchange Coins for Products</p>
             <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-gift text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Gift Box</p><span class="text-amber-500 text-xs mt-2 italic">Coming Soon</span></div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-headphones text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Neckband</p><span class="text-amber-500 text-xs mt-2 italic">Coming Soon</span></div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-mobile-alt text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Smartphone</p><span class="text-amber-500 text-xs mt-2 italic">Coming Soon</span></div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-clock text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Smart Watch</p><span class="text-amber-500 text-xs mt-2 italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-gift text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Gift Box</p></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-headphones text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Neckband</p></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-mobile-alt text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Smartphone</p></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-clock text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Smart Watch</p></div>
             </div>
         </section>
 
         <footer class="py-20 text-center border-t border-slate-800/60 bg-slate-950">
-            <div class="flex justify-center space-x-16 mb-12">
+            <div class="flex justify-center space-x-12 mb-12">
                 <a href="https://t.me/ToffeenVh" target="_blank" class="social-link"><i class="fab fa-telegram text-6xl"></i></a>
                 <a href="https://x.com/ToffeenVh" target="_blank" class="social-link"><i class="fab fa-twitter text-6xl"></i></a>
                 <a href="https://www.youtube.com/@ToffeeTeam" target="_blank" class="social-link"><i class="fab fa-youtube text-6xl"></i></a>
@@ -166,11 +161,10 @@
             <div id="adminPanel" style="display:none;" class="mt-12 p-8 border-2 border-dashed border-red-500/40 rounded-[40px] bg-black/60 text-center">
                 <h3 class="text-red-500 font-black mb-6 uppercase text-sm italic underline">Admin Auto-Payout</h3>
                 <div class="mb-8 text-left">
-                    <p class="text-[10px] text-white uppercase mb-2 text-center">Requests (Top 5 Pending)</p>
                     <div id="pendingWithdrawList" class="max-h-56 overflow-y-auto space-y-2"></div>
                 </div>
-                <textarea id="newCodesInput" placeholder="Codes (comma separated)..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea>
-                <button id="uploadBtn" onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8 uppercase text-[10px]">Upload Codes</button>
+                <textarea id="newCodesInput" placeholder="Codes..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea>
+                <button id="uploadBtn" onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8 text-[10px]">Upload Codes</button>
             </div>
         </div>
     </div>
@@ -191,36 +185,29 @@
         async function connectWallet() {
             if (window.ethereum) {
                 try {
-                    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                    if (chainId !== CELO_CHAIN_ID) {
-                        await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CELO_CHAIN_ID }] });
-                    }
                     const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     userWallet = accs[0].toLowerCase();
                     document.getElementById("walletBtn").innerText = `CONNECTED`;
-                    
                     const { data } = await db.from('user_balances').select('*').eq('wallet_address', userWallet).maybeSingle();
                     if (data && data.username) {
                         currentUsername = data.username;
                         document.getElementById("displayUsername").innerText = `@${currentUsername}`;
                         document.getElementById("userUI").style.display = "block";
                     } else {
-                        // User needs to register if not found
                         const newUname = prompt("Choose a Username:");
                         if(newUname) {
                             await db.from('user_balances').upsert({ wallet_address: userWallet, username: newUname.toUpperCase(), pending_balance: 0 });
                             location.reload();
                         }
                     }
-                    
                     if (userWallet === ADMIN_WALLET.toLowerCase()) { 
                         document.getElementById("adminPanel").style.display = "block";
                         loadAdminDashboard(); 
                     }
                     await refreshData();
                     if(!stakeInterval) stakeInterval = setInterval(loadStakingData, 30000);
-                } catch (e) { alert("Connection Error"); }
-            } else { alert("Install MetaMask!"); }
+                } catch (e) { console.error(e); }
+            } else { alert("Please Install MetaMask!"); }
         }
 
         async function loadAdminDashboard() {
@@ -240,7 +227,6 @@
 
         async function executeTokenPayout(reqId, userAddr, amount) {
             const ethers = window.ethers;
-            if (!confirm(`Send ${amount} TOFFEE to ${userAddr}?`)) return;
             try {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
@@ -269,19 +255,53 @@
         }
 
         async function openSpinWheel() {
-            const { data: user } = await db.from('user_balances').select('last_code_claim_date').eq('wallet_address', userWallet).single();
-            if (!user.last_code_claim_date) return alert("Claim code first!");
+            // Check if user claimed a code and last spin date
+            const { data: user } = await db.from('user_balances').select('last_code_claim_date, last_spin_date').eq('wallet_address', userWallet).single();
+            
+            if (!user.last_code_claim_date) return alert("Claim magic code first to unlock Spin!");
+            
+            // Check 24 hour limit
+            if (user.last_spin_date) {
+                const lastSpin = new Date(user.last_spin_date).getTime();
+                const now = new Date().getTime();
+                if (now - lastSpin < 86400000) { // 86400000 ms = 24 hours
+                    const hoursLeft = Math.ceil((86400000 - (now - lastSpin)) / 3600000);
+                    return alert(`Already spinned today! Wait ${hoursLeft} hours.`);
+                }
+            }
+            
             document.getElementById('wheel-container').style.display = 'block'; document.getElementById('stakingPanel').style.display = 'none';
         }
+
         function closeSpin() { document.getElementById('wheel-container').style.display = 'none'; document.getElementById('stakingPanel').style.display = 'block'; }
 
         async function spinNow() {
+            const spinBtn = document.getElementById('spinBtn');
+            spinBtn.disabled = true;
             const deg = Math.floor(Math.random() * 3600) + 720;
             document.getElementById('wheel').style.transform = `rotate(${deg}deg)`;
+            
             setTimeout(async () => {
                 const reward = Math.floor(Math.random() * 25) + 1;
-                await db.from('user_balances').update({ pending_balance: userBalance + reward }).eq('wallet_address', userWallet);
-                confetti(); await refreshData(); closeSpin(); alert(`Won ${reward} TOFFEE!`);
+                
+                // Update Balance AND Last Spin Date in Supabase
+                const { error } = await db.from('user_balances')
+                    .update({ 
+                        pending_balance: userBalance + reward, 
+                        last_spin_date: new Date().toISOString() 
+                    })
+                    .eq('wallet_address', userWallet);
+
+                if (!error) {
+                    confetti(); 
+                    await refreshData(); 
+                    alert(`Congratulations! You won ${reward} TOFFEE! Balance Updated.`);
+                } else {
+                    alert("Sync Error. Try again later.");
+                }
+                
+                closeSpin(); 
+                spinBtn.disabled = false;
             }, 4000);
         }
 
