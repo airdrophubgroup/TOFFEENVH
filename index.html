@@ -14,23 +14,17 @@
         :root { --primary: #38bdf8; --bg: #030712; --card: rgba(30, 41, 59, 0.4); --text: #f8fafc; }
         body { font-family: 'Segoe UI', sans-serif; background: radial-gradient(circle at top, #0f172a 0%, #030712 100%); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; position: relative; }
         html { scroll-behavior: smooth; }
-
         .glass-card { background: rgba(17, 24, 39, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.15); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .glass-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 10px 40px rgba(56, 189, 248, 0.15); }
-
         .social-link { transition: 0.3s; color: #94a3b8; }
         .social-link:hover { transform: scale(1.4) rotate(10deg); color: var(--primary); filter: drop-shadow(0 0 12px var(--primary)); }
-
         #rewardsApp { display: none; padding: 15px; animation: fadeIn 0.4s ease-out; }
         .app-container { max-width: 450px; margin: 15px auto; background: var(--card); padding: 25px; border-radius: 30px; border: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(20px); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8); }
-        
         input { width: 100%; height: 70px; background: #000; color: #fff; border: 3px solid #1e293b; border-radius: 20px; text-align: center; text-transform: uppercase; outline: none; font-weight: bold; }
         .btn-app { width: 100%; padding: 18px; border-radius: 18px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; transition: 0.2s; }
-
         .ticker-wrap { background: rgba(0,0,0,0.6); overflow: hidden; white-space: nowrap; padding: 12px 0; border-radius: 15px; margin-bottom: 20px; }
         .ticker-move { display: inline-block; animation: ticker 30s linear infinite; font-size: 11px; color: var(--primary); font-weight: 800; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
         .whatsapp-float { position: fixed; bottom: 25px; right: 25px; background: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; z-index: 1000; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3); }
         .section-hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -103,27 +97,11 @@
         <section class="py-24 bg-slate-950/20 px-5 text-center">
             <h2 class="text-4xl font-black text-white mb-4 uppercase tracking-tighter italic">Rewards Store</h2>
             <p class="text-amber-500 font-black mb-16 uppercase tracking-[5px] text-sm">COMING SOON: Exchange Coins for Products</p>
-            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center">
-                    <i class="fas fa-gift text-4xl mb-4 text-amber-400"></i>
-                    <p class="text-white font-bold text-xs uppercase">Gift Box</p>
-                    <span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span>
-                </div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center">
-                    <i class="fas fa-headphones text-4xl mb-4 text-amber-400"></i>
-                    <p class="text-white font-bold text-xs uppercase">Neckband</p>
-                    <span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span>
-                </div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center">
-                    <i class="fas fa-mobile-alt text-4xl mb-4 text-amber-400"></i>
-                    <p class="text-white font-bold text-xs uppercase">Smartphone</p>
-                    <span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span>
-                </div>
-                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center">
-                    <i class="fas fa-clock text-4xl mb-4 text-amber-400"></i>
-                    <p class="text-white font-bold text-xs uppercase">Smart Watch</p>
-                    <span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span>
-                </div>
+            <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-gift text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Gift Box</p><span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-headphones text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Neckband</p><span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-mobile-alt text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Smartphone</p><span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span></div>
+                <div class="glass-card p-8 rounded-[40px] flex flex-col items-center"><i class="fas fa-clock text-4xl mb-4 text-amber-400"></i><p class="text-white font-bold text-xs uppercase">Smart Watch</p><span class="text-amber-500 text-[10px] mt-2 italic">Coming Soon</span></div>
             </div>
         </section>
 
@@ -144,8 +122,8 @@
         </div>
 
         <div class="app-container">
-            <p id="displayUsername" class="text-center text-amber-500 font-bold text-[12px] mb-4 uppercase">Connect Wallet</p>
-            <div class="ticker-wrap"><div id="ticker" class="ticker-move">Connect MetaMask or Any Wallet to Start Earning Rewards... 🍭</div></div>
+            <p id="displayUsername" class="text-center text-amber-500 font-bold text-[12px] mb-4 uppercase italic">Connect Wallet</p>
+            <div class="ticker-wrap"><div id="ticker" class="ticker-move">Welcome to TOFFEENVH Rewards Portal! Claim magic codes to earn $TOFFEE tokens... 🍭</div></div>
 
             <button id="walletBtn" class="btn-app w-full bg-amber-500 text-slate-950 py-5 rounded-2xl font-black shadow-lg mb-8" onclick="connectWallet()">CONNECT WALLET</button>
 
@@ -158,18 +136,27 @@
                     </div>
                 </div>
 
-                <div id="stakingPanel" class="glass-card p-8 rounded-[40px] border-amber-500/30 shadow-xl text-center py-12">
-                    <p class="text-amber-500 font-black text-sm uppercase tracking-widest mb-2 italic">Staking Vault</p>
-                    <h3 class="text-2xl font-black text-white uppercase italic">Coming Soon</h3>
-                    <p class="text-slate-500 text-[10px] mt-4 font-bold uppercase">Earn 15% APY on your $TOFFEE</p>
+                <div id="stakingPanel" class="glass-card p-8 rounded-[40px] border-amber-500/30 shadow-xl text-center py-10">
+                    <p class="text-amber-500 font-black text-[10px] uppercase tracking-widest mb-1 italic">Staking Vault</p>
+                    <h3 class="text-xl font-black text-white uppercase italic">Coming Soon</h3>
+                </div>
+
+                <div class="bg-black/40 p-6 rounded-[40px] border border-white/5">
+                    <h3 class="text-[10px] font-black text-sky-400 uppercase italic mb-6 text-center tracking-widest underline decoration-sky-500 underline-offset-4">Digital Voucher Store</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white/5 p-4 rounded-3xl flex flex-col items-center border border-white/5"><i class="fab fa-amazon text-2xl text-amber-500 mb-2"></i><span class="text-[9px] font-black text-white uppercase">Amazon GC</span><span class="text-[8px] text-amber-500 font-bold mt-1 italic uppercase">Soon</span></div>
+                        <div class="bg-white/5 p-4 rounded-3xl flex flex-col items-center border border-white/5"><i class="fas fa-shopping-cart text-2xl text-blue-500 mb-2"></i><span class="text-[9px] font-black text-white uppercase">Flipkart VCHR</span><span class="text-[8px] text-blue-500 font-bold mt-1 italic uppercase">Soon</span></div>
+                        <div class="bg-white/5 p-4 rounded-3xl flex flex-col items-center border border-white/5"><i class="fab fa-google-play text-2xl text-green-500 mb-2"></i><span class="text-[9px] font-black text-white uppercase">Google Play</span><span class="text-[8px] text-green-500 font-bold mt-1 italic uppercase">Soon</span></div>
+                        <div class="bg-white/5 p-4 rounded-3xl flex flex-col items-center border border-white/5"><i class="fab fa-paypal text-2xl text-sky-500 mb-2"></i><span class="text-[9px] font-black text-white uppercase">PayPal Cash</span><span class="text-[8px] text-sky-500 font-bold mt-1 italic uppercase">Soon</span></div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-5">
                     <div class="bg-black/40 p-5 rounded-3xl border border-white/5">
-                        <h3 class="text-[10px] font-black text-sky-400 uppercase italic mb-3">🏆 Rank Top 3</h3>
+                        <h3 class="text-[10px] font-black text-sky-400 uppercase italic mb-3">🏆 Top 3 Rank</h3>
                         <div id="leaderList" class="text-[9px] space-y-2 font-mono text-slate-400 leading-tight">Loading...</div>
                     </div>
-                    <div class="bg-black/40 p-5 rounded-3xl border border-white/5 text-center">
+                    <div class="bg-black/40 p-5 rounded-3xl border border-white/5 text-center flex flex-col justify-center">
                         <h3 class="text-[10px] font-black text-purple-400 uppercase mb-3">Referral</h3>
                         <button onclick="copyReferral()" class="text-[10px] font-black text-purple-400 border border-purple-500/30 px-4 py-2 rounded-xl active:scale-90 transition uppercase">COPY ID</button>
                     </div>
@@ -179,12 +166,10 @@
             </div>
 
             <div id="adminPanel" style="display:none;" class="mt-12 p-8 border-2 border-dashed border-red-500/40 rounded-[40px] bg-black/60 text-center">
-                <h3 class="text-red-500 font-black mb-6 uppercase text-sm italic underline">Admin Auto-Payout</h3>
-                <div class="mb-8 text-left">
-                    <div id="pendingWithdrawList" class="max-h-56 overflow-y-auto space-y-2"></div>
-                </div>
+                <h3 class="text-red-500 font-black mb-6 uppercase text-sm italic underline">Admin Panel</h3>
+                <div id="pendingWithdrawList" class="max-h-56 overflow-y-auto space-y-2 mb-6"></div>
                 <textarea id="newCodesInput" placeholder="Codes..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea>
-                <button id="uploadBtn" onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black">Upload Codes</button>
+                <button onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black">Upload Codes</button>
             </div>
         </div>
     </div>
@@ -243,7 +228,7 @@
             const code = document.getElementById('codeInput').value.trim().toUpperCase();
             if(!code) return alert("Enter Code");
             const { data } = await db.rpc('claim_toffee_code', { user_wallet: userWallet, input_code: code });
-            if (data === 'SUCCESS') { confetti(); await refreshData(); loadLeaderboard(); document.getElementById('codeInput').value = ""; alert("Claimed!"); } else { alert("Invalid!"); }
+            if (data === 'SUCCESS') { confetti(); await refreshData(); loadLeaderboard(); document.getElementById('codeInput').value = ""; alert("Claimed!"); } else { alert("Invalid Code!"); }
         }
 
         async function requestWithdrawal() {
@@ -288,7 +273,7 @@
             if (data === 'SUCCESS') { alert("Uploaded!"); document.getElementById("newCodesInput").value = ""; }
         }
 
-        function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("Copied!"); }
+        function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("Copied ID!"); }
     </script>
 </body>
 </html>
