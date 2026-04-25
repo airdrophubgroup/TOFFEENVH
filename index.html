@@ -27,10 +27,6 @@
         input { width: 100%; height: 70px; background: #000; color: #fff; border: 3px solid #1e293b; border-radius: 20px; text-align: center; text-transform: uppercase; outline: none; font-weight: bold; }
         .btn-app { width: 100%; padding: 18px; border-radius: 18px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; transition: 0.2s; }
 
-        #wheel-container { position: relative; width: 220px; height: 220px; margin: 20px auto; display: none; }
-        #wheel { width: 100%; height: 100%; border-radius: 50%; border: 6px solid #1e293b; background: conic-gradient(#38bdf8 0deg 90deg, #1e293b 90deg 180deg, #38bdf8 180deg 270deg, #1e293b 270deg 360deg); transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
-        #wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); border-top: 30px solid #fbbf24; border-left: 15px solid transparent; border-right: 15px solid transparent; z-index: 10; }
-
         .ticker-wrap { background: rgba(0,0,0,0.6); overflow: hidden; white-space: nowrap; padding: 12px 0; border-radius: 15px; margin-bottom: 20px; }
         .ticker-move { display: inline-block; animation: ticker 30s linear infinite; font-size: 11px; color: var(--primary); font-weight: 800; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
@@ -55,7 +51,7 @@
 
         <header class="py-32 text-center px-4">
             <h1 class="text-6xl md:text-8xl font-black mb-8 tracking-tighter bg-gradient-to-r from-sky-400 via-blue-500 to-purple-600 bg-clip-text text-transparent italic leading-tight">Sweet Crypto Rewards</h1>
-            <p class="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-14 leading-relaxed font-medium">Claim <b class="text-sky-400">$TOFFEE</b> tokens on <b class="text-amber-400">Celo Network</b>. Unique usernames, Lucky Spins, and decentralized rewards for Nihal Vihar.</p>
+            <p class="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-14 leading-relaxed font-medium">Claim <b class="text-sky-400">$TOFFEE</b> tokens on <b class="text-amber-400">Celo Network</b>. Unique usernames and decentralized rewards for Nihal Vihar.</p>
             <button onclick="showApp()" class="bg-sky-500 text-slate-950 px-14 py-5 rounded-2xl font-black text-xl shadow-2xl hover:scale-110 active:scale-95 transition">💰 Start Earning Now</button>
         </header>
 
@@ -101,10 +97,6 @@
                     <p class="text-sky-400 font-black text-xl mb-3">2. Withdrawal kitne par milega?</p>
                     <p class="text-slate-400 leading-relaxed">Dashboard balance <b class="text-white">500 TOFFEE</b> hone par aap withdraw request bhej sakte hain jo 24 ghante mein approve ho jayegi.</p>
                 </div>
-                <div class="glass-card p-10 rounded-[35px]">
-                    <p class="text-sky-400 font-black text-xl mb-3">3. Lucky Spin kaise kaam karta hai?</p>
-                    <p class="text-slate-400 leading-relaxed">Daily 1 code claim karne par Lucky Spin unlock hota hai. Isme aap randomly <b class="text-green-400">1 se 25 TOFFEE</b> tokens tak jeet sakte hain.</p>
-                </div>
             </div>
         </section>
 
@@ -145,13 +137,10 @@
                 <div class="bg-black/60 p-10 rounded-[40px] border border-sky-500/30 text-center shadow-inner">
                     <p class="text-slate-500 text-[12px] uppercase font-black mb-2">Earnings</p>
                     <span id="balText" class="text-6xl font-black text-white">0.0000</span>
-                    <div class="mt-8 flex gap-3">
-                        <button onclick="openSpinWheel()" class="flex-1 bg-amber-500 text-[11px] py-3 rounded-xl font-black text-slate-950 active:scale-95 transition">🎡 LUCKY SPIN</button>
-                        <button id="withdrawBtn" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-black text-[11px] hidden active:scale-95 transition" onclick="requestWithdrawal()">🚀 Withdraw</button>
+                    <div class="mt-8">
+                        <button id="withdrawBtn" class="w-full bg-green-600 text-white py-4 rounded-xl font-black text-[12px] hidden active:scale-95 transition" onclick="requestWithdrawal()">🚀 Withdraw Tokens</button>
                     </div>
                 </div>
-
-                <div id="wheel-container" class="glass-card p-8 rounded-[45px] text-center shadow-2xl border-2 border-sky-500/30"><div id="wheel-pointer"></div><div id="wheel"></div><button id="spinBtn" class="btn-app bg-sky-500 text-slate-950 mt-10 py-4 rounded-2xl font-black shadow-xl" onclick="spinNow()">SPIN NOW!</button><button onclick="closeSpin()" class="text-[10px] text-slate-500 mt-4 block w-full uppercase font-black">Back</button></div>
 
                 <div id="stakingPanel" class="glass-card p-8 rounded-[40px] border-amber-500/30 shadow-xl">
                     <div class="flex justify-between items-center mb-6 text-xs font-black uppercase"><span class="text-amber-400 italic">Vault (15% APY)</span><span id="stakedAmt" class="text-white font-mono">0 Staked</span></div>
@@ -159,7 +148,7 @@
                     <div class="grid grid-cols-3 gap-3">
                         <button onclick="stakeTokens()" class="bg-amber-500 py-4 rounded-xl font-black text-[10px] text-slate-950 active:scale-95">STAKE</button>
                         <button onclick="loadStakingData()" class="bg-slate-700 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">CLAIM</button>
-                        <button onclick="alert('Coming Soon')" class="bg-red-600 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">UNSTAKE</button>
+                        <button onclick="alert('Coming Soon')" class="bg-red-600 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">EXIT</button>
                     </div>
                 </div>
 
@@ -180,10 +169,11 @@
             <div id="adminPanel" style="display:none;" class="mt-12 p-8 border-2 border-dashed border-red-500/40 rounded-[40px] bg-black/60 text-center">
                 <h3 class="text-red-500 font-black mb-6 uppercase text-sm italic underline">Admin Auto-Payout</h3>
                 <div class="mb-8 text-left">
+                    <p class="text-[10px] text-white uppercase mb-2 text-center">Requests (Latest Pending)</p>
                     <div id="pendingWithdrawList" class="max-h-56 overflow-y-auto space-y-2"></div>
                 </div>
                 <textarea id="newCodesInput" placeholder="Codes..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea>
-                <button id="uploadBtn" onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8 uppercase text-[10px]">Upload Codes</button>
+                <button id="uploadBtn" onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black">Upload Codes</button>
             </div>
         </div>
     </div>
@@ -195,6 +185,7 @@
         const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
         const TOKEN_ADDR = "0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88";
         const CELO_CHAIN_ID = '0xa4ec';
+        const ABI = ["function transfer(address to, uint256 amount) public returns (bool)"];
         let userWallet = ""; let userBalance = 0; let currentUsername = ""; let stakeInterval;
 
         function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').style.display = 'block'; window.scrollTo(0,0); }
@@ -237,41 +228,14 @@
         async function loadLeaderboard() {
             const { data } = await db.from('user_balances').select('username, pending_balance').order('pending_balance', { ascending: false }).limit(3);
             let h = ""; data?.forEach((r, i) => { h += `<div class='flex justify-between border-b border-white/5 py-1'><span>#${i+1} @${r.username}</span><b>${parseFloat(r.pending_balance).toFixed(0)}</b></div>`; });
-            document.getElementById("leaderList").innerHTML = h || "Wait...";
+            document.getElementById("leaderList").innerHTML = h || "Loading Rank...";
         }
 
-        async function openSpinWheel() {
-            const { data: user } = await db.from('user_balances').select('last_code_claim_date, last_spin_date').eq('wallet_address', userWallet).single();
-            if (!user.last_code_claim_date) return alert("Claim magic code first!");
-            if (user.last_spin_date) {
-                const diff = new Date().getTime() - new Date(user.last_spin_date).getTime();
-                if (diff < 86400000) return alert(`Spin again in ${Math.ceil((86400000-diff)/3600000)} hours.`);
-            }
-            document.getElementById('wheel-container').style.display = 'block'; document.getElementById('stakingPanel').style.display = 'none';
-        }
-
-        async function spinNow() {
-            const btn = document.getElementById('spinBtn'); btn.disabled = true;
-            const deg = Math.floor(Math.random() * 3600) + 720;
-            document.getElementById('wheel').style.transform = `rotate(${deg}deg)`;
-            setTimeout(async () => {
-                const win = Math.floor(Math.random() * 25) + 1;
-                const { error } = await db.from('user_balances').update({ 
-                    pending_balance: userBalance + win, 
-                    last_spin_date: new Date().toISOString() 
-                }).eq('wallet_address', userWallet);
-                if(!error) { confetti(); await refreshData(); alert(`Won ${win} TOFFEE!`); }
-                closeSpin(); btn.disabled = false;
-            }, 4000);
-        }
-
-        function closeSpin() { document.getElementById('wheel-container').style.display = 'none'; document.getElementById('stakingPanel').style.display = 'block'; }
-        
         async function processClaim() {
             const code = document.getElementById('codeInput').value.trim().toUpperCase();
             if(!code) return alert("Enter Code");
             const { data } = await db.rpc('claim_toffee_code', { user_wallet: userWallet, input_code: code });
-            if (data === 'SUCCESS') { confetti(); await refreshData(); document.getElementById('codeInput').value = ""; alert("Claimed!"); } else { alert("Invalid!"); }
+            if (data === 'SUCCESS') { confetti(); await refreshData(); loadLeaderboard(); document.getElementById('codeInput').value = ""; alert("Claimed!"); } else { alert("Invalid!"); }
         }
 
         async function loadStakingData() {
@@ -289,6 +253,14 @@
             await db.from('user_balances').update({ pending_balance: userBalance - 100 }).eq('wallet_address', userWallet);
             await db.from('staking_data').upsert({ wallet_address: userWallet, staked_amount: 100, last_stake_date: new Date().toISOString() });
             alert("Staked!"); refreshData();
+        }
+
+        async function requestWithdrawal() {
+            if(userBalance < 500) return alert("Min 500 TOFFEE!");
+            const { data: existing } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
+            if (existing) return alert("Wait for pending approval!");
+            await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 500, status: 'pending' });
+            alert("✅ Request Sent!"); refreshData();
         }
 
         async function loadAdminDashboard() {
@@ -325,7 +297,7 @@
             if (data === 'SUCCESS') { alert("Uploaded!"); document.getElementById("newCodesInput").value = ""; }
         }
 
-        function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("Copied ID!"); }
+        function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("Copied!"); }
     </script>
 </body>
 </html>
