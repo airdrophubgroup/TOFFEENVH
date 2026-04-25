@@ -158,18 +158,30 @@
                     <div class="bg-black/40 p-5 rounded-2xl mb-6 text-center"><span id="rewardAmt" class="text-3xl font-black text-green-400">0.000000</span></div>
                     <div class="grid grid-cols-3 gap-3">
                         <button onclick="stakeTokens()" class="bg-amber-500 py-4 rounded-xl font-black text-[10px] text-slate-950 active:scale-95">STAKE</button>
-                        <button onclick="claimStakingRewards()" class="bg-slate-700 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">CLAIM</button>
-                        <button onclick="unstakeTokens()" class="bg-red-600 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">UNSTAKE</button>
+                        <button onclick="loadStakingData()" class="bg-slate-700 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">CLAIM</button>
+                        <button onclick="alert('Coming Soon')" class="bg-red-600 py-4 rounded-xl font-black text-[10px] text-white active:scale-95">UNSTAKE</button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-5"><div class="bg-black/40 p-5 rounded-3xl border border-white/5"><h3 class="text-[10px] font-black text-sky-400 uppercase italic mb-3">🏆 Rank 3</h3><div id="leaderList" class="text-[9px] space-y-2 font-mono text-slate-400 leading-tight">Loading...</div></div><div class="bg-black/40 p-5 rounded-3xl border border-white/5 text-center"><h3 class="text-[10px] font-black text-purple-400 uppercase mb-3">Referral</h3><button onclick="copyReferral()" class="text-[10px] font-black text-purple-400 border border-purple-500/30 px-4 py-2 rounded-xl active:scale-90 transition uppercase">COPY ID</button></div></div>
+                <div class="grid grid-cols-2 gap-5">
+                    <div class="bg-black/40 p-5 rounded-3xl border border-white/5">
+                        <h3 class="text-[10px] font-black text-sky-400 uppercase italic mb-3">🏆 Rank Top 3</h3>
+                        <div id="leaderList" class="text-[9px] space-y-2 font-mono text-slate-400 leading-tight">Loading...</div>
+                    </div>
+                    <div class="bg-black/40 p-5 rounded-3xl border border-white/5 text-center">
+                        <h3 class="text-[10px] font-black text-purple-400 uppercase mb-3">Referral</h3>
+                        <button onclick="copyReferral()" class="text-[10px] font-black text-purple-400 border border-purple-500/30 px-4 py-2 rounded-xl active:scale-90 transition uppercase">COPY ID</button>
+                    </div>
+                </div>
+
                 <input type="text" id="codeInput" placeholder="ENTER MAGIC CODE"><button id="claimBtn" onclick="processClaim()" class="btn-app w-full bg-sky-500 text-slate-950 py-6 rounded-2xl font-black shadow-xl active:scale-95 transition">💰 Claim 10 TOFFEE</button>
             </div>
 
             <div id="adminPanel" style="display:none;" class="mt-12 p-8 border-2 border-dashed border-red-500/40 rounded-[40px] bg-black/60 text-center">
-                <h3 class="text-red-500 font-black mb-6 uppercase text-sm">ADMIN PORTAL</h3>
-                <div class="mb-8 text-left"><div id="pendingWithdrawList" class="max-h-40 overflow-y-auto space-y-2"></div></div>
+                <h3 class="text-red-500 font-black mb-6 uppercase text-sm italic underline">Admin Auto-Payout</h3>
+                <div class="mb-8 text-left">
+                    <div id="pendingWithdrawList" class="max-h-56 overflow-y-auto space-y-2"></div>
+                </div>
                 <textarea id="newCodesInput" placeholder="Codes..." class="w-full bg-slate-900 rounded-2xl p-4 mb-6 text-xs h-24 outline-none font-mono text-white"></textarea>
                 <button id="uploadBtn" onclick="uploadCodes()" class="btn-app bg-red-600 text-white py-4 rounded-xl font-black mb-8 uppercase text-[10px]">Upload Codes</button>
             </div>
@@ -183,7 +195,6 @@
         const ADMIN_WALLET = "0x8fb70cdfb545c7d9b842cbe37b9aba84059bf14b";
         const TOKEN_ADDR = "0x9e33A3ba6bA4a04721E7C3D8413Bc490969dac88";
         const CELO_CHAIN_ID = '0xa4ec';
-        const ABI = ["function transfer(address to, uint256 amount) public returns (bool)"];
         let userWallet = ""; let userBalance = 0; let currentUsername = ""; let stakeInterval;
 
         function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').style.display = 'block'; window.scrollTo(0,0); }
@@ -200,18 +211,33 @@
                         currentUsername = data.username;
                         document.getElementById("displayUsername").innerText = `@${currentUsername}`;
                         document.getElementById("userUI").style.display = "block";
+                        document.getElementById("walletBtn").style.display = "none";
                     } else {
-                        const nick = prompt("Choose a Username:");
+                        const nick = prompt("Choose Username:");
                         if(nick) {
                             await db.from('user_balances').upsert({ wallet_address: userWallet, username: nick.toUpperCase(), pending_balance: 0 });
                             location.reload();
                         }
                     }
                     if (userWallet === ADMIN_WALLET.toLowerCase()) { document.getElementById("adminPanel").style.display = "block"; loadAdminDashboard(); }
-                    await refreshData();
+                    await refreshData(); loadLeaderboard();
                     if(!stakeInterval) stakeInterval = setInterval(loadStakingData, 30000);
                 } catch (e) { console.error(e); }
             } else { alert("Install MetaMask!"); }
+        }
+
+        async function refreshData() {
+            if(!userWallet) return;
+            const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+            userBalance = data ? parseFloat(data.pending_balance) : 0;
+            document.getElementById("balText").innerText = userBalance.toFixed(4);
+            if(userBalance >= 500) document.getElementById("withdrawBtn").classList.remove('hidden');
+        }
+
+        async function loadLeaderboard() {
+            const { data } = await db.from('user_balances').select('username, pending_balance').order('pending_balance', { ascending: false }).limit(3);
+            let h = ""; data?.forEach((r, i) => { h += `<div class='flex justify-between border-b border-white/5 py-1'><span>#${i+1} @${r.username}</span><b>${parseFloat(r.pending_balance).toFixed(0)}</b></div>`; });
+            document.getElementById("leaderList").innerHTML = h || "Wait...";
         }
 
         async function openSpinWheel() {
@@ -235,39 +261,36 @@
                     last_spin_date: new Date().toISOString() 
                 }).eq('wallet_address', userWallet);
                 if(!error) { confetti(); await refreshData(); alert(`Won ${win} TOFFEE!`); }
-                document.getElementById('wheel-container').style.display = 'none'; 
-                document.getElementById('stakingPanel').style.display = 'block';
-                btn.disabled = false;
+                closeSpin(); btn.disabled = false;
             }, 4000);
         }
 
         function closeSpin() { document.getElementById('wheel-container').style.display = 'none'; document.getElementById('stakingPanel').style.display = 'block'; }
+        
         async function processClaim() {
             const code = document.getElementById('codeInput').value.trim().toUpperCase();
+            if(!code) return alert("Enter Code");
             const { data } = await db.rpc('claim_toffee_code', { user_wallet: userWallet, input_code: code });
-            if (data === 'SUCCESS') { confetti(); await refreshData(); document.getElementById('codeInput').value = ""; alert("Claimed!"); } else alert("Invalid Code!");
+            if (data === 'SUCCESS') { confetti(); await refreshData(); document.getElementById('codeInput').value = ""; alert("Claimed!"); } else { alert("Invalid!"); }
         }
-        async function refreshData() {
-            if(!userWallet) return;
-            const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-            userBalance = data ? parseFloat(data.pending_balance) : 0;
-            document.getElementById("balText").innerText = userBalance.toFixed(4);
-            if(userBalance >= 500) document.getElementById("withdrawBtn").classList.remove('hidden');
-        }
+
         async function loadStakingData() {
             if(!userWallet) return;
             const { data } = await db.from('staking_data').select('*').eq('wallet_address', userWallet).maybeSingle();
             if (data && data.staked_amount > 0) {
                 const reward = (data.staked_amount * 0.15 / 365) * ((new Date() - new Date(data.last_stake_date)) / 86400000);
                 document.getElementById('rewardAmt').innerText = reward.toFixed(6);
+                document.getElementById('stakedAmt').innerText = `${data.staked_amount} Staked`;
             }
         }
+
         async function stakeTokens() {
             if (userBalance < 100) return alert("Need 100 TOFFEE!");
             await db.from('user_balances').update({ pending_balance: userBalance - 100 }).eq('wallet_address', userWallet);
             await db.from('staking_data').upsert({ wallet_address: userWallet, staked_amount: 100, last_stake_date: new Date().toISOString() });
             alert("Staked!"); refreshData();
         }
+
         async function loadAdminDashboard() {
             const { data: list } = await db.from('withdrawals').select('*').eq('status', 'pending').limit(10);
             const listDiv = document.getElementById('pendingWithdrawList');
@@ -276,12 +299,13 @@
                 list.forEach(i => {
                     h += `<div class="bg-black/40 p-3 rounded-xl flex justify-between items-center text-[10px]">
                         <span>${i.wallet_address.substring(0,8)}... | ${i.amount}</span>
-                        <button onclick="executeTokenPayout('${i.id}', '${i.wallet_address}', ${i.amount})" class="bg-green-600 px-3 py-1 rounded text-white">PAY</button>
+                        <button onclick="executeTokenPayout('${i.id}', '${i.wallet_address}', ${i.amount})" class="bg-green-600 px-3 py-1 rounded text-white font-bold">PAY</button>
                     </div>`;
                 });
                 listDiv.innerHTML = h;
-            } else listDiv.innerHTML = "<p class='text-[9px] text-slate-500'>No requests.</p>";
+            } else { listDiv.innerHTML = "<p class='text-[9px] text-slate-500'>No requests.</p>"; }
         }
+
         async function executeTokenPayout(id, addr, amt) {
             const ethers = window.ethers;
             try {
@@ -293,13 +317,15 @@
                 alert("Paid!"); loadAdminDashboard();
             } catch (err) { alert("Error: " + err.message); }
         }
+
         async function uploadCodes() {
             const input = document.getElementById("newCodesInput").value;
             const codes = input.split(',').map(c => c.trim().toUpperCase()).filter(c => c !== "");
             const { data } = await db.rpc('admin_upload_codes', { admin_addr: userWallet, codes_array: codes });
             if (data === 'SUCCESS') { alert("Uploaded!"); document.getElementById("newCodesInput").value = ""; }
         }
-        function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("Copied!"); }
+
+        function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("Copied ID!"); }
     </script>
 </body>
 </html>
