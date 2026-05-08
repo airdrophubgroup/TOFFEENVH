@@ -94,7 +94,7 @@
             </div>
         </section>
 
-        <section id="landingRewardsStore" class="py-24 bg-slate-950/20 px-5 text-center">
+        <section class="py-24 bg-slate-950/20 px-5 text-center">
             <h2 class="text-4xl font-black text-white mb-4 uppercase tracking-tighter italic">Rewards Store</h2>
             <p class="text-amber-500 font-black mb-16 uppercase tracking-[5px] text-sm">COMING SOON: Exchange Coins for Products</p>
             <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
@@ -133,21 +133,6 @@
                     <span id="balText" class="text-6xl font-black text-white">0.0000</span>
                     <div class="mt-8">
                         <button id="withdrawBtn" class="w-full bg-green-600 text-white py-4 rounded-xl font-black text-[12px] hidden active:scale-95 transition" onclick="requestWithdrawal()">🚀 Withdraw Tokens</button>
-                    </div>
-                </div>
-
-                <div id="stakingPanel" class="glass-card p-8 rounded-[40px] border-amber-500/30 shadow-xl text-center py-10">
-                    <p class="text-amber-500 font-black text-[10px] uppercase tracking-widest mb-1 italic">Staking Vault</p>
-                    <h3 class="text-xl font-black text-white uppercase italic">Coming Soon</h3>
-                </div>
-
-                <div class="bg-black/40 p-6 rounded-[40px] border border-white/5">
-                    <h3 class="text-[10px] font-black text-sky-400 uppercase italic mb-6 text-center tracking-widest underline decoration-sky-500 underline-offset-4">Digital Voucher Store</h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-white/5 p-4 rounded-3xl flex flex-col items-center border border-white/5"><i class="fab fa-amazon text-2xl text-amber-500 mb-2"></i><span class="text-[9px] font-black text-white uppercase">Amazon GC</span><span class="text-[8px] text-amber-500 font-bold mt-1 italic uppercase">Soon</span></div>
-                        <div class="bg-white/5 p-4 rounded-3xl flex flex-col items-center border border-white/5"><i class="fas fa-shopping-cart text-2xl text-blue-500 mb-2"></i><span class="text-[9px] font-black text-white uppercase">Flipkart VCHR</span><span class="text-[8px] text-blue-500 font-bold mt-1 italic uppercase">Soon</span></div>
-                        <div class="bg-white/5 p-4 rounded-3xl flex flex-col items-center border border-white/5"><i class="fab fa-google-play text-2xl text-green-500 mb-2"></i><span class="text-[9px] font-black text-white uppercase">Google Play</span><span class="text-[8px] text-green-500 font-bold mt-1 italic uppercase">Soon</span></div>
-                        <div class="bg-white/5 p-4 rounded-3xl flex flex-col items-center border border-white/5"><i class="fab fa-paypal text-2xl text-sky-500 mb-2"></i><span class="text-[9px] font-black text-white uppercase">PayPal Cash</span><span class="text-[8px] text-sky-500 font-bold mt-1 italic uppercase">Soon</span></div>
                     </div>
                 </div>
 
@@ -192,54 +177,55 @@
                     userWallet = accs[0].toLowerCase();
                     document.getElementById("walletBtn").innerText = `CONNECTED`;
                     
+                    // Direct Fetch with error logging
                     const { data, error } = await db.from('user_balances').select('*').eq('wallet_address', userWallet).maybeSingle();
                     
+                    if (error) {
+                        console.error("DB Error:", error);
+                        alert("Database Connection Issue. Please try again.");
+                        return;
+                    }
+
                     if (data && data.username) {
                         currentUsername = data.username;
                         document.getElementById("displayUsername").innerText = `@${currentUsername}`;
                         document.getElementById("userUI").style.display = "block";
                         document.getElementById("walletBtn").style.display = "none";
+                        await refreshData();
+                        loadLeaderboard();
                     } else {
-                        const nick = prompt("Choose Username:");
+                        const nick = prompt("Choose Username (Nihal Vihar Unique ID):");
                         if(nick) {
-                            await db.from('user_balances').upsert({ wallet_address: userWallet, username: nick.toUpperCase(), pending_balance: 0 });
-                            location.reload();
-                            return;
+                            const { error: upsertError } = await db.from('user_balances').upsert({ 
+                                wallet_address: userWallet, 
+                                username: nick.toUpperCase(), 
+                                pending_balance: 0 
+                            });
+                            if (upsertError) alert("Error creating profile: " + upsertError.message);
+                            else location.reload();
                         }
                     }
-                    
+
                     if (userWallet === ADMIN_WALLET.toLowerCase()) { 
                         document.getElementById("adminPanel").style.display = "block"; 
                         loadAdminDashboard(); 
                     }
-                    
-                    await refreshData(); 
-                    loadLeaderboard();
-                    
                 } catch (e) { 
-                    console.error("Wallet Connection Error:", e);
-                    alert("Connection Error: Check if you are in MetaMask browser.");
+                    alert("Connection Failed: " + e.message);
                 }
             } else { 
-                alert("Please open this website inside MetaMask browser or TrustWallet DApp browser."); 
+                alert("Please open this site inside MetaMask/TrustWallet browser."); 
             }
         }
 
         async function refreshData() {
             if(!userWallet) return;
-            try {
-                const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-                userBalance = data ? parseFloat(data.pending_balance) : 0;
+            const { data, error } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+            if (data) {
+                userBalance = parseFloat(data.pending_balance);
                 document.getElementById("balText").innerText = userBalance.toFixed(4);
-                
-                // Withdrawal button 100 par dikhega
-                if(userBalance >= 100) {
-                    document.getElementById("withdrawBtn").classList.remove('hidden');
-                } else {
-                    document.getElementById("withdrawBtn").classList.add('hidden');
-                }
-            } catch (err) {
-                console.error("Data Refresh Error:", err);
+                if(userBalance >= 100) document.getElementById("withdrawBtn").classList.remove('hidden');
+                else document.getElementById("withdrawBtn").classList.add('hidden');
             }
         }
 
@@ -251,35 +237,41 @@
                     h += `<div class='flex justify-between border-b border-white/5 py-1'><span>#${i+1} @${r.username}</span><b>${parseFloat(r.pending_balance).toFixed(0)}</b></div>`; 
                 });
             }
-            document.getElementById("leaderList").innerHTML = h || "No data yet.";
+            document.getElementById("leaderList").innerHTML = h || "Loading Rank...";
         }
 
         async function processClaim() {
             const code = document.getElementById('codeInput').value.trim().toUpperCase();
-            if(!code) return alert("Enter Code");
+            if(!code) return alert("Enter Magic Code");
             const { data, error } = await db.rpc('claim_toffee_code', { user_wallet: userWallet, input_code: code });
+            
+            if (error) {
+                alert("RPC Error: " + error.message);
+                return;
+            }
+
             if (data === 'SUCCESS') { 
                 confetti(); 
                 await refreshData(); 
                 loadLeaderboard(); 
                 document.getElementById('codeInput').value = ""; 
-                alert("Claimed Successfully!"); 
+                alert("Success! 1 TOFFEE Added."); 
             } else { 
-                alert("Invalid or Already Used Code!"); 
+                alert("Invalid or Used Code!"); 
             }
         }
 
         async function requestWithdrawal() {
-            if(userBalance < 100) return alert("Min 100 TOFFEE required!");
+            if(userBalance < 100) return alert("Minimum 100 TOFFEE required!");
             const { data: existing } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
-            if (existing) return alert("You already have a pending request!");
+            if (existing) return alert("Request already pending!");
             
             const { error } = await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 100, status: 'pending' });
-            if(!error) {
-                alert("✅ Withdrawal Request Sent!"); 
+            if (!error) {
+                alert("✅ Request Sent! Wait 24h.");
                 refreshData();
             } else {
-                alert("Error sending request.");
+                alert("Error: " + error.message);
             }
         }
 
@@ -320,9 +312,9 @@
         }
 
         function copyReferral() { 
-            if(!currentUsername) return alert("Connect wallet first!");
+            if(!currentUsername) return alert("Connect Wallet First!");
             navigator.clipboard.writeText(currentUsername); 
-            alert("Copied ID!"); 
+            alert("ID Copied!"); 
         }
     </script>
 </body>
