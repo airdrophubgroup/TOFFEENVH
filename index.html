@@ -94,7 +94,7 @@
             </div>
         </section>
 
-        <section class="py-24 bg-slate-950/20 px-5 text-center">
+        <section id="landingRewardsStore" class="py-24 bg-slate-950/20 px-5 text-center">
             <h2 class="text-4xl font-black text-white mb-4 uppercase tracking-tighter italic">Rewards Store</h2>
             <p class="text-amber-500 font-black mb-16 uppercase tracking-[5px] text-sm">COMING SOON: Exchange Coins for Products</p>
             <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
@@ -191,7 +191,9 @@
                     const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     userWallet = accs[0].toLowerCase();
                     document.getElementById("walletBtn").innerText = `CONNECTED`;
-                    const { data } = await db.from('user_balances').select('*').eq('wallet_address', userWallet).maybeSingle();
+                    
+                    const { data, error } = await db.from('user_balances').select('*').eq('wallet_address', userWallet).maybeSingle();
+                    
                     if (data && data.username) {
                         currentUsername = data.username;
                         document.getElementById("displayUsername").innerText = `@${currentUsername}`;
@@ -202,43 +204,83 @@
                         if(nick) {
                             await db.from('user_balances').upsert({ wallet_address: userWallet, username: nick.toUpperCase(), pending_balance: 0 });
                             location.reload();
+                            return;
                         }
                     }
-                    if (userWallet === ADMIN_WALLET.toLowerCase()) { document.getElementById("adminPanel").style.display = "block"; loadAdminDashboard(); }
-                    await refreshData(); loadLeaderboard();
-                } catch (e) { console.error(e); }
-            } else { alert("Install MetaMask!"); }
+                    
+                    if (userWallet === ADMIN_WALLET.toLowerCase()) { 
+                        document.getElementById("adminPanel").style.display = "block"; 
+                        loadAdminDashboard(); 
+                    }
+                    
+                    await refreshData(); 
+                    loadLeaderboard();
+                    
+                } catch (e) { 
+                    console.error("Wallet Connection Error:", e);
+                    alert("Connection Error: Check if you are in MetaMask browser.");
+                }
+            } else { 
+                alert("Please open this website inside MetaMask browser or TrustWallet DApp browser."); 
+            }
         }
 
         async function refreshData() {
             if(!userWallet) return;
-            const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
-            userBalance = data ? parseFloat(data.pending_balance) : 0;
-            document.getElementById("balText").innerText = userBalance.toFixed(4);
-            // Badlav: Withdrawal 100 par check
-            if(userBalance >= 100) document.getElementById("withdrawBtn").classList.remove('hidden');
+            try {
+                const { data } = await db.from('user_balances').select('pending_balance').eq('wallet_address', userWallet).maybeSingle();
+                userBalance = data ? parseFloat(data.pending_balance) : 0;
+                document.getElementById("balText").innerText = userBalance.toFixed(4);
+                
+                // Withdrawal button 100 par dikhega
+                if(userBalance >= 100) {
+                    document.getElementById("withdrawBtn").classList.remove('hidden');
+                } else {
+                    document.getElementById("withdrawBtn").classList.add('hidden');
+                }
+            } catch (err) {
+                console.error("Data Refresh Error:", err);
+            }
         }
 
         async function loadLeaderboard() {
             const { data } = await db.from('user_balances').select('username, pending_balance').order('pending_balance', { ascending: false }).limit(3);
-            let h = ""; data?.forEach((r, i) => { h += `<div class='flex justify-between border-b border-white/5 py-1'><span>#${i+1} @${r.username}</span><b>${parseFloat(r.pending_balance).toFixed(0)}</b></div>`; });
-            document.getElementById("leaderList").innerHTML = h || "Loading Rank...";
+            let h = ""; 
+            if(data) {
+                data.forEach((r, i) => { 
+                    h += `<div class='flex justify-between border-b border-white/5 py-1'><span>#${i+1} @${r.username}</span><b>${parseFloat(r.pending_balance).toFixed(0)}</b></div>`; 
+                });
+            }
+            document.getElementById("leaderList").innerHTML = h || "No data yet.";
         }
 
         async function processClaim() {
             const code = document.getElementById('codeInput').value.trim().toUpperCase();
             if(!code) return alert("Enter Code");
-            const { data } = await db.rpc('claim_toffee_code', { user_wallet: userWallet, input_code: code });
-            if (data === 'SUCCESS') { confetti(); await refreshData(); loadLeaderboard(); document.getElementById('codeInput').value = ""; alert("Claimed!"); } else { alert("Invalid Code!"); }
+            const { data, error } = await db.rpc('claim_toffee_code', { user_wallet: userWallet, input_code: code });
+            if (data === 'SUCCESS') { 
+                confetti(); 
+                await refreshData(); 
+                loadLeaderboard(); 
+                document.getElementById('codeInput').value = ""; 
+                alert("Claimed Successfully!"); 
+            } else { 
+                alert("Invalid or Already Used Code!"); 
+            }
         }
 
         async function requestWithdrawal() {
-            // Badlav: Min withdrawal 100
-            if(userBalance < 100) return alert("Min 100 TOFFEE!");
+            if(userBalance < 100) return alert("Min 100 TOFFEE required!");
             const { data: existing } = await db.from('withdrawals').select('*').eq('wallet_address', userWallet).eq('status', 'pending').maybeSingle();
-            if (existing) return alert("Wait for pending approval!");
-            await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 100, status: 'pending' });
-            alert("✅ Request Sent!"); refreshData();
+            if (existing) return alert("You already have a pending request!");
+            
+            const { error } = await db.from('withdrawals').insert({ wallet_address: userWallet, amount: 100, status: 'pending' });
+            if(!error) {
+                alert("✅ Withdrawal Request Sent!"); 
+                refreshData();
+            } else {
+                alert("Error sending request.");
+            }
         }
 
         async function loadAdminDashboard() {
@@ -247,7 +289,7 @@
             if (list && list.length > 0) {
                 let h = "";
                 list.forEach(i => {
-                    h += `<div class="bg-black/40 p-3 rounded-xl flex justify-between items-center text-[10px]">
+                    h += `<div class="bg-black/40 p-3 rounded-xl flex justify-between items-center text-[10px] mb-2">
                         <span>${i.wallet_address.substring(0,8)}... | ${i.amount}</span>
                         <button onclick="executeTokenPayout('${i.id}', '${i.wallet_address}', ${i.amount})" class="bg-green-600 px-3 py-1 rounded text-white font-bold">PAY</button>
                     </div>`;
@@ -263,8 +305,10 @@
                 const signer = provider.getSigner();
                 const contract = new ethers.Contract(TOKEN_ADDR, ["function transfer(address to, uint256 amount) public returns (bool)"], signer);
                 const tx = await contract.transfer(addr, ethers.utils.parseUnits(amt.toString(), 18));
-                await tx.wait(); await db.rpc('mark_payout_complete', { req_id: id, user_addr: addr });
-                alert("Paid!"); loadAdminDashboard();
+                await tx.wait(); 
+                await db.rpc('mark_payout_complete', { req_id: id, user_addr: addr });
+                alert("Paid!"); 
+                loadAdminDashboard();
             } catch (err) { alert("Error: " + err.message); }
         }
 
@@ -275,7 +319,11 @@
             if (data === 'SUCCESS') { alert("Uploaded!"); document.getElementById("newCodesInput").value = ""; }
         }
 
-        function copyReferral() { navigator.clipboard.writeText(currentUsername); alert("Copied ID!"); }
+        function copyReferral() { 
+            if(!currentUsername) return alert("Connect wallet first!");
+            navigator.clipboard.writeText(currentUsername); 
+            alert("Copied ID!"); 
+        }
     </script>
 </body>
 </html>
