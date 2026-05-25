@@ -18,6 +18,9 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 
+    <!-- Tesseract.js Library (OCR Text Scanner ke liye add kiya gaya hai) -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 
@@ -296,7 +299,25 @@
 
 
 
-                <input type="text" id="codeInput" placeholder="ENTER MAGIC CODE"><button id="claimBtn" onclick="processClaim()" class="btn-app w-full bg-sky-500 text-slate-950 py-6 rounded-2xl font-black shadow-xl active:scale-95 transition">💰 Claim 1 TOFFEE</button>
+                <!-- Camera Scan Live Section Interface (Sirf Camera Open Hone Pr Dikhega) -->
+                <div id="cameraSection" class="hidden w-full bg-black/80 rounded-2xl p-4 border border-sky-500/50 text-center space-y-3">
+                    <video id="videoView" class="w-full rounded-xl bg-slate-900 border border-slate-700" autoplay playsinline></video>
+                    <div id="scanStatus" class="text-[11px] text-sky-400 font-bold animate-pulse uppercase">Camera streaming...</div>
+                    <button type="button" onclick="captureTextCode()" class="w-full bg-sky-500 text-slate-950 font-bold py-2 rounded-xl text-xs uppercase">Capture & Extract Code</button>
+                </div>
+
+                <!-- Input box aur Scan Button Group Layout -->
+                <div class="relative flex items-center">
+                    <input type="text" id="codeInput" placeholder="ENTER MAGIC CODE" class="pr-16">
+                    <button type="button" onclick="toggleCameraScan()" class="absolute right-4 text-sky-400 hover:text-sky-300 text-2xl transition focus:outline-none" title="Scan with Camera">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+
+                <!-- Hidden Canvas frame catch karne ke liye -->
+                <canvas id="hiddenCanvas" class="hidden"></canvas>
+
+                <button id="claimBtn" onclick="processClaim()" class="btn-app w-full bg-sky-500 text-slate-950 py-6 rounded-2xl font-black shadow-xl active:scale-95 transition">💰 Claim 1 TOFFEE</button>
 
             </div>
 
@@ -334,11 +355,13 @@
 
         let userWallet = ""; let userBalance = 0; let currentUsername = "";
 
+        // OCR Scanner Global Variables
+        let cameraStream = null;
 
 
         function showApp() { document.getElementById('landingPage').classList.add('section-hidden'); document.getElementById('rewardsApp').style.display = 'block'; window.scrollTo(0,0); }
 
-        function showLanding() { document.getElementById('landingPage').classList.remove('section-hidden'); document.getElementById('rewardsApp').style.display = 'none'; }
+        function showLanding() { document.getElementById('landingPage').classList.remove('section-hidden'); document.getElementById('rewardsApp').style.display = 'none'; stopCameraStream(); }
 
 
 
@@ -634,6 +657,79 @@
 
         }
 
+
+        // ==========================================
+        //  NEW CAMERA OCR SCANNING UTILITY FUNCTIONS
+        // ==========================================
+
+        async function toggleCameraScan() {
+            const camSec = document.getElementById('cameraSection');
+            if (camSec.classList.contains('hidden')) {
+                camSec.classList.remove('hidden');
+                document.getElementById('scanStatus').innerText = "Camera initializing...";
+                try {
+                    cameraStream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { facingMode: "environment", width: { ideal: 640 }, height: { ideal: 480 } } 
+                    });
+                    document.getElementById('videoView').srcObject = cameraStream;
+                    document.getElementById('scanStatus').innerText = "Camera On! Target your code and tap Capture.";
+                } catch (err) {
+                    console.error("Camera error:", err);
+                    document.getElementById('scanStatus').innerText = "Failed to access mobile camera.";
+                    alert("Camera start nahi ho saka. Kindly verify app permissions.");
+                }
+            } else {
+                stopCameraStream();
+            }
+        }
+
+        function stopCameraStream() {
+            const camSec = document.getElementById('cameraSection');
+            if (camSec) camSec.classList.add('hidden');
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+        }
+
+        function captureTextCode() {
+            const video = document.getElementById('videoView');
+            const canvas = document.getElementById('hiddenCanvas');
+            const status = document.getElementById('scanStatus');
+            const inputField = document.getElementById('codeInput');
+
+            if (!cameraStream || video.readyState !== video.HAVE_ENOUGH_DATA) {
+                return alert("Camera ready hone ka wait karein.");
+            }
+
+            status.innerText = "Analyzing text/code... please hold still...";
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Tesseract OCR Core Process
+            Tesseract.recognize(
+                canvas.toDataURL('image/jpeg'),
+                'eng',
+                { logger: m => console.log(m) }
+            ).then(({ data: { text } }) => {
+                // String cleans filters out spaces, linebreaks and updates input box structure 
+                let cleanText = text.trim().replace(/\s+/g, '').toUpperCase();
+                
+                if (cleanText) {
+                    inputField.value = cleanText;
+                    status.innerText = "Scan Successful!";
+                    stopCameraStream(); // Automatic close section layout
+                } else {
+                    status.innerText = "Clear text nahi mila. Please try again with better lighting.";
+                }
+            }).catch(err => {
+                console.error(err);
+                status.innerText = "Extraction Error. Please try manual entry.";
+            });
+        }
     </script>
 
 </body>
